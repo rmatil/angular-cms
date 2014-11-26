@@ -1,0 +1,31 @@
+<h1><i class="fa fa-upload"></i> Medien hinzufügen</h1>
+<div class="left-wrapper">
+	<input type="text" ng-model="file.description" value="{{file.description}}" id="file-description" class="title" tabindex="1">
+	<p></p>
+	<div ng-file-drop="onFileSelect($files)" ng-file-drag-over-class="drop-zone-active" ng-show="dropSupported" class="drop-zone">Dateien hierher ziehen</div>
+	<div ng-file-drop-available="dropSupported=true" ng-show="!dropSupported"><!--HTML5 Drop File is not supported!--></div>
+</div>
+<div class="right-wrapper">
+	<div class="right-heading {{ backgroundColorClass }}">Datei auswählen</div>
+	<div class="right-body">
+		<div class="right-body-box">
+			Gewünschte Datei auswählen:<br />
+			<span class="delete" ng-show="!file.description">Die Dateibeschreibung muss angegeben werden</span>
+			<input type="file" ng-file-select="onFileSelect($files)" ng-disabled="!file.description">
+			<div class="progress-bar all-rounded">
+			    <div class="progress-bar-percentage all-rounded" style="width: 0%"><span>{{ percent }} %</span></div>
+			</div>
+		</div>
+	</div>
+	<div class="right-footer">
+	   <button ng-click="upload.abort()">Upload abbrechen</button>
+	</div>
+	<p></p>
+	<div class="right-heading {{ backgroundColorClass }}" ng-show="debugModus">Debug Info</div>
+	<div class="right-body" ng-show="debugModus">
+		<p ng-show="debugModus">{{ file | json }}</p>
+	</div>
+	
+</div>
+<div class="clear"></div>
+

@@ -1,0 +1,9 @@
+<h1>System Logging</h1>
+<p><div ng-show="hasSucceeded" class="success">Einstellungen wurde aktualisiert</div>
+	<div ng-show="hasNotSucceeded" class="error"><b>Fehler:</b> Die Einstellungen konnten nicht aktualisiert werden. <i>{{"Message: "+ errorMsg }}</i></div>
+</p>
+<pre>
+	<ul>
+		<li ng-repeat="entry in sysLog track by $index">{{ entry }}</li>
+	</ul>
+</pre>

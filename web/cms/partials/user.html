@@ -1,0 +1,99 @@
+<h1><i class="fa fa-users"></i> {{ menuName }}</h1>
+<form id="userUpdateForm" name="userUpdateForm" ng-submit="saveUser(user)" novalidate>
+	<div class="left-wrapper">
+		<table class="al-left">
+			<tr>
+				<td class="no-border"></td>
+				<td class="no-border"><h2>Persönliche Daten</h2></td>
+			</tr>
+			<tr>
+				<td class="no-border"><label for="user_name">Benutzername</label></td>
+				<td class="no-border"><input type="text" id="user_name" name="user_name" ng-model="user.user_name" ng-value="{{user.user_name}}" username ng-disabled="true"/></td>
+			</tr>
+			<tr>
+				<td class="no-border"><label for="first_name">Vorname</label></td>
+				<td class="no-border"><input type="text" id="first_name" name="first_name" ng-model="user.first_name" ng-value="{{user.first_name}}" tabindex="1"/></td>
+			</tr>
+			<tr>
+				<td class="no-border"><label for="last_name">Nachname</label></td>
+				<td class="no-border"><input type="text" id="last_name" name="last_name" ng-model="user.last_name" ng-value="{{user.last_name}}" tabindex="2"/></td>
+			</tr>
+			<tr>
+				<td class="no-border"><label for="email">Email</label></td>
+				<td class="no-border"><input type="email" id="email" name="email" ng-model="user.email" ng-value="{{user.email}}" ng-class="{ undefined: userUpdateForm.email.$pristine, wrong: userUpdateForm.email.$error, correct: userUpdateForm.email.$valid }" tabindex="3" required/></td>
+			</tr>
+			<tr>
+				<td class="no-border"></td>
+				<td class="no-border"><h2>Passwort ändern</h2></td>
+			</tr>
+			<tr>
+				<td class="no-border"><label for="pass1">Passwort</label></td>
+				<td class="no-border">
+					<input type='password' id='pass1' name='pass1' ng-model='pass1' ng-minlength='8' ng-class="{ undefined: userUpdateForm.pass1.$pristine, wrong: userUpdateForm.$error.minlength, correct: !userUpdateForm.$error.minlength }"  tabindex="4"/>
+				</td>
+			</tr>
+			<tr>
+				<td class="no-border"><label for="pass2">Passwort wiederholen</label></td>
+				<td class="no-border"><input type='password' id='pass2' name='pass2' ng-model='pass2' same-as='pass1' ng-class="{ undefined: userUpdateForm.pass2.$pristine, wrong: userUpdateForm.$error.sameas, correct: !userUpdateForm.$error.sameas }"  tabindex="5"/></td>
+			</tr>
+			<tr>
+				<td class="no-border"></td>
+				<td class="no-border">
+					<p>Fülle die beiden Felder aus, falls Du das Passwort ändern möchtest.</p>
+					<p ng-class="{ wrong: userUpdateForm.$error.minlength }" ng-show="userUpdateForm.$error.minlength">
+						Passwörter müssen eine Mindestlänge von acht Zeichen aufweisen.
+					</p>
+					<p ng-class="{ wrong: userUpdateForm.$error.sameas }" ng-show="userUpdateForm.$error.sameas">
+						Die Passwörter stimmen nicht überein.
+					</p>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="right-wrapper">
+		<div class="right-heading {{ backgroundColorClass }}">Benutzereinstellungen</div>
+		<div class="right-body">
+			<div class="right-body-box">
+				<div class="left">Registriert am</div>
+				<div class="right"><b>{{user.registration_date | date:"HH:mm 'Uhr am' dd.MM.yyyy"}}</b></div>
+				<div class="clear"></div>
+			</div>
+			<div class="right-body-box">
+				<div class="left">Letzter Login</div>
+				<div class="right"><b>{{ user.last_login_date | date:"HH:mm 'Uhr am' dd.MM.yyyy"}}</b></div>
+				<div class="clear"></div>
+			</div>
+			<div class="right-body-box">
+				<div class="left">Rechte wählen</div>
+				<div class="right">
+					<select ng-model="user.user_group" required>
+					    <option ng-repeat="user_group in allUserGroups" value="{{user_group}}" ng-selected="user.user_group.id === user_group.id">
+					        {{user_group.name}}
+					    </option>
+					</select>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+		<div class="right-footer">
+	        <button type="submit"  tabindex="7">Speichern</button>
+	        <img class="img-center" src="images/loading.gif" height="18" width="18" alt="loading" ng-show="loading">
+	        <span class="right delete" delete-object delete-object-id="{{ user.id }}" delete-object-path="{{ apiPath }}" tabindex="6">{{deleteMsg}}</span>
+		</div>
+		<p>&nbsp;</p> 
+		<div class="right-heading {{ backgroundColorClass }}" ng-show="debugModus">Debug Info</div>
+		<p ng-show="debugModus"></p>
+		<div class="right-body" ng-show="debugModus">
+			<pre class="light">
+				<p ng-show="debugModus">{{ user.curUsergroup| json }}</p>
+				<p ng-show="debugModus">{{ user|json}}</p>
+				<p ng-show="debugModus">pass1: {{ pass1 }}</p>
+				<p ng-show="debugModus">pass2: {{ pass2 }}</p>
+			</pre>
+		</div>
+	</div>
+	<div class="clear"></div>
+</form>
+ 
+
+

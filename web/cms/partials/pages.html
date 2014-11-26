@@ -1,0 +1,25 @@
+<h1 class="left"><i class="fa fa-bars"></i>  Menüseiten &nbsp; <img class="img-center" src="images/loading.gif" height="20" width="20" alt="loading" ng-show="loadingPages"></h1>
+<!--
+http://stackoverflow.com/questions/17672614/angularjs-filter-not-working
+filter can not handle objects, only arrays
+-->
+<span class="right">
+	<input ng-model="pageFilter" class="search-input" placeholder="Seiten durchsuchen">
+</span>
+
+<table class="enumerate">
+	<tr class="table-header">
+		<th><a href="" ng-click="predicate = 'title'; reverse=!reverse"><i class="fa fa-sort"></i> Titel</a></a></th>
+		<th><a href="" ng-click="predicate = 'category.name'; reverse=!reverse"><i class="fa fa-sort"></i> Kategorie</a></a></th>
+		<th><a href="" ng-click="predicate = 'language.name'; reverse=!reverse"><i class="fa fa-sort"></i> Sprache</a></a></th>
+		<th><a href="" ng-click="predicate = 'author.user_name'; reverse=!reverse"><i class="fa fa-sort"></i> Autor</a></a></th>
+		<th><a href="" ng-click="predicate = 'last_edit_date'; reverse=!reverse"><i class="fa fa-sort"></i> zuletzt bearbeitet</a></a></th>
+	</tr>
+	<tr ng-repeat="page in pages |filter:pageFilter | orderBy:predicate:reverse">
+		<td><a href="#/pages/{{page.id}}">{{page.title}}</a></td>
+		<td>{{page.category.name}}</td>
+		<td>{{page.language.name}}</td>
+		<td>{{page.author.user_name}}</td>
+		<td>{{page.last_edit_date | date:"HH:mm 'Uhr am' dd.MM.yyyy"}}</td>
+	</tr>
+</table>

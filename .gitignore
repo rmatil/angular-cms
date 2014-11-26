@@ -1,0 +1,19 @@
+# composer
+composer.lock
+/vendor
+
+# bower
+/web/cms/bower_components
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# OS X
+.DS_Store
+
+# Logs
+*.log
+
+# media dir
+/media

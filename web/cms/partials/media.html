@@ -1,0 +1,31 @@
+<h1 class="left"><i class="fa fa-picture-o"></i> Medien &nbsp; <img class="img-center" src="images/loading.gif" height="20" width="20" alt="loading" ng-show="loadingFiles"></h1>
+<!--
+http://stackoverflow.com/questions/17672614/angularjs-filter-not-working
+filter can not handle objects, only arrays
+-->
+<span class="right">
+	<input ng-model="fileFilter" class="search-input" placeholder="Dateien durchsuchen">
+</span>
+
+<table class="enumerate">
+	<tr class="table-header">
+		<th></th>
+		<th><a href="" ng-click="predicate = 'name'; reverse=!reverse"><i class="fa fa-sort"></i> Name</a></a></th>
+		<th><a href="" ng-click="predicate = 'extension'; reverse=!reverse"><i class="fa fa-sort"></i> Typ</a></a></th>
+		<th><a href="" ng-click="predicate = 'size'; reverse=!reverse"><i class="fa fa-sort"></i> Grösse</a></a></th>
+		<th><a href="" ng-click="predicate = 'dimensions'; reverse=!reverse"><i class="fa fa-sort"></i> Dimensionen</a></a></th>
+		<th><a href="" ng-click="predicate = 'category.name'; reverse=!reverse"><i class="fa fa-sort"></i> Kategorie</a></a></th>
+		<th><a href="" ng-click="predicate = 'creation_date'; reverse=!reverse"><i class="fa fa-sort"></i> Hochgeladen am</a></a></th>
+		<td>Löschen</td>
+	</tr>
+	<tr ng-repeat="file in files | filter:fileFilter | orderBy:predicate:reverse">
+		<td><a ng-href="{{file.link}}" target="_self"><img ng-src="{{file.thumbnail_link}}" width="30"></a></td>
+		<td><a ng-href="{{file.link}}" target="_self">{{file.name}}</a></td>
+		<td>{{file.extension}}</td>
+		<td>{{file.size}}</td>
+		<td>{{file.dimensions}}</td>
+		<td>{{file.category.name}} </td>
+		<td>{{file.creation_date | date:"HH:mm 'Uhr am' dd.MM.yyyy"}}</td>
+		<td><span class="right delete" delete-object delete-object-id="{{ file.id }}" delete-object-path="{{ apiPath }}" tabindex="7">{{deleteMsg}}</span></td>
+	</tr>
+</table>

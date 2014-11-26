@@ -1,0 +1,74 @@
+<h1><i class="icon-box fa fa-tachometer"></i> Dashboard</h1>
+<div class="db-box">
+	<div class="dashboard-box dashboard-box-left-triple">
+		<h2>Direktlinks</h2>
+		<div class="dashboard-body-box lightred-left-border">
+			<div class="left"><a ng-href="add-article">Neuen Artikel erstellen</a></div>
+			<div class="right"><a ng-href="add-article"><i class="fa fa-plus-circle"></i></a></div>
+			<div class="clear"></div>
+		</div>
+		<div class="dashboard-body-box lightred-left-border">
+			<div class="left"><a ng-href="add-page">Neue Seite erstellen</a></div>
+			<div class="right"><a ng-href="add-page"><i class="fa fa-plus-circle"></i></a></div>
+			<div class="clear"></div>
+		</div>
+		<div class="dashboard-body-box lightpink-left-border">
+			<div class="left"><a ng-href="add-event">Neue Veranstaltung erstellen</a></div>
+			<div class="right"><a ng-href="add-event"><i class="fa fa-plus-circle"></i></a></div>
+			<div class="clear"></div>
+		</div>
+		<div class="dashboard-body-box lightpurple-left-border">
+			<div class="left"><a ng-href="add-media">Neue Datei hochladen</a></div>
+			<div class="right"><a ng-href="add-media"><i class="fa fa-plus-circle"></i></a></div>
+			<div class="clear"></div>
+		</div>
+		<div class="dashboard-body-box lightblue-left-border">
+			<div class="left"><a ng-href="add-user">Neuen Benutzer erstellen</a></div>
+			<div class="right"><a ng-href="add-user"><i class="fa fa-plus-circle"></i></a></div>
+			<div class="clear"></div>
+		</div>
+		<br />
+		<h2>Seitenvorschau</h2>
+		<div class="dashboard-body-box lightyellow-left-border">
+			<div class="left"><a ng-href="../">Vorschau anzeigen</a></div>
+			<div class="right"><a ng-href="../"></a></div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	<div class="dashboard-box dashboard-box-right">
+		<h2><i class="fa fa-bolt"></i> letzte Aktivitäten</h2>
+		<div class="dashboard-body-box" ng-repeat="item in newestItems">
+			<div class="left" ng-switch on="item.type">
+				<span ng-switch-when="articles">
+					{{item.firstname}}
+					<span ng-if="item.creationDate == item.lastEditedDate"> erstellte </span>
+					<span ng-if="item.creationDate != item.lastEditedDate"> bearbeitete </span>
+					den Artikel <a ng-href="articles/{{item.id}}">{{item.name}}</a>
+				</span>
+				<span ng-switch-when="media">
+					{{item.firstname}} fügte die Datei <a ng-href="media">{{item.name}}</a> hinzu
+				</span>
+				<span ng-switch-when="pages">
+					{{item.firstname}}
+					<span ng-if="item.creationDate == item.lastEditedDate"> erstellte </span>
+					<span ng-if="item.creationDate != item.lastEditedDate"> bearbeitete </span>
+					die Seite <a ng-href="pages/{{item.id}}">{{item.name}}</a>
+				</span>
+				<span ng-switch-default></span>
+			</div>
+			<div class="right">
+				{{item.lastEditedDay}}, {{item.lastEditedTime}}
+			</div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	<div class="dashboard-box dashboard-box-right">
+		<h2><i class="fa fa-calendar"></i> nächste Veranstaltungen</h2>
+		<div class="dashboard-body-box lightpink-left-border" ng-repeat="event in newestEvents">
+			<div class="left"><a ng-href="events/{{event.eventId}}">{{ event.name }}</a> am {{ event.startDate }} um {{ event.startTime }}</div>
+			<div class="right"></div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	<div class="clear"></div>
+</div>

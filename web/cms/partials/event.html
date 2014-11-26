@@ -1,0 +1,93 @@
+<h1><i class="fa fa-calendar"></i> {{ menuName }}</h1>
+<form name="addEvent" ng-submit="saveEvent(event)">
+	<div class="left-wrapper">
+		<input type="text" ng-model="event.name" value="{{event.name}}" id="event-name" class="title" tabindex="1">
+		<p></p>
+	    <textarea ck-editor ng-model="event.description" id="body-editor" value="{{event.description}}" tabindex="2">{{event.description}}</textarea>
+	    <p></p>
+	</div>
+	<div class="right-wrapper">
+		<div class="right-heading {{ backgroundColorClass }}">Informationen</div>
+		<div class="right-body">
+			<div class="right-body-box">
+				<div class="left">Autor</div>
+				<div class="right"><b>{{event.author.user_name}}</b></div>
+				<div class="clear"></div>
+			</div>
+			<div class="right-body-box">
+				<div class="left">Bearbeitet am</div>
+				<div class="right"><b>{{event.last_edit_date | date:"HH:mm 'Uhr am' dd.MM.yyyy" }}</b></div>
+				<div class="clear"></div>
+			</div>
+			<div class="right-body-box">
+				<div class="left">Startzeit (HH:mm)</div>
+				<div class="right">
+					<input type="time" ng-model="eventStartTime">
+				</div>
+				<div class="clear"></div>
+				<div class="left">Endzeit (HH:mm)</div>
+				<div class="right">
+					<input type="time" ng-model="eventEndTime">
+				</div>
+				<div class="clear"></div>
+				<div class="left">Startdatum</div>
+				<div class="right">
+					<div pickadate ng-model="eventStartDate"></div>
+				</div>
+				<div class="clear"></div>
+				<div class="left" ng-show="event.repeat_option">Enddatum</div>
+				<div class="right" ng-show="event.repeat_option">
+					<div pickadate ng-model="eventEndDate"></div>
+				</div>
+				<div class="clear"></div>
+	        </div>
+			<div class="right-body-box">
+				<div class="left">Wiederholen</div>
+				<div class="right">
+					<select ng-model="event.repeat_option" required>
+					    <option ng-repeat="repeatOption in allRepeatOptions" value="{{repeatOption}}" ng-selected="event.repeat_option.id === repeatOption.id">
+					        {{ repeatOption.option_value }}
+					    </option>
+					</select>
+				</div>
+	        	<div class="clear"></div>
+	        </div>
+			<div class="right-body-box">
+				<div class="left">Dateianhang</div>
+				<div class="right">
+					<select ng-model="event.file" required>
+					    <option ng-repeat="file in allFiles" value="{{file}}" ng-selected="event.file.id === file.id">
+					        {{ file.name }}
+					    </option>
+					</select>
+				</div>
+	        	<div class="clear"></div>
+	        </div>
+	        <div class="right-body-box">
+	        	<div class="left">Veranstaltungsort</div>
+		        <div class="right"><select data-ng-model="event.curLocation"
+		        							data-ng-options="a.locationName for a in event.allLocations" tabindex="7">
+	        						</select></div>
+	        	<div class="clear"></div>
+	        </div>
+		</div>
+		<div class="right-footer">
+	        <button type="submit" tabindex="8">Speichern</button>
+	     	<img class="img-center" src="images/loading.gif" height="18" width="18" alt="loading" ng-show="loading">
+	        <span class="right delete" delete-object delete-object-id="{{ event.id }}" delete-object-path="{{ apiPath }}" tabindex="7">{{deleteMsg}}</span>
+		</div>
+		<p></p>
+		<div class="right-heading {{ backgroundColorClass }}" ng-show="debugModus">Debug Info</div>
+		<div class="right-body" ng-show="debugModus">
+			<pre class="light">
+startTime: {{ eventStartTime}}
+endTime: {{ eventEndTime }}
+startDate: {{ eventStartDate }}
+endDate: {{ eventEndDate }}
+{{ event | json }}
+				</p>
+			</pre>
+		</div>
+	</div>
+	<div class="clear"></div>
+</form>

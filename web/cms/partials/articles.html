@@ -1,0 +1,22 @@
+<h1 class="left"><i class="fa fa-file-text-o"></i> Artikel &nbsp; <img class="img-center" src="images/loading.gif" height="20" width="20" alt="loading" ng-show="loadingArticles"></h1>
+
+<span class="right">
+	<input ng-model="articleFilter" class="search-input" placeholder="Artikel durchsuchen">
+</span>
+
+<table class="enumerate">
+	<tr class="table-header">
+		<th><a href="" ng-click="predicate = 'title'; reverse=!reverse"><i class="fa fa-sort"></i> Titel</a></a></th>
+		<th><a href="" ng-click="predicate = 'category.name'; reverse=!reverse"><i class="fa fa-sort"></i> Kategorie</a></th>
+		<th><a href="" ng-click="predicate = 'language.name'; reverse=!reverse"><i class="fa fa-sort"></i> Sprache</a></th>
+		<th><a href="" ng-click="predicate = 'author.user_name'; reverse=!reverse"><i class="fa fa-sort"></i> Autor</a></th>
+		<th><a href="" ng-click="predicate = 'last_edit_date'; reverse=!reverse"><i class="fa fa-sort"></i> zuletzt bearbeitet</a></th>
+	</tr>
+	<tr ng-repeat="article in articles | filter:articleFilter | orderBy:predicate:reverse">
+		<td><a href="#/articles/{{article.id}}">{{article.title}}</a></td>
+		<td>{{article.category.name}}</td>
+		<td>{{article.language.name}}</td>
+		<td>{{article.author.user_name}}</td>
+		<td>{{article.last_edit_date | date:"HH:mm 'Uhr am' dd.MM.yyyy"}}</td>
+	</tr>
+</table>

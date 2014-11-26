@@ -1,0 +1,103 @@
+{
+    "Dashboard": {
+		"backgroundColorClass":	"lightyellow",
+		"topBorderClass":		"lightyellow-top-border",
+		"menuArray":			[
+									{
+										"name": "Übersicht",
+										"link": "#\/overview\/"
+									}
+								]
+	},
+    "Artikel": {
+		"backgroundColorClass": "darkred",
+		"topBorderClass":		"lightred-top-border",
+		"menuArray":			[
+									{
+            							"name": "Artikelübersicht",
+            							"link": "#\/articles\/"
+        							},
+        							{
+						            	"name": "Artikel hinzufügen",
+						            	"link": "#\/add-article\/"
+						        	},
+						        	{
+						        		"name": "Seitenübersicht",
+						        		"link": "#\/pages\/"
+						        	},
+						        	{
+						        		"name": "Seite hinzufügen",
+						        		"link": "#\/add-page\/"
+						        	}
+								]
+	},
+	"Media": {
+		"backgroundColorClass":	"darkpurple",
+		"topBorderClass":		"lightpurple-top-border",
+		"menuArray":			[
+									{
+										"name": "Übersicht",
+										"link": "#\/files\/"
+									},
+									{
+										"name": "Upload",
+										"link": "#\/add-file\/"
+									}
+								]
+	},
+	"Veranstaltungen": {
+		"backgroundColorClass":	"darkpink",
+		"topBorderClass":		"lightpink-top-border",
+		"menuArray":			[
+									{
+										"name": "Übersicht",
+										"link":	"#\/events\/"
+									},
+									{
+										"name": "Event hinzufügen",
+										"link": "#\/add-event\/"
+									},
+									{
+										"name": "Veranstaltungsort hinzufügen",
+										"link": "#\/add-location"
+									}
+								]
+	},
+	"Benutzer": {
+		"backgroundColorClass":	"darkblue",
+		"topBorderClass":		"lightblue-top-border",
+		"menuArray":			[
+									{
+										"name": "Übersicht",
+										"link": "#\/users\/"
+									},
+									{
+										"name": "Benutzer hinzufügen",
+										"link": "#\/add-user\/"
+									}
+								]
+	},
+	"Einstellungen": {
+		"backgroundColorClass":	"darkgreen",
+		"topBorderClass":		"lightgreen-top-border",
+		"menuArray":			[
+									{
+										"name": "Übersicht",
+										"link": "#\/settings\/"
+									},
+									{
+										"name": "System Logging",
+										"link": "#\/settings\/system-logging\/"
+									},
+									{
+										"name": "Datenbank Logging",
+										"link": "#\/settings\/database-logging\/"
+									}
+								]
+	},
+	"Fehler": {
+		"backgroundColorClass":	"darkred",
+		"topBorderClass":		"lightred-top-border",
+		"menuArray":			[]
+	}
+}
