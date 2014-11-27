@@ -101,4 +101,9 @@ class Setting {
     public function setValue($value) {
         $this->value = $value;
     }
+
+    public function update(Setting $setting) {
+        $this->setName($setting->getName());
+        $this->setValue($setting->getValue());
+    }
 }
