@@ -151,7 +151,7 @@ class User {
     /**
      * Hash of the users password
      * 
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      *
      * @Exclude
      * 
