@@ -37,7 +37,7 @@ class RegistrationHandler {
 
         $registration = new Registration();
         $registration->setUser($user);
-        $registration->setExpired($expirationDate);
+        $registration->setExpirationDate($expirationDate);
         $registration->setToken($token);
 
         $settingsRepo        = $this->entityManager->getRepository(self::$SETTINGS_FULL_QUALIFIED_CLASSNAME);

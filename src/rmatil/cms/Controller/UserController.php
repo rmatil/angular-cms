@@ -13,6 +13,7 @@ class UserController extends SlimController {
 
     private static $USER_FULL_QUALIFIED_CLASSNAME        = 'rmatil\cms\Entities\User';
     private static $USER_GROUP_FULL_QUALIFIED_CLASSNAME  = 'rmatil\cms\Entities\UserGroup';
+    private static $REGISTRATION_FULL_QUALIFIED_CLASSNAME = 'rmatil\cms\Entities\Registration';
 
     public function getUsersAction() {
         $entityManager   = $this->app->entityManager;
@@ -143,6 +144,13 @@ class UserController extends SlimController {
             return;
         }
 
+        $registrationRepository = $entityManager->getRepository(self::$REGISTRATION_FULL_QUALIFIED_CLASSNAME);
+        $registration           = $registrationRepository->findOneBy(array('user' => $user));
+
+        if ($registration !== null) {
+            $entityManager->remove($registration);
+        }
+
         // prevent conflict on foreign key constraint
         $user->setIsLockedBy(null);
         $user->setUserGroup(null);
@@ -155,6 +163,7 @@ class UserController extends SlimController {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
             $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            return;
         }
 
         $this->app->response->setStatus(HttpStatusCodes::NO_CONTENT);
