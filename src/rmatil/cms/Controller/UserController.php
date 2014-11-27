@@ -77,8 +77,10 @@ class UserController extends SlimController {
             $userObject->setPasswordHash($origUser->getPasswordHash());
         } else {
             // hash provided plaintext password
-            $hash = password_hash($userObject->getPlainPassword(), PASSWORD_DEFAULT);
-            $userObject->setPasswordHash($hash);
+
+            // TODO: password_hash is only available since PHP 5.5
+            // $hash = password_hash($userObject->getPlainPassword(), PASSWORD_DEFAULT);
+            // $userObject->setPasswordHash($hash);
         }
 
         $origUser->update($userObject);
@@ -105,20 +107,17 @@ class UserController extends SlimController {
 
         $entityManager              = $this->app->entityManager;
         $userGroupRepository        = $entityManager->getRepository(self::$USER_GROUP_FULL_QUALIFIED_CLASSNAME);
-        $origUserGroup              = $userGroupRepository->findOneBy(array('id' => $origUser->getUserGroup()->getId()));
+        $origUserGroup              = $userGroupRepository->findOneBy(array('id' => $userObject->getUserGroup()->getId()));
         $userObject->setUserGroup($origUserGroup);
 
-        if ($userObject->getPlainPassword() === null ||
-            $userObject->getPlainPassword() === '') {
-            // user has not set a new password
-            $userObject->setPasswordHash($origUser->getPasswordHash());
-        } else {
-            // hash provided plaintext password
-            $hash = password_hash($userObject->getPlainPassword(), PASSWORD_DEFAULT);
-            $userObject->setPasswordHash($hash);
-        }
+        $now = new DateTime();
+        $userObject->setLastLoginDate($now);
+        $userObject->setRegistrationDate($now);
+        $userObject->setHasEmailValidated(false);
+        $userObject->setIsLocked(true);
 
-        $entityManager->persist($userObject);
+        // sends registration email and persists the user in the db
+        $this->app->registrationHandler->registerUser($userObject);
 
         try {
             $entityManager->flush();
