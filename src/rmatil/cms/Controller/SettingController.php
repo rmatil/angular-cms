@@ -1,0 +1,56 @@
+<?php
+
+namespace rmatil\cms\Controller;
+
+use SlimController\SlimController;
+use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Entities\User;
+use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\DBALException;
+
+class SettingController extends SlimController {
+
+    protected static $SETTING_FULL_QUALIFIED_CLASSNAME     = 'rmatil\cms\Entities\Setting';
+
+    public function getSettingsAction() {
+        $entityManager      = $this->app->entityManager;
+        $settingRepository  = $entityManager->getRepository(self::$SETTING_FULL_QUALIFIED_CLASSNAME);
+        $settings           = $settingRepository->findAll();
+
+        $returnValues       = array();
+        foreach ($settings as $entry) {
+            $returnValues[$entry->getName()] = $entry;
+        }
+
+        $this->app->response->header('Content-Type', 'application/json');
+        $this->app->response->setStatus(HttpStatusCodes::OK);
+        $this->app->response->setBody($this->app->serializer->serialize($returnValues, 'json'));
+    }
+
+    public function updateSettingsAction() {
+        $settings = json_decode($this->app->request->getBody(), true);
+
+        $entityManager      = $this->app->entityManager;
+        $settingsRepository = $entityManager->getRepository(self::$SETTING_FULL_QUALIFIED_CLASSNAME);
+
+        foreach ($settings as $entry) {
+            $origSetting = $settingsRepository->findOneBy(array('id' => $entry['id']));
+
+            if ($origSetting === null) {
+                continue;
+            }
+
+            $origSetting->setValue($entry['value']);
+        }
+
+        // force update
+        try {
+            $entityManager->flush();
+        } catch (DBALException $dbalex) {
+            $now = new DateTime();
+            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
+            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            return;
+        }
+    }
+}

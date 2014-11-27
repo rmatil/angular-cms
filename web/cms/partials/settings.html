@@ -5,76 +5,47 @@
 
 		<div class="left-body">
 			<table class="table-settings">
-				<tr>
-					<td class="no-border"><label for="siteName">Website Name</label></td>
-					<td class="no-border"><input type="text" ng-model="settings.siteName" name="siteName" id="siteName" tabindex="1"></td>
+				<tr class="no-border">
+					<td ><label for="siteName">Website Name</label></td>
+					<td><input type="text" ng-model="settings.website_name.value" name="siteName" id="siteName" tabindex="1"></td>
 				</tr>
 				<tr>
 					<td></td>
-					<td><i>Entspricht dem Text, der im Kopf oder in den Tabs des Browsers angezeigt wird</i></td>
+					<td>Entspricht dem Text, der im Kopf oder in den Tabs des Browsers angezeigt wird</td>
 				</tr>
 				<tr>
-					<td class="no-border"><label for="frontpage">Startseite</label></td>
-					<td class="no-border"><select data-ng-model="settings.curFrontpage" data-ng-options="p.title for p in settings.allPages" name="frontpage" id="frontpage" tabindex="2"></select></td>
+					<td><label for="websiteUrl">Website URL</label></td>
+					<td><input type="text" ng-model="settings.website_url.value" name="websiteUrl" id="websiteUrl" tabindex="4" disabled></td>
+				</tr>
+				<tr class="no-border">
+					<td><label for="debugMode">Debug Modus</label></td>
+					<td><input type="checkbox" ng-model="settings.debug_mode.value" ng-true-value="1" ng-false-value="0" name="debugMode" id="debugMode" tabindex="4"></td>
 				</tr>
 				<tr>
-					<td><br /></td>
-					<td><i></i></td>
-				</tr>
-				<tr>
-					<td class="no-border"><label for="adminMail">Administrator Email</label></td>
-					<td class="no-border"><input type="text" ng-model="settings.adminMail" name="adminMail" id="adminMail" tabindex="3"></td>
-				</tr>
-				<tr>
-					<td><br /></td>
-					<td>Mitteilungen dieses Portal werden an diese Mailadresse gesendet.</td>
-				</tr>
-				<tr>
-					<td class="no-border"><label for="setDebugModus">Debug Modus</label></td>
-					<td class="no-border"><input type="checkbox" ng-model="settings.debugModus" name="setDebugModus" id="setDebugModus" tabindex="4"></td>
-				</tr>
-				<tr>
-					<td class="no-border"></td>
-					<td class="no-border"><i>Zeigt Nachrichten in der Konsole des Browsers an um Fehler im CMS zu finden</i></td>
+					<td></td>
+					<td><i>Zeigt Nachrichten in der Konsole des Browsers an um Fehler im CMS zu finden</i></td>
 				</tr>
 			</table>
 		</div>
 		<br />
-		<h2>Mailserver Einstellungen</h2>
-		<h4>Diese Einstellungen werden verwendet, um Emails über dieses Portal zu versenden</h4>
+		<h2>Emailadressen des Portals</h2>
 		<div class="left-body">
 			<table class="table-settings">
-				<tr>
-					<td class="no-border"><label for="mailServer">Mail Server</label></td>
-					<td class="no-border"><input type="text" ng-model="settings.mailserver_server" name="mailServer" id="mailServer" tabindex="5"></td>
+				<tr class="no-border">
+					<td><label for="websiteEmail">Portal Absenderadresse</label></td>
+					<td><input type="text" ng-model="settings.website_email.value" name="websiteEmail" id="websiteEmail" tabindex="3"></td>
 				</tr>
 				<tr>
-					<td></td>
-					<td><i>Der SMTP-Mailserver</i></td>
+					<td><br /></td>
+					<td>Mitteilungen dieses Portal werden mit dieser Absenderadresse verschickt</td>
+				</tr>
+				<tr class="no-border">
+					<td><label for="websiteReplyToEmail">Portal Antwortadresse</label></td>
+					<td><input type="text" ng-model="settings.website_reply_to_email.value" name="websiteReplyToEmail" id="websiteReplyToEmail" tabindex="3"></td>
 				</tr>
 				<tr>
-					<td class="no-border"><label for="serverPort">Port</label></td>
-					<td class="no-border"><input type="number" ng-model="settings.mailserver_port" ng-value="settings.mailserver_port" name="serverPort" id="serverPort" tabindex="6"></td>
-				</tr>
-				<tr>
-					<td></td>
-					<td><i>Port des SMTP-Mailservers</i></td>
-				</tr>
-				<tr>
-					<td class="no-border"><label for="username">Benutzername</label></td>
-					<td class="no-border"><input type="text" ng-model="settings.mailserver_user" name="username" id="username" tabindex="7"></td>
-				</tr>
-				<tr>
-					<td></td>
-					<td><i>Benutzername für den Zugriff auf den Mailserver</i></td>
-				</tr>
-				<tr>
-					<td class="no-border"><label for="password">Passwort</label></td>
-					<td class="no-border"><input type="text" ng-model="settings.mailserver_pass" name="password" id="password" tabindex="8"></td>
-				</tr>
-				<tr>
-					<td class="no-border"></td>
-					<td class="no-border"><i>Passwort für den Zugriff auf den Mailserver. Dieses Passwort wird im Klartext in der Datenbank gespeichert.</i></td>
+					<td><br /></td>
+					<td>Mitteilungen dieses Portal erhalten diese Emailadresse als Antwortadresse</td>
 				</tr>
 			</table>
 		</div>
