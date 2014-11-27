@@ -22,21 +22,21 @@
 				<td class="no-border"><label for="email">Email</label></td>
 				<td class="no-border"><input type="email" id="email" name="email" ng-model="user.email" ng-value="{{user.email}}" ng-class="{ undefined: userUpdateForm.email.$pristine, wrong: userUpdateForm.email.$error, correct: userUpdateForm.email.$valid }" tabindex="3" required/></td>
 			</tr>
-			<tr>
+			<tr ng-show="menuName !== 'Benutzer hinzufügen'">
 				<td class="no-border"></td>
 				<td class="no-border"><h2>Passwort ändern</h2></td>
 			</tr>
-			<tr>
+			<tr ng-show="menuName !== 'Benutzer hinzufügen'">
 				<td class="no-border"><label for="pass1">Passwort</label></td>
 				<td class="no-border">
 					<input type='password' id='pass1' name='pass1' ng-model='pass1' ng-minlength='8' ng-class="{ undefined: userUpdateForm.pass1.$pristine, wrong: userUpdateForm.$error.minlength, correct: !userUpdateForm.$error.minlength }"  tabindex="4"/>
 				</td>
 			</tr>
-			<tr>
+			<tr ng-show="menuName !== 'Benutzer hinzufügen'">
 				<td class="no-border"><label for="pass2">Passwort wiederholen</label></td>
 				<td class="no-border"><input type='password' id='pass2' name='pass2' ng-model='pass2' same-as='pass1' ng-class="{ undefined: userUpdateForm.pass2.$pristine, wrong: userUpdateForm.$error.sameas, correct: !userUpdateForm.$error.sameas }"  tabindex="5"/></td>
 			</tr>
-			<tr>
+			<tr ng-show="menuName !== 'Benutzer hinzufügen'">
 				<td class="no-border"></td>
 				<td class="no-border">
 					<p>Fülle die beiden Felder aus, falls Du das Passwort ändern möchtest.</p>
@@ -53,12 +53,12 @@
 	<div class="right-wrapper">
 		<div class="right-heading {{ backgroundColorClass }}">Benutzereinstellungen</div>
 		<div class="right-body">
-			<div class="right-body-box">
+			<div class="right-body-box" ng-show="menuName !== 'Benutzer hinzufügen'">
 				<div class="left">Registriert am</div>
 				<div class="right"><b>{{user.registration_date | date:"HH:mm 'Uhr am' dd.MM.yyyy"}}</b></div>
 				<div class="clear"></div>
 			</div>
-			<div class="right-body-box">
+			<div class="right-body-box" ng-show="menuName !== 'Benutzer hinzufügen'">
 				<div class="left">Letzter Login</div>
 				<div class="right"><b>{{ user.last_login_date | date:"HH:mm 'Uhr am' dd.MM.yyyy"}}</b></div>
 				<div class="clear"></div>
