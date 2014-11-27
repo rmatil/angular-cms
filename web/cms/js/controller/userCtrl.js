@@ -31,7 +31,7 @@ angular.module('cms.controllers')
 		// represent fields for passwords
 		$scope.pass1 	= '';
 
-		genService.getObjectById('users', $routeParams.userId).then(function(response) {
+		genService.getObjectById('users', $routeParams.userId).then(function (response) {
 			if ($scope.debugModus) {
 				$log.log(response);
 			}
@@ -49,21 +49,16 @@ angular.module('cms.controllers')
 
 		// save changes in page
 		$scope.saveUser = function(pUser) {
-			// save user with no new pass
-			if ($scope.pass1 === undefined || $scope.pass1 == '') {
-					if ($scope.debugModus) {
-						$log.log("empty pass");
-					}
-				pUser.pass1 = '';
-			} else {
-				pUser.pass1 = $scope.pass1;
+			// save user with no new pass if empty
+			if ($scope.pass1.length > 0) {
+				pUser.plain_password = $scope.pass1;
 			}
 
-			if (pUser.username == '') {
+			if (pUser.username.length < 1) {
 				toaster.pop('error', null, 'Vorname und Nachname muss ausgefüllt werden');
 				return;
 			}
-			if (pUser.email == '') {
+			if (pUser.email.length < 1) {
 				toaster.pop('error', null, 'Email muss ausgefüllt werden');
 				return;
 			}
@@ -76,8 +71,7 @@ angular.module('cms.controllers')
             }
 
 			$scope.loading = true;
-			genService.updateObject('users', pUser).then(function(response){
-				if ($scope.debugModus) $log.log(response);
+			genService.updateObject('users', pUser).then(function (response) {
 				if (response.data !== "") {
 					$scope.loading = false;
 					toaster.pop('error', null, "User konnte nicht aktualisiert werden: " + response.data);
@@ -130,16 +124,6 @@ angular.module('cms.controllers')
 
 		// save changes in page
 		$scope.saveUser = function(pUser) {
-			// save user with no new pass
-			if ($scope.pass1 === undefined || $scope.pass1 == '') {
-					if ($scope.debugModus) {
-						$log.log("empty pass");
-					}
-				pUser.pass1 = '';
-			} else {
-				pUser.pass1 = $scope.pass1;
-			}
-
 			if (pUser.username == '') {
 				toaster.pop('error', null, 'Vorname und Nachname muss ausgefüllt werden');
 				return;
@@ -157,14 +141,13 @@ angular.module('cms.controllers')
             }
 
 			$scope.loading = true;
-			genService.insertObject('users', pUser).then(function(response){
-				if ($scope.debugModus) $log.log(response);
+			genService.insertObject('users', pUser).then(function (response) {
 				if (response.data !== "") {
 					$scope.loading = false;
 					toaster.pop('error', null, "User konnte nicht aktualisiert werden: " + response.data);
 				} else {
 					toaster.pop('success', null, "Benutzer wurde aktualisiert")
-					redirectTimeoutPromise = $timeout(function() {
+					redirectTimeoutPromise = $timeout(function () {
 						$location.path('/users');
 						$scope.loading = false;
 					}, 2500);
