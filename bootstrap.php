@@ -10,6 +10,7 @@ use SlimController\Slim;
 use JMS\Serializer\SerializerBuilder;
 use rmatil\cms\Handler\ThumbnailHandler;
 use rmatil\cms\Handler\FileHandler;
+use rmatil\cms\Handler\RegistrationHandler;
 
 // If $isDevMode is true caching is done in memory with the ArrayCache. Proxy objects are recreated on every request.
 $isDevMode = true;
@@ -28,6 +29,15 @@ $dbParams = array(
     'dbname'   => 'cms',
 );
 
+$mailParams = array(
+    'CharSet' => 'UTF-8',
+    'Host'    => '',
+    'SMTPAuth' => true,
+    'Username' => '',
+    'Password' => '',
+    'Port' => 587
+);
+
 // protocol of connection (either http or https)
 (!isset($_SERVER['HTTPS']) OR $_SERVER['HTTPS']=='off') ? $protocol = 'http://' : $protocol = 'https://';
 
@@ -40,9 +50,11 @@ define('LOCAL_MEDIA_DIR', LOCAL_ROOT.'/media');
 session_cache_limiter(false);
 session_start();
 
-$entityManager    = EntityManager::create($dbParams, $config);
-$thumbnailHandler = new ThumbnailHandler();
-$fileHandler      = new FileHandler(HTTP_MEDIA_DIR, LOCAL_MEDIA_DIR);
+$entityManager       = EntityManager::create($dbParams, $config);
+$thumbnailHandler    = new ThumbnailHandler();
+$fileHandler         = new FileHandler(HTTP_MEDIA_DIR, LOCAL_MEDIA_DIR);
+$phpMailer           = new PHPMailer();
+$registrationHandler = new RegistrationHandler($entityManager, $phpMailer, $mailParams);
 
 $userRepo         = $entityManager->getRepository('rmatil\cms\Entities\User');
 $user             = $userRepo->findOneBy(array('userName' => 'ramatil'));
@@ -82,6 +94,11 @@ $app->container->singleton('thumbnailHandler', function () use ($thumbnailHandle
 $app->container->singleton('fileHandler', function () use ($fileHandler) {
     return $fileHandler;
 });
+
+$app->container->singleton('registrationHandler', function() use ($registrationHandler) {
+    return $registrationHandler;
+});
+
 
 
 // See https://github.com/fortrabbit/slimcontroller/issues/23 for overloading methods
@@ -162,6 +179,13 @@ $app->addRoutes(array(
     '/api/usergroups/:id'               => array('get'    => 'UserGroup:getUserGroupById',
                                                  'delete' => 'UserGroup:deleteUserGroupById'),
     '/api/usergroups/update/:id'        => array('post'   => 'UserGroup:updateUserGroup'),
+
+    // registration
+    '/api/registration/:token'          => array('post'   => 'Registration:completeRegistration'),
+
+    // settings
+    '/api/settings'                     => array('get'    => 'Setting:getSettings'),
+    '/api/settings/update/:id'          => array('post'   => 'Setting:updateSettings'),
 
 
     // empty objects
