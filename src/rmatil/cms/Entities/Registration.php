@@ -44,7 +44,7 @@ class Registration {
      * 
      * @var \DateTime
      */
-    protected $expired;
+    protected $expirationDate;
 
     /**
      * Token to registrate the user
@@ -82,7 +82,7 @@ class Registration {
      *
      * @return \DateTime
      */
-    public function getExpired() {
+    public function getExpirationDate() {
         return $this->expired;
     }
 
@@ -91,7 +91,7 @@ class Registration {
      *
      * @param \DateTime $expired the expired
      */
-    public function setExpired(\DateTime $expired = null) {
+    public function setExpirationDate(\DateTime $expired = null) {
         $this->expired = $expired;
     }
 
