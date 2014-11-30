@@ -43,6 +43,10 @@ angular.module('cms.controllers')
 		$scope.eventStartTime;
 		$scope.eventEndTime;
 
+        // init content of ckEditor and prevent empty content
+        $scope.event = {};
+        $scope.event.description = '';
+
 		// get event
 		genService.getObjectById('events', $routeParams.eventId).then(function (response) {
 			if ($scope.debugModus) {
@@ -181,6 +185,10 @@ angular.module('cms.controllers')
 		$scope.eventEndDate;
 		$scope.eventStartTime;
 		$scope.eventEndTime;
+
+        // init content of ckEditor and prevent empty content
+        $scope.event = {};
+        $scope.event.description = '';
 
 		// get event
 		genService.getEmptyObject('event').then(function (response) {
