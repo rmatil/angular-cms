@@ -6,11 +6,15 @@ angular.module('cms.controllers')
 		// set Menu according to its Name
 		MenuService.update("Veranstaltungen");
 
+        $scope.loadingEvents = true;
 		genService.getAllObjects('locations').then(function(response) {
 			if (response == null) {
 				return;
 			}
 			$scope.allLocations = response;
+            $timeout(function () {
+                $scope.loadingEvents = false;
+            }, 300);
 		});
 
 		genService.getAllObjects('events').then(function(response) {

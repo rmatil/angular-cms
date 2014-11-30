@@ -18,7 +18,7 @@
 						<span style="height: 20px">&nbsp;</span>
 						<span ng-show="noResultsFound">{{errorMsg}}</span>
 						<span ng-show="addressIsLoading">
-							<img class="img-center" src="images/loading.gif" height="20" width="20" alt="loading" ng-show="addressIsLoading">
+							<img class="img-center" src="img/loading.gif" height="20" width="20" alt="loading" ng-show="addressIsLoading">
 							{{ mapMessage }}
 						</span>
 					</td>
@@ -45,7 +45,7 @@
 		</div>
 		<div class="right-footer">
 	        <button type="submit" tabindex="4">Speichern</button>
-	     	<img class="img-center" src="/backend/images/loading.gif" height="18" width="18" alt="loading" ng-show="loading">
+	     	<img class="img-center" src="/backend/img/loading.gif" height="18" width="18" alt="loading" ng-show="loading">
 	     	<span class="right delete" delete-object delete-object-id="{{ location.id }}" delete-object-path="{{ apiPath }}" tabindex="7">{{deleteMsg}}</span>
 		</div>
 		<p></p>
