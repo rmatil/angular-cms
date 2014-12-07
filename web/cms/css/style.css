@@ -418,26 +418,26 @@ input.loading {
   padding-right: 30px;
 }
 
-.wrongNoInput {
+.wrong {
   background: url(../images/error.svg) no-repeat left center;
   background-size: 15px 15px;
   padding-left: 25px; 
 }
 
-.correctNoInput {
+.correct {
   background: url(../images/correct.svg) no-repeat left center;
   background-size: 15px 15px;
   padding-left: 25px;
 }
 
-.wrong {
+input.wrong {
   background: url(../images/error.svg) no-repeat left center;
   background-size: 15px 15px;
   background-position: 5px 5px;
   padding-left: 25px;
 }
 
-.correct {
+input.correct {
   background: url(../images/correct.svg) no-repeat left center;
   background-size: 15px 15px;
   background-position: 5px 5px;
