@@ -12,18 +12,23 @@ filter can not handle objects, only arrays
 		<th><a href="" ng-click="predicate = 'user_name'; reverse=!reverse"><i class="fa fa-sort"></i> Benutzername</a></a></th>
 		<th><a href="" ng-click="predicate = 'first_name'; reverse=!reverse"><i class="fa fa-sort"></i> Vorname</a></a></th>
 		<th><a href="" ng-click="predicate = 'last_name'; reverse=!reverse"><i class="fa fa-sort"></i> Nachname</a></a></th>
-		<th><a href="" ng-click="predicate = 'email'; reverse=!reverse"><i class="fa fa-sort"></i> Email</a></a></th>
 		<th><a href="" ng-click="predicate = 'user_group.name'; reverse=!reverse"><i class="fa fa-sort"></i> Benutzergruppe</a></a></th>
 		<th><a href="" ng-click="predicate = 'last_login_date'; reverse=!reverse"><i class="fa fa-sort"></i> zuletzt eingeloggt</a></a></th>
 		<th>Email bestätigt</th>
+		<th></th>
 	</tr>
 	<tr ng-repeat="user in users | filter:userFilter | orderBy:predicate:reverse">
 		<td><a href="#/users/{{user.id}}">{{user.user_name}}</a></td>
 		<td>{{user.first_name}}</td>
 		<td>{{user.last_name}}</td>
-		<td>{{user.email}}</td>
 		<td>{{user.user_group.name}}</td>
 		<td>{{user.last_login_date | date:"HH:mm 'Uhr am' dd.MM.yyyy"}}</td>
-		<td><span ng-class="{ wrongNoInput: user.has_email_validated === false, correctNoInput: user.has_email_validated === true }"></span></td>
+		<td>
+			<i ng-show="user.has_email_validated" class="fa fa-check-circle-o"></i>
+			<i ng-show="!user.has_email_validated" class="fa fa-times-circle-o"></i>
+		</td>
+		<td>
+			<span class="delete" delete-object delete-object-id="{{user.id}}" delete-object-path="users">{{deleteMsg}}</span>
+		</td>
 	</tr>
 </table>
