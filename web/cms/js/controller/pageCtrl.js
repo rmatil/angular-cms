@@ -171,7 +171,6 @@ angular.module('cms.controllers')
 
 		$scope.apiPath 	 = 'pages';
 		$scope.menuName  = 'Seite hinzufügen';
-		$scope.deleteMsg = 'Löschen';
 
 		genService.getEmptyObject('page').then(function (response) {
 			if ($scope.debugModus) {
