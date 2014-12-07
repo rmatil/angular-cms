@@ -14,7 +14,7 @@ class RegistrationController extends SlimController {
     protected static $REGISTRATION_FULL_QUALIFIED_CLASSNAME = 'rmatil\cms\Entities\Registration';
 
     public function completeRegistrationAction($token) {
-        $submittedPass          = $this->app->request->post('password');;
+        $submittedPass          = $this->app->request->post('password');
 
         if (strlen($submittedPass) < 8) {
             $this->app->response->setStatus(HttpStatusCodes::BAD_REQUEST);

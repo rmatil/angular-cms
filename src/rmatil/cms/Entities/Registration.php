@@ -83,16 +83,16 @@ class Registration {
      * @return \DateTime
      */
     public function getExpirationDate() {
-        return $this->expired;
+        return $this->expirationDate;
     }
 
     /**
      * Sets the DateTime object of the expiry date.
      *
-     * @param \DateTime $expired the expired
+     * @param \DateTime $expirationDate the expired
      */
-    public function setExpirationDate(\DateTime $expired = null) {
-        $this->expired = $expired;
+    public function setExpirationDate(\DateTime $expirationDate = null) {
+        $this->expirationDate = $expirationDate;
     }
 
     /**
@@ -115,7 +115,7 @@ class Registration {
 
     public function update(Registration $registration) {
         $this->setUser($registration->getUser());
-        $this->setExpired($registration->getExpired());
+        $this->setExpirationDate($registration->getExpirationDate());
         $this->setToken($registration->getToken());
     }
 }
