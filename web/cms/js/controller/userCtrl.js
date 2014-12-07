@@ -105,7 +105,6 @@ angular.module('cms.controllers')
 
         $scope.apiPath   = 'users'; // used for genService
         $scope.menuName  = 'Benutzer hinzufügen';
-        $scope.deleteMsg = 'Löschen';
 
         // represent fields for passwords
         $scope.pass1    = '';
