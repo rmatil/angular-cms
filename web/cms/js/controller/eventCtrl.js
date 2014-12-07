@@ -6,11 +6,15 @@ angular.module('cms.controllers')
 		// set Menu according to its Name
 		MenuService.update("Veranstaltungen");
 
+        $scope.loadingEvents = true;
 		genService.getAllObjects('locations').then(function(response) {
 			if (response == null) {
 				return;
 			}
 			$scope.allLocations = response;
+            $timeout(function () {
+                $scope.loadingEvents = false;
+            }, 300);
 		});
 
 		genService.getAllObjects('events').then(function(response) {
@@ -38,6 +42,10 @@ angular.module('cms.controllers')
 		$scope.eventEndDate;
 		$scope.eventStartTime;
 		$scope.eventEndTime;
+
+        // init content of ckEditor and prevent empty content
+        $scope.event = {};
+        $scope.event.description = '';
 
 		// get event
 		genService.getObjectById('events', $routeParams.eventId).then(function (response) {
@@ -177,6 +185,10 @@ angular.module('cms.controllers')
 		$scope.eventEndDate;
 		$scope.eventStartTime;
 		$scope.eventEndTime;
+
+        // init content of ckEditor and prevent empty content
+        $scope.event = {};
+        $scope.event.description = '';
 
 		// get event
 		genService.getEmptyObject('event').then(function (response) {

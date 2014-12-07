@@ -30,6 +30,10 @@ angular.module('cms.controllers')
         $scope.menuName  = 'Artikel bearbeiten';
         $scope.deleteMsg = 'Löschen';
 
+        // init content of ckEditor and prevent empty content
+        $scope.article = {};
+        $scope.article.content = '';
+
         genService.getObjectById('articles', $routeParams.articleId).then(function (response) {
             if ($scope.debugModus) {
                 $log.log("article received");
@@ -134,6 +138,10 @@ angular.module('cms.controllers')
         $scope.menuName  = 'Artikel hinzufügen';
         $scope.deleteMsg = 'Löschen';
 
+        // init content of ckEditor and prevent empty content
+        $scope.article = {};
+        $scope.article.content = '';
+        
         genService.getEmptyObject('article').then(function (response) {
             if ($scope.debugModus) {
                 $log.log("empty article received");
