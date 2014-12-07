@@ -29,7 +29,7 @@ class RegistrationHandler {
         $this->initMailer($mailerSettings);
     }
 
-    public function registerUser(User $user) {
+    public function registerUser(User &$user) {
         $expirationDate = new DateTime();
         $expirationDate->add(new DateInterval('PT48H'));
 
