@@ -116,6 +116,21 @@ class FileHandler {
         ThumbnailHandler::createThumbnail($fileObject, $this->httpPathToMediaDir, $this->localPathToMediaDir, $_FILES['file']['name'], $fileExtension, 40, null);
     }
 
+    public function deleteFileOnDisk($fileName, $extension) {
+        $path = sprintf('%s/%s.%s', $this->localPathToMediaDir, $fileName, $extension);
+        
+        $ret = true;
+        if (file_exists($path)) {
+            $ret = @unlink($path);
+        }
+
+        // TODO: delete thumbnail
+
+        if (!$ret) {
+            throw new \Exception(error_get_last());
+        }
+    }
+
     /**
      * Adds a given file extension to a given document type. Type must be one
      * of image, documents, audio, video
