@@ -44,7 +44,7 @@ $mailParams = array(
 define('HTTP_ROOT', $protocol.$_SERVER['HTTP_HOST']);
 define('LOCAL_ROOT', __DIR__);
 define('HTTP_MEDIA_DIR', HTTP_ROOT.'/media');
-define('LOCAL_MEDIA_DIR', LOCAL_ROOT.'/media');
+define('LOCAL_MEDIA_DIR', LOCAL_ROOT.'/web/media');
 
 
 session_cache_limiter(false);
