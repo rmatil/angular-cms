@@ -48,7 +48,7 @@ class FileController extends SlimController {
         $fileObject = new File();
 
         try {
-            // $this->app->fileHandler->saveUploadedFile($fileObject);
+            $this->app->fileHandler->saveUploadedFile($fileObject);
         } catch (FileAlreadyExistsException $faee) {
             $now = new DateTime();
             $this->app->log->info(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $faee->getMessage()));
@@ -69,7 +69,8 @@ class FileController extends SlimController {
             $thumbnailSaved = false;
         } catch (ThumbnailCreationFailedException $e) {
             // only thumbnail creation failed, file was saved
-            $this->app->log->info($e->getMessage());
+            $now = new DateTime();
+            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $e->getMessage()));
             $thumbnailSaved = false;
         }
 
@@ -117,6 +118,15 @@ class FileController extends SlimController {
             return;
         }
 
+        try {
+            $this->app->fileHandler->deleteFileOnDisk($file->getName(), $file->getExtension());
+        } catch (\Exception $e) {
+            $now = new DateTime();
+            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $e->getMessage()));
+            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            return;
+        }
+
         $entityManager->remove($file);
 
         try {
@@ -125,6 +135,7 @@ class FileController extends SlimController {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
             $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            return;
         }
 
         $this->app->response->setStatus(HttpStatusCodes::NO_CONTENT);
