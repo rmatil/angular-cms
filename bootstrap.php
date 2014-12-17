@@ -187,6 +187,9 @@ $app->addRoutes(array(
     '/api/settings'                     => array('get'    => 'Setting:getSettings'),
     '/api/settings/update/:id'          => array('post'   => 'Setting:updateSettings'),
 
+    // statistics
+    '/api/statistics'                   => array('get'    => 'Stat:getStatistics'),
+
 
     // empty objects
     '/api/empty/article'              => array('get'      => 'Article:getEmptyArticle'),
