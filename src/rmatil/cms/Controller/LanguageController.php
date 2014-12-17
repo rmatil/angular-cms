@@ -4,6 +4,7 @@ namespace rmatil\cms\Controller;
 
 use SlimController\SlimController;
 use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Entities\Article;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\DBALException;
@@ -11,11 +12,9 @@ use DateTime;
 
 class LanguageController extends SlimController {
 
-    private static $LANGUAGE_FULL_QUALIFIED_CLASSNAME = 'rmatil\cms\Entities\Language';
-
     public function getLanguagesAction() {
         $entityManager      = $this->app->entityManager;
-        $languageRepository = $entityManager->getRepository(self::$LANGUAGE_FULL_QUALIFIED_CLASSNAME);
+        $languageRepository = $entityManager->getRepository(EntityNames::LANGUAGE);
         $languages          = $languageRepository->findAll();
 
         $this->app->response->header('Content-Type', 'application/json');
@@ -25,7 +24,7 @@ class LanguageController extends SlimController {
 
     public function getLanguageByIdAction($id) {
         $entityManager      = $this->app->entityManager;
-        $languageRepository = $entityManager->getRepository(self::$LANGUAGE_FULL_QUALIFIED_CLASSNAME);
+        $languageRepository = $entityManager->getRepository(EntityNames::LANGUAGE);
         $language           = $languageRepository->findOneBy(array('id' => $id));
 
         if ($language === null) {
@@ -39,11 +38,11 @@ class LanguageController extends SlimController {
     }
 
     public function updateLanguageAction($languageId) {
-        $languageObject      = $this->app->serializer->deserialize($this->app->request->getBody(), self::$LANGUAGE_FULL_QUALIFIED_CLASSNAME, 'json');
+        $languageObject      = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::LANGUAGE, 'json');
 
         // get original article
         $entityManager      = $this->app->entityManager;
-        $languageRepository = $entityManager->getRepository(self::$LANGUAGE_FULL_QUALIFIED_CLASSNAME);
+        $languageRepository = $entityManager->getRepository(EntityNames::LANGUAGE);
         $origLanguage       = $languageRepository->findOneBy(array('id' => $languageId));
 
         $origLanguage->update($languageObject);
@@ -64,7 +63,7 @@ class LanguageController extends SlimController {
     }
 
     public function insertLanguageAction() {
-        $languageObject      = $this->app->serializer->deserialize($this->app->request->getBody(), self::$LANGUAGE_FULL_QUALIFIED_CLASSNAME, 'json');
+        $languageObject      = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::LANGUAGE, 'json');
 
         $entityManager      = $this->app->entityManager;
         $entityManager->persist($languageObject);
@@ -85,7 +84,7 @@ class LanguageController extends SlimController {
 
     public function deleteLanguageByIdAction($id) {
         $entityManager       = $this->app->entityManager;
-        $languageRepository  = $entityManager->getRepository(self::$LANGUAGE_FULL_QUALIFIED_CLASSNAME);
+        $languageRepository  = $entityManager->getRepository(EntityNames::LANGUAGE);
         $language            = $languageRepository->findOneBy(array('id' => $id));
 
         if ($language === null) {

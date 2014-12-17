@@ -1,0 +1,27 @@
+<?php
+
+namespace rmatil\cms\Controller;
+
+use SlimController\SlimController;
+use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Entities\User;
+use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\DBALException;
+
+class StatController extends SlimController {
+
+    public function getStatisticsAction() {
+        $entityManager      = $this->app->entityManager;
+        $settingRepository  = $entityManager->getRepository(self::$SETTING_FULL_QUALIFIED_CLASSNAME);
+        $settings           = $settingRepository->findAll();
+
+        $returnValues       = array();
+        foreach ($settings as $entry) {
+            $returnValues[$entry->getName()] = $entry;
+        }
+
+        $this->app->response->header('Content-Type', 'application/json');
+        $this->app->response->setStatus(HttpStatusCodes::OK);
+        $this->app->response->setBody($this->app->serializer->serialize($returnValues, 'json'));
+    }
+}

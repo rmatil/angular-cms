@@ -4,6 +4,7 @@ namespace rmatil\cms\Controller;
 
 use SlimController\SlimController;
 use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Entities\Article;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\DBALException;
@@ -15,11 +16,9 @@ use DateTime;
 
 class FileController extends SlimController {
 
-    private static $FILE_FULL_QUALIFIED_CLASSNAME = 'rmatil\cms\Entities\File';
-
     public function getFilesAction() {
         $entityManager      = $this->app->entityManager;
-        $fileRepository     = $entityManager->getRepository(self::$FILE_FULL_QUALIFIED_CLASSNAME);
+        $fileRepository     = $entityManager->getRepository(EntityNames::FILE);
         $files              = $fileRepository->findAll();
 
         $this->app->response->header('Content-Type', 'application/json');
@@ -29,7 +28,7 @@ class FileController extends SlimController {
 
     public function getFileByIdAction($id) {
         $entityManager      = $this->app->entityManager;
-        $fileRepository     = $entityManager->getRepository(self::$FILE_FULL_QUALIFIED_CLASSNAME);
+        $fileRepository     = $entityManager->getRepository(EntityNames::FILE);
         $file               = $fileRepository->findOneBy(array('id' => $id));
 
         if ($file === null) {
@@ -110,7 +109,7 @@ class FileController extends SlimController {
 
     public function deleteFileByIdAction($id) {
         $entityManager      = $this->app->entityManager;
-        $fileRepository     = $entityManager->getRepository(self::$FILE_FULL_QUALIFIED_CLASSNAME);
+        $fileRepository     = $entityManager->getRepository(EntityNames::FILE);
         $file               = $fileRepository->findOneBy(array('id' => $id));
 
         if ($file === null) {

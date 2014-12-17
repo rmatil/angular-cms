@@ -4,6 +4,7 @@ namespace rmatil\cms\Controller;
 
 use SlimController\SlimController;
 use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Entities\UserGroup;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\DBALException;
@@ -11,11 +12,9 @@ use DateTime;
 
 class UserGroupController extends SlimController {
 
-    private static $USER_GROUP_FULL_QUALIFIED_CLASSNAME = 'rmatil\cms\Entities\UserGroup';
-
     public function getUserGroupsAction() {
         $entityManager              = $this->app->entityManager;
-        $userGroupRepository        = $entityManager->getRepository(self::$USER_GROUP_FULL_QUALIFIED_CLASSNAME);
+        $userGroupRepository        = $entityManager->getRepository(EntityNames::USER_GROUP);
         $userGroups                 = $userGroupRepository->findAll();
 
         $this->app->response->header('Content-Type', 'application/json');
@@ -25,7 +24,7 @@ class UserGroupController extends SlimController {
 
     public function getUserGroupByIdAction($id) {
         $entityManager              = $this->app->entityManager;
-        $userGroupRepository        = $entityManager->getRepository(self::$USER_GROUP_FULL_QUALIFIED_CLASSNAME);
+        $userGroupRepository        = $entityManager->getRepository(EntityNames::USER_GROUP);
         $userGroup                  = $userGroupRepository->findOneBy(array('id' => $id));
 
         if ($userGroup === null) {
@@ -39,11 +38,11 @@ class UserGroupController extends SlimController {
     }
 
     public function updateUserGroupAction($userGroupId) {
-        $userGroupObj              = $this->app->serializer->deserialize($this->app->request->getBody(), self::$USER_GROUP_FULL_QUALIFIED_CLASSNAME, 'json');
+        $userGroupObj              = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::USER_GROUP, 'json');
 
         // get original page category
         $entityManager              = $this->app->entityManager;
-        $userGroupRepository        = $entityManager->getRepository(self::$USER_GROUP_FULL_QUALIFIED_CLASSNAME);
+        $userGroupRepository        = $entityManager->getRepository(EntityNames::USER_GROUP);
         $origUserGroup              = $userGroupRepository->findOneBy(array('id' => $userGroupId));
 
         $origUserGroup->update($userGroupObj);
@@ -64,7 +63,7 @@ class UserGroupController extends SlimController {
     }
 
     public function insertUserGroupAction() {
-        $userGroupObj          = $this->app->serializer->deserialize($this->app->request->getBody(), self::$USER_GROUP_FULL_QUALIFIED_CLASSNAME, 'json');
+        $userGroupObj          = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::USER_GROUP, 'json');
 
         $entityManager         = $this->app->entityManager;
         $entityManager->persist($userGroupObj);
@@ -85,7 +84,7 @@ class UserGroupController extends SlimController {
 
     public function deleteUserGroupByIdAction($id) {
         $entityManager           = $this->app->entityManager;
-        $userGroupRepository     = $entityManager->getRepository(self::$USER_GROUP_FULL_QUALIFIED_CLASSNAME);
+        $userGroupRepository     = $entityManager->getRepository(EntityNames::USER_GROUP);
         $userGroup               = $userGroupRepository->findOneBy(array('id' => $id));
 
         if ($userGroup === null) {

@@ -10,6 +10,6 @@ use Doctrine\ORM\EntityManager;
 class IndexController extends SlimController {
 
     public function indexAction() {
-        $this->app->render('cms/index.php');
+        $this->app->redirect('cms/index.php');
     }
 }

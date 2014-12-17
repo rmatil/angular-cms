@@ -11,12 +11,9 @@ use DateTime;
 
 class LocationController extends SlimController {
 
-    private static $LOCATION_FULL_QUALIFIED_CLASSNAME = 'rmatil\cms\Entities\Location';
-    private static $USER_FULL_QUALIFIED_CLASSNAME     = 'rmatil\cms\Entities\User';
-
     public function getlocationsAction() {
         $entityManager       = $this->app->entityManager;
-        $locationRepository  = $entityManager->getRepository(self::$LOCATION_FULL_QUALIFIED_CLASSNAME);
+        $locationRepository  = $entityManager->getRepository(EntityNames::LOCATION);
         $locations           = $locationRepository->findAll();
 
         $this->app->response->header('Content-Type', 'application/json');
@@ -26,7 +23,7 @@ class LocationController extends SlimController {
 
     public function getLocationByIdAction($id) {
         $entityManager       = $this->app->entityManager;
-        $locationRepository  = $entityManager->getRepository(self::$LOCATION_FULL_QUALIFIED_CLASSNAME);
+        $locationRepository  = $entityManager->getRepository(EntityNames::LOCATION);
         $location            = $locationRepository->findOneBy(array('id' => $id));
 
         if ($location === null) {
@@ -40,7 +37,7 @@ class LocationController extends SlimController {
             $location->setIsLockedBy(null);
         }
 
-        $userRepository             = $entityManager->getRepository(self::$USER_FULL_QUALIFIED_CLASSNAME);
+        $userRepository             = $entityManager->getRepository(EntityNames::USER);
         $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
         $location->setAuthor($origUser);
 
@@ -63,14 +60,14 @@ class LocationController extends SlimController {
     }
 
     public function updateLocationAction($locationId) {
-        $locationObject      = $this->app->serializer->deserialize($this->app->request->getBody(), self::$LOCATION_FULL_QUALIFIED_CLASSNAME, 'json');
+        $locationObject      = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::LOCATION, 'json');
 
         // get original location
         $entityManager       = $this->app->entityManager;
-        $locationRepository  = $entityManager->getRepository(self::$LOCATION_FULL_QUALIFIED_CLASSNAME);
+        $locationRepository  = $entityManager->getRepository(EntityNames::LOCATION);
         $origLocation        = $locationRepository->findOneBy(array('id' => $locationId));
 
-        $userRepository      = $entityManager->getRepository(self::$USER_FULL_QUALIFIED_CLASSNAME);
+        $userRepository      = $entityManager->getRepository(EntityNames::USER);
         $origUser            = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
         $locationObject->setAuthor($origUser);
 
@@ -94,7 +91,7 @@ class LocationController extends SlimController {
     }
 
     public function insertLocationAction() {
-        $locationObject      = $this->app->serializer->deserialize($this->app->request->getBody(), self::$LOCATION_FULL_QUALIFIED_CLASSNAME, 'json');
+        $locationObject      = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::LOCATION, 'json');
 
         // set now as creation date
         $now                = new DateTime();
@@ -103,7 +100,7 @@ class LocationController extends SlimController {
 
         $entityManager       = $this->app->entityManager;
 
-        $userRepository      = $entityManager->getRepository(self::$USER_FULL_QUALIFIED_CLASSNAME);
+        $userRepository      = $entityManager->getRepository(EntityNames::USER);
         $origUser            = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
         $locationObject->setAuthor($origUser);
 
@@ -125,7 +122,7 @@ class LocationController extends SlimController {
 
     public function deleteLocationByIdAction($id) {
         $entityManager       = $this->app->entityManager;
-        $locationRepository  = $entityManager->getRepository(self::$LOCATION_FULL_QUALIFIED_CLASSNAME);
+        $locationRepository  = $entityManager->getRepository(EntityNames::LOCATION);
         $location            = $locationRepository->findOneBy(array('id' => $id));
 
         if ($location === null) {
@@ -152,7 +149,7 @@ class LocationController extends SlimController {
         $entityManager              = $this->app->entityManager;
         $now                        = new DateTime();
 
-        $userRepository             = $entityManager->getRepository(self::$USER_FULL_QUALIFIED_CLASSNAME);
+        $userRepository             = $entityManager->getRepository(EntityNames::USER);
         $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
         $location->setAuthor($origUser);
 

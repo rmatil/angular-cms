@@ -4,6 +4,7 @@ namespace rmatil\cms\Controller;
 
 use SlimController\SlimController;
 use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Entities\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\DBALException;
@@ -11,13 +12,9 @@ use DateTime;
 
 class UserController extends SlimController {
 
-    private static $USER_FULL_QUALIFIED_CLASSNAME        = 'rmatil\cms\Entities\User';
-    private static $USER_GROUP_FULL_QUALIFIED_CLASSNAME  = 'rmatil\cms\Entities\UserGroup';
-    private static $REGISTRATION_FULL_QUALIFIED_CLASSNAME = 'rmatil\cms\Entities\Registration';
-
     public function getUsersAction() {
         $entityManager   = $this->app->entityManager;
-        $userRepository  = $entityManager->getRepository(self::$USER_FULL_QUALIFIED_CLASSNAME);
+        $userRepository  = $entityManager->getRepository(EntityNames::USER);
         $users           = $userRepository->findAll();
 
         $this->app->response->header('Content-Type', 'application/json');
@@ -27,7 +24,7 @@ class UserController extends SlimController {
 
     public function getUserByIdAction($id) {
         $entityManager   = $this->app->entityManager;
-        $userRepository  = $entityManager->getRepository(self::$USER_FULL_QUALIFIED_CLASSNAME);
+        $userRepository  = $entityManager->getRepository(EntityNames::USER);
         $user            = $userRepository->findOneBy(array('id' => $id));
 
         if ($user === null) {
@@ -45,7 +42,7 @@ class UserController extends SlimController {
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($user, 'json'));
 
-        $userRepository             = $entityManager->getRepository(self::$USER_FULL_QUALIFIED_CLASSNAME);
+        $userRepository             = $entityManager->getRepository(EntityNames::USER);
         $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
         // set requesting user as lock
         $user->setIsLockedBy($origUser);
@@ -62,13 +59,13 @@ class UserController extends SlimController {
     }
 
     public function updateUserAction($userId) {
-        $userObject                 = $this->app->serializer->deserialize($this->app->request->getBody(), self::$USER_FULL_QUALIFIED_CLASSNAME, 'json');
+        $userObject                 = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::USER, 'json');
 
         $entityManager              = $this->app->entityManager;
-        $userRepository             = $entityManager->getRepository(self::$USER_FULL_QUALIFIED_CLASSNAME);
+        $userRepository             = $entityManager->getRepository(EntityNames::USER);
         $origUser                   = $userRepository->findOneBy(array('id' => $userId));
 
-        $userGroupRepository        = $entityManager->getRepository(self::$USER_GROUP_FULL_QUALIFIED_CLASSNAME);
+        $userGroupRepository        = $entityManager->getRepository(EntityNames::USER_GROUP);
         $origUserGroup              = $userGroupRepository->findOneBy(array('id' => $origUser->getUserGroup()->getId()));
         $userObject->setUserGroup($origUserGroup);
 
@@ -104,10 +101,10 @@ class UserController extends SlimController {
     }
 
     public function insertUserAction() {
-        $userObject      = $this->app->serializer->deserialize($this->app->request->getBody(), self::$USER_FULL_QUALIFIED_CLASSNAME, 'json');
+        $userObject      = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::USER, 'json');
 
         $entityManager              = $this->app->entityManager;
-        $userGroupRepository        = $entityManager->getRepository(self::$USER_GROUP_FULL_QUALIFIED_CLASSNAME);
+        $userGroupRepository        = $entityManager->getRepository(EntityNames::USER_GROUP);
         $origUserGroup              = $userGroupRepository->findOneBy(array('id' => $userObject->getUserGroup()->getId()));
         $userObject->setUserGroup($origUserGroup);
 
@@ -136,7 +133,7 @@ class UserController extends SlimController {
 
     public function deleteUserByIdAction($id) {
         $entityManager   = $this->app->entityManager;
-        $userRepository  = $entityManager->getRepository(self::$USER_FULL_QUALIFIED_CLASSNAME);
+        $userRepository  = $entityManager->getRepository(EntityNames::USER);
         $user            = $userRepository->findOneBy(array('id' => $id));
 
         if ($user === null) {
@@ -144,7 +141,7 @@ class UserController extends SlimController {
             return;
         }
 
-        $registrationRepository = $entityManager->getRepository(self::$REGISTRATION_FULL_QUALIFIED_CLASSNAME);
+        $registrationRepository = $entityManager->getRepository(EntityNames::REGISTRATION);
         $registration           = $registrationRepository->findOneBy(array('user' => $user));
 
         if ($registration !== null) {

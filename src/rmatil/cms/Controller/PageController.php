@@ -4,6 +4,7 @@ namespace rmatil\cms\Controller;
 
 use SlimController\SlimController;
 use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Entities\Page;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\DBALException;
@@ -12,16 +13,9 @@ use DateTime;
 
 class PageController extends SlimController {
 
-    private static $PAGE_FULL_QUALIFIED_CLASSNAME           = 'rmatil\cms\Entities\Page';
-    private static $LANGUAGE_FULL_QUALIFIED_CLASSNAME       = 'rmatil\cms\Entities\Language';
-    private static $USER_FULL_QUALIFIED_CLASSNAME           = 'rmatil\cms\Entities\User';
-    private static $ARTICLE_FULL_QUALIFIED_CLASSNAME        = 'rmatil\cms\Entities\Article';
-    private static $PAGE_CATEGORY_FULL_QUALIFIED_CLASSNAME  = 'rmatil\cms\Entities\PageCategory';
-
-
     public function getPagesAction() {
         $entityManager   = $this->app->entityManager;
-        $pageRepository  = $entityManager->getRepository(self::$PAGE_FULL_QUALIFIED_CLASSNAME);
+        $pageRepository  = $entityManager->getRepository(EntityNames::PAGE);
         $pages           = $pageRepository->findAll();
 
         $this->app->response->header('Content-Type', 'application/json');
@@ -31,7 +25,7 @@ class PageController extends SlimController {
 
     public function getPageByIdAction($id) {
         $entityManager   = $this->app->entityManager;
-        $pageRepository  = $entityManager->getRepository(self::$PAGE_FULL_QUALIFIED_CLASSNAME);
+        $pageRepository  = $entityManager->getRepository(EntityNames::PAGE);
         $page            = $pageRepository->findOneBy(array('id' => $id));
 
         if ($page === null) {
@@ -45,7 +39,7 @@ class PageController extends SlimController {
             $page->setIsLockedBy(null);
         }
 
-        $userRepository             = $entityManager->getRepository(self::$USER_FULL_QUALIFIED_CLASSNAME);
+        $userRepository             = $entityManager->getRepository(EntityNames::USER);
         $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
         $page->setAuthor($origUser);
 
@@ -68,30 +62,30 @@ class PageController extends SlimController {
     }
 
     public function updatePageAction($pageId) {
-        $pageObject                 = $this->app->serializer->deserialize($this->app->request->getBody(), self::$PAGE_FULL_QUALIFIED_CLASSNAME, 'json');
+        $pageObject                 = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::PAGE, 'json');
 
         $now                        = new DateTime();
         $pageObject->setLastEditDate($now);
 
         // get original page
         $entityManager              = $this->app->entityManager;
-        $pageRepository             = $entityManager->getRepository(self::$PAGE_FULL_QUALIFIED_CLASSNAME);
+        $pageRepository             = $entityManager->getRepository(EntityNames::PAGE);
         $origPage                   = $pageRepository->findOneBy(array('id' => $pageId));
 
-        $languageRepository         = $entityManager->getRepository(self::$LANGUAGE_FULL_QUALIFIED_CLASSNAME);
+        $languageRepository         = $entityManager->getRepository(EntityNames::LANGUAGE);
         $origLanguage               = $languageRepository->findOneBy(array('id' => $pageObject->getLanguage()->getId()));
         $pageObject->setLanguage($origLanguage);
 
-        $userRepository             = $entityManager->getRepository(self::$USER_FULL_QUALIFIED_CLASSNAME);
+        $userRepository             = $entityManager->getRepository(EntityNames::USER);
         $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
         $pageObject->setAuthor($origUser);
 
-        $pageCategoryRepository     = $entityManager->getRepository(self::$PAGE_CATEGORY_FULL_QUALIFIED_CLASSNAME);
+        $pageCategoryRepository     = $entityManager->getRepository(EntityNames::PAGE_CATEGORY);
         $origPageCategory           = $pageCategoryRepository->findOneBy(array('id' => $origPage->getCategory()->getId()));
         $pageObject->setCategory($origPageCategory);
 
         // get all articles
-        $articleRepository          = $entityManager->getRepository(self::$ARTICLE_FULL_QUALIFIED_CLASSNAME);
+        $articleRepository          = $entityManager->getRepository(EntityNames::ARTICLE);
         $origArticles               = new ArrayCollection();
 
         // remove association of this page from each article
@@ -144,7 +138,7 @@ class PageController extends SlimController {
     }
 
     public function insertPageAction() {
-        $pageObject                 = $this->app->serializer->deserialize($this->app->request->getBody(), self::$PAGE_FULL_QUALIFIED_CLASSNAME, 'json');
+        $pageObject                 = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::PAGE, 'json');
 
         // set now as creation date
         $now                        = new DateTime();
@@ -152,20 +146,20 @@ class PageController extends SlimController {
         $pageObject->setCreationDate($now);
 
         $entityManager              = $this->app->entityManager;
-        $languageRepository         = $entityManager->getRepository(self::$LANGUAGE_FULL_QUALIFIED_CLASSNAME);
+        $languageRepository         = $entityManager->getRepository(EntityNames::LANGUAGE);
         $origLanguage               = $languageRepository->findOneBy(array('id' => $pageObject->getLanguage()->getId()));
         $pageObject->setLanguage($origLanguage);
 
-        $userRepository             = $entityManager->getRepository(self::$USER_FULL_QUALIFIED_CLASSNAME);
+        $userRepository             = $entityManager->getRepository(EntityNames::USER);
         $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
         $pageObject->setAuthor($origUser);
 
-        $pageCategoryRepository     = $entityManager->getRepository(self::$PAGE_CATEGORY_FULL_QUALIFIED_CLASSNAME);
+        $pageCategoryRepository     = $entityManager->getRepository(EntityNames::PAGE_CATEGORY);
         $origPageCategory           = $pageCategoryRepository->findOneBy(array('id' => $pageObject->getCategory()->getId()));
         $pageObject->setCategory($origPageCategory);
 
         $origArticles               = new ArrayCollection();
-        $articleRepository          = $entityManager->getRepository(self::$ARTICLE_FULL_QUALIFIED_CLASSNAME);
+        $articleRepository          = $entityManager->getRepository(EntityNames::ARTICLE);
         // get origArticles
         foreach ($pageObject->getArticles()->toArray() as $article) {
             $origArticle = $articleRepository->findOneBy(array('id' => $article->getId()));
@@ -192,7 +186,7 @@ class PageController extends SlimController {
 
     public function deletePageByIdAction($id) {
         $entityManager          = $this->app->entityManager;
-        $pageRepository         = $entityManager->getRepository(self::$PAGE_FULL_QUALIFIED_CLASSNAME);
+        $pageRepository         = $entityManager->getRepository(EntityNames::PAGE);
         $page                   = $pageRepository->findOneBy(array('id' => $id));
 
         if ($page === null) {
@@ -216,7 +210,7 @@ class PageController extends SlimController {
     public function getEmptyPageAction() {
         $page = new Page();
 
-        $userRepository = $this->app->entityManager->getRepository(self::$USER_FULL_QUALIFIED_CLASSNAME);
+        $userRepository = $this->app->entityManager->getRepository(EntityNames::USER);
         $origUser       = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
         $page->setAuthor($origUser);
 
