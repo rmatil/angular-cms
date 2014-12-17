@@ -3,6 +3,12 @@
 	<p></p>
 	<div class="dashboard-box dashboard-box-left-triple">
 		<h2>Veranstaltungsorte</h2>
+		<div class="left">
+			<div class="dashboard-body-box lightpink-left-border" ng-show="allLocations < 1">
+				<a ng-href="add-location" href="add-location">Neuer Veranstaltungsort erstellen <i class="fa fa-plus-circle"></i></a> 
+			</div>
+		</div>
+		<div class="clear"></div>
 		<div class="dashboard-body-box" ng-repeat="location in allLocations">
 			<div class="left">
 				<a ng-href="locations/{{ location.id }}">{{ location.name }}</a>
@@ -15,6 +21,12 @@
 	</div>
 	<div class="dashboard-box dashboard-box-right">
 		<h2>Nächste Veranstaltungen</h2>
+		<div class="left">
+			<div class="dashboard-body-box lightpink-left-border" ng-show="allEvents < 1">
+				<a ng-href="add-event" href="add-event">Neuer Event erstellen <i class="fa fa-plus-circle"></i></a> 
+			</div>
+		</div>
+		<div class="clear"></div>
 		<div class="dashboard-body-box" ng-repeat="event in allEvents">
 			<div class="left">
 				<a ng-href="events/{{ event.id}}">{{ event.name }}</a>  am {{ event.start_date | date:"HH:mm 'Uhr am' dd.MM.yyyy" }}

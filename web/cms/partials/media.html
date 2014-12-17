@@ -6,6 +6,14 @@ filter can not handle objects, only arrays
 <span class="right">
 	<input ng-model="fileFilter" class="search-input" placeholder="Dateien durchsuchen">
 </span>
+<div class="clear"></div>
+
+<div class="left">
+	<div class="dashboard-body-box lightpurple-left-border" ng-show="files.length < 1">
+		<a ng-href="add-file" href="add-file">Neue Datei hinzufügen<i class="fa fa-plus-circle"></i></a> 
+	</div>
+</div>
+<div class="clear"></div>
 
 <table class="enumerate">
 	<tr class="table-header">
