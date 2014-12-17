@@ -3,6 +3,14 @@
 <span class="right">
 	<input ng-model="articleFilter" class="search-input" placeholder="Artikel durchsuchen">
 </span>
+<div class="clear"></div>
+
+<div class="left">
+	<div class="dashboard-body-box lightred-left-border" ng-show="articles.length < 1">
+		<a ng-href="add-article" href="add-article">Neuen Artikel erstellen <i class="fa fa-plus-circle"></i></a> 
+	</div>
+</div>
+<div class="clear"></div>
 
 <table class="enumerate">
 	<tr class="table-header">

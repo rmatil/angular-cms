@@ -6,6 +6,14 @@ filter can not handle objects, only arrays
 <span class="right">
 	<input ng-model="userFilter" class="search-input" placeholder="Benutzer durchsuchen">
 </span>
+<div class="clear"><div>
+
+<div class="left">
+	<div class="dashboard-body-box lightblue-left-border" ng-show="users.length < 1">
+		<a ng-href="add-user" href="add-user">Neuen Benutzer erstellen <i class="fa fa-plus-circle"></i></a> 
+	</div>
+</div>
+<div class="clear"></div>
 
 <table class="enumerate">
 	<tr class="table-header">
