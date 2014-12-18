@@ -30,12 +30,12 @@ $dbParams = array(
 );
 
 $mailParams = array(
-    'CharSet' => 'UTF-8',
-    'Host'    => '',
+    'CharSet'  => 'UTF-8',
+    'Host'     => '',
     'SMTPAuth' => true,
     'Username' => '',
     'Password' => '',
-    'Port' => 587
+    'Port'     => 587
 );
 
 // protocol of connection (either http or https)
@@ -55,10 +55,6 @@ $thumbnailHandler    = new ThumbnailHandler();
 $fileHandler         = new FileHandler(HTTP_MEDIA_DIR, LOCAL_MEDIA_DIR);
 $phpMailer           = new PHPMailer();
 $registrationHandler = new RegistrationHandler($entityManager, $phpMailer, $mailParams);
-
-$userRepo         = $entityManager->getRepository('rmatil\cms\Entities\User');
-$user             = $userRepo->findOneBy(array('userName' => 'ramatil'));
-$_SESSION['user'] = $user;
 
 // enable this for log writing to file
 $logWriter        = new LogWriter(fopen(__DIR__.'/log/cms.log', 'a'));
@@ -107,9 +103,9 @@ $app->addRoutes(array(
     '/cms'                              => 'Index:index',
 
     // login
-    '/login'                        => array('get'     => 'Login:loginView'),
-    '/login/do-login'               => array('get'     => 'Login:doLogin'),
-    '/login/do-logout'              => array('get'     => 'Login:doLogout'),
+    '/login'                            => array('get'     => 'Login:loginView'),
+    '/login/do-login'                   => array('post'    => 'Login:doLogin'),
+    '/login/do-logout'                  => array('get'     => 'Login:doLogout'),
 
     // articles
     '/api/articles'                     => array('get'     => 'Article:getArticles',
