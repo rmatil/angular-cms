@@ -6,6 +6,7 @@ use SlimController\SlimController;
 use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Entities\User;
+use rmatil\cms\Utils\PasswordUtils;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\DBALException;
 use DateTime;
@@ -34,7 +35,7 @@ class UserController extends SlimController {
 
         // do not show lock if requested by the same user as currently locked
         if ($user->getIsLockedBy() !== null &&
-            $user->getIsLockedBy()->getId() === $_SESSION['user']->getId()) {
+            $user->getIsLockedBy()->getId() === $_SESSION['user_id']) {
             $user->setIsLockedBy(null);
         }
 
@@ -43,7 +44,7 @@ class UserController extends SlimController {
         $this->app->response->setBody($this->app->serializer->serialize($user, 'json'));
 
         $userRepository             = $entityManager->getRepository(EntityNames::USER);
-        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
+        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         // set requesting user as lock
         $user->setIsLockedBy($origUser);
         
@@ -75,10 +76,7 @@ class UserController extends SlimController {
             $userObject->setPasswordHash($origUser->getPasswordHash());
         } else {
             // hash provided plaintext password
-
-            // TODO: password_hash is only available since PHP 5.5
-            // $hash = password_hash($userObject->getPlainPassword(), PASSWORD_DEFAULT);
-            // $userObject->setPasswordHash($hash);
+            $userObject->setPasswordHash(PasswordUtils::hash($userObject->getPlainPassword()));
         }
 
         $origUser->update($userObject);
