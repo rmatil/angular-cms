@@ -1,5 +1,12 @@
 <?php
-    @session_start();
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    if (!isset($_SESSION['user_is_logged_in']) ||
+        true !== $_SESSION['user_is_logged_in']) {
+        header('location: ../login');
+    }
 ?>
 <!doctype html>
 <html lang="de" ng-app="cms">
