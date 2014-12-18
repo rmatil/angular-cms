@@ -1,3 +1,13 @@
+<?php
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    if (!isset($_SESSION['user_is_logged_in']) ||
+        true !== $_SESSION['user_is_logged_in']) {
+        header('location: ../login');
+    }
+?>
 <!doctype html>
 <html lang="de" ng-app="cms">
 <head>
@@ -58,11 +68,7 @@
     </div>
     <div class="wrapper">
         <div class="header">
-            <div class="header-content">
-                Hallo, <?php //echo $_SESSION['firstname'] ?> | 
-                Dein letzter Besuch war am <?php //echo $_SESSION['timestamp'] ?> | 
-                <a href="authentication/index.php?logout=true" target="_self"><i class="fa fa-power-off"></i></a>
-            </div>
+            <div class="header-content"></div>
         </div>
         <div class="left-sidebar">
             <div class="left-sidebar-bar"></div>
@@ -97,6 +103,24 @@
         </div>
         <div class="content-bar-wrapper">
             <div class="content-bar">
+                <ul class="icon-bar">
+                    <li >
+                        <i class="fa fa-user"></i> 
+                        <?php
+                            echo sprintf("<a class='no-underline' href='/cms/users/%s'>%s</a>", $_SESSION['user_id'], $_SESSION['user_first_name']);
+                        ?>
+                    </li>
+                    <li>
+                        <i class="fa fa-calendar"></i> 
+                        <?php
+                            echo $_SESSION['user_last_login_date']->format('d.m.Y');
+                        ?>
+                    </li>
+                    <li>
+                        <i class="fa fa-sign-out"></i> 
+                        <a class="no-underline" href="/login/do-logout" target="_self">Logout</a>
+                    </li>
+                </ul>
             </div>
         </div>
         <div ng-cloak class="content-nav">

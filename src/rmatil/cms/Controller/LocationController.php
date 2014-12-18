@@ -34,12 +34,12 @@ class LocationController extends SlimController {
 
         // do not show lock if requested by the same user as currently locked
         if ($location->getIsLockedBy() !== null &&
-            $location->getIsLockedBy()->getId() === $_SESSION['user']->getId()) {
+            $location->getIsLockedBy()->getId() === $_SESSION['user_id']) {
             $location->setIsLockedBy(null);
         }
 
         $userRepository             = $entityManager->getRepository(EntityNames::USER);
-        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
+        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $location->setAuthor($origUser);
 
         $this->app->response->header('Content-Type', 'application/json');
@@ -69,7 +69,7 @@ class LocationController extends SlimController {
         $origLocation        = $locationRepository->findOneBy(array('id' => $locationId));
 
         $userRepository      = $entityManager->getRepository(EntityNames::USER);
-        $origUser            = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
+        $origUser            = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $locationObject->setAuthor($origUser);
 
         $origLocation->update($locationObject);
@@ -102,7 +102,7 @@ class LocationController extends SlimController {
         $entityManager       = $this->app->entityManager;
 
         $userRepository      = $entityManager->getRepository(EntityNames::USER);
-        $origUser            = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
+        $origUser            = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $locationObject->setAuthor($origUser);
 
         $entityManager->persist($locationObject);
@@ -151,7 +151,7 @@ class LocationController extends SlimController {
         $now                        = new DateTime();
 
         $userRepository             = $entityManager->getRepository(EntityNames::USER);
-        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
+        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $location->setAuthor($origUser);
 
         $location->setCreationDate($now);

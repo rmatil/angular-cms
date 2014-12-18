@@ -96,6 +96,14 @@ img {
 
 a { color: #8c8c8c; }
 
+.no-underline {
+  text-decoration: none;
+}
+
+a.no-underline:hover {
+  text-decoration: underline;
+}
+
 #map-canvas {
   height: 500px;
 }
@@ -141,6 +149,24 @@ a { color: #8c8c8c; }
 .hidden {
   display: none;
 }
+
+/***********************************************/
+/* icon bar          */
+/***********************************************/
+ul.icon-bar {
+  float: right;
+  text-align: right;
+}
+
+ul.icon-bar li {
+  position: relative;
+  height: 100%;
+  padding: 11px 11px 11px 11px;
+  line-height: 37px;
+  margin-right: 13px;
+  display: inline-block; /*horizontal und als blockelement*/
+}
+
 
 /***********************************************/
 /* left sidebar & navigation           */
@@ -228,7 +254,7 @@ ul.navigation li ul {
 
 .content-bar {
   height: 50px;
-  margin: 0 420px 0 0;
+  margin: 0 180px 0 0;
   background: #f8f8f8;
   color: #000;
   line-height: 50px;

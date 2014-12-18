@@ -6,6 +6,7 @@ use SlimController\SlimController;
 use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Entities\User;
+use rmatil\cms\Utils\PasswordUtils;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\DBALException;
 
@@ -28,8 +29,7 @@ class RegistrationController extends SlimController {
             return;
         }
 
-        // TODO: extend hashing with salt
-        $passwordHash = hash('sha256', $submittedPass);
+        $passwordHash = PasswordUtils::hash($submittedPass);
 
         $user = $origRegistration->getUser();
         $user->setIsLocked(false);
