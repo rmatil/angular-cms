@@ -178,7 +178,6 @@ angular.module('cms.controllers')
 
 		$scope.apiPath 	 = 'events';
 		$scope.menuName  = 'Veranstaltung hinzufügen';
-		$scope.deleteMsg = 'Löschen';
 
 		// these values get merged to a datetime object on save
 		$scope.eventStartDate;
@@ -231,8 +230,7 @@ angular.module('cms.controllers')
 			$scope.allLocations = response;
 		});
 
-		$scope.deleteMsg = "Event löschen";
-		$scope.ctr = 5;
+
 		$scope.cancelled = false;
 
 		// save changes in event
