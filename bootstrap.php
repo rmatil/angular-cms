@@ -72,7 +72,7 @@ $app              = new Slim(array(
                                 'controller.method_suffix'   => 'Action',
                                 'controller.template_suffix' => 'php',
                                 'log.writer'                 => $logWriter, // enable this forl log writing to file
-                                'templates.path'             => LOCAL_ROOT.'/web',
+                                'templates.path'             => LOCAL_ROOT.'/web/slim-templates',
                             ));
 
 // Add Doctrine Entity Manager to app
@@ -103,7 +103,14 @@ $app->container->singleton('registrationHandler', function() use ($registrationH
 
 // See https://github.com/fortrabbit/slimcontroller/issues/23 for overloading methods
 $app->addRoutes(array(
-    '/'                                 => 'Index:index',
+    '/'                                 => 'Flimsfestival:index',
+    '/cms'                              => 'Index:index',
+
+    // login
+    '/login'                        => array('get'     => 'Login:loginView'),
+    '/login/do-login'               => array('get'     => 'Login:doLogin'),
+    '/login/do-logout'              => array('get'     => 'Login:doLogout'),
+
     // articles
     '/api/articles'                     => array('get'     => 'Article:getArticles',
                                                  'post'    => 'Article:insertArticle'),
