@@ -43,7 +43,6 @@ class FileController extends SlimController {
     }
 
     public function insertFileAction() {
-        $thumbnailSaved = true;
         $fileObject = new File();
 
         try {
@@ -65,12 +64,10 @@ class FileController extends SlimController {
             // only thumbnail was not saved because of wrong parameters, file was saved
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $iae->getMessage()));
-            $thumbnailSaved = false;
         } catch (ThumbnailCreationFailedException $e) {
             // only thumbnail creation failed, file was saved
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $e->getMessage()));
-            $thumbnailSaved = false;
         }
 
         if (!$fileObject->getDimensions()) {
@@ -92,13 +89,6 @@ class FileController extends SlimController {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
             $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
-            return;
-        }
-
-        if (!$thumbnailSaved) {
-            $this->app->response->header('Content-Type', 'application/json');
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
-            $this->app->response->setBody($this->app->serializer->serialize($fileObject, 'json'));
             return;
         }
         
