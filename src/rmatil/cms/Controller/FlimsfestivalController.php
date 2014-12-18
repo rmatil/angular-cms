@@ -7,10 +7,9 @@ use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Entities\Article;
 use Doctrine\ORM\EntityManager;
 
-class IndexController extends SlimController {
+class FlimsfestivalController extends SlimController {
 
     public function indexAction() {
-        // $this->app->redirect('cms/');
-        $this->app->response->setBody("index action in index controller");
+        $this->app->response->setBody("yeee");
     }
 }

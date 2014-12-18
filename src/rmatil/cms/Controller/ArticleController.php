@@ -34,12 +34,12 @@ class ArticleController extends SlimController {
 
         // do not show lock if requested by the same user as currently locked
         if ($article->getIsLockedBy() !== null &&
-            $article->getIsLockedBy()->getId() === $_SESSION['user']->getId()) {
+            $article->getIsLockedBy()->getId() === $_SESSION['user_id']) {
             $article->setIsLockedBy(null);
         }
 
         $userRepository             = $entityManager->getRepository(EntityNames::USER);
-        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
+        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $article->setAuthor($origUser);
 
         $this->app->response->header('Content-Type', 'application/json');
@@ -80,7 +80,7 @@ class ArticleController extends SlimController {
         $articleObject->setLanguage($origLanguage);
 
         $userRepository             = $entityManager->getRepository(EntityNames::USER);
-        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
+        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $articleObject->setAuthor($origUser);
 
         $articleCategoryRepository  = $entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
@@ -116,7 +116,7 @@ class ArticleController extends SlimController {
 
         $entityManager              = $this->app->entityManager;
         $userRepository             = $entityManager->getRepository(EntityNames::USER);
-        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
+        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $articleObject->setAuthor($origUser);
 
         $languageRepository         = $entityManager->getRepository(EntityNames::LANGUAGE);
@@ -174,7 +174,7 @@ class ArticleController extends SlimController {
         $article = new Article();
         
         $userRepository             = $this->app->entityManager->getRepository(EntityNames::USER);
-        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
+        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $article->setAuthor($origUser);
         
         $now = new DateTime();

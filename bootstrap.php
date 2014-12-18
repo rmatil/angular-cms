@@ -11,6 +11,7 @@ use JMS\Serializer\SerializerBuilder;
 use rmatil\cms\Handler\ThumbnailHandler;
 use rmatil\cms\Handler\FileHandler;
 use rmatil\cms\Handler\RegistrationHandler;
+use rmatil\cms\Middleware\SecurityMiddleware;
 
 // If $isDevMode is true caching is done in memory with the ArrayCache. Proxy objects are recreated on every request.
 $isDevMode = true;
@@ -30,12 +31,12 @@ $dbParams = array(
 );
 
 $mailParams = array(
-    'CharSet' => 'UTF-8',
-    'Host'    => '',
+    'CharSet'  => 'UTF-8',
+    'Host'     => '',
     'SMTPAuth' => true,
     'Username' => '',
     'Password' => '',
-    'Port' => 587
+    'Port'     => 587
 );
 
 // protocol of connection (either http or https)
@@ -56,10 +57,6 @@ $fileHandler         = new FileHandler(HTTP_MEDIA_DIR, LOCAL_MEDIA_DIR);
 $phpMailer           = new PHPMailer();
 $registrationHandler = new RegistrationHandler($entityManager, $phpMailer, $mailParams);
 
-$userRepo         = $entityManager->getRepository('rmatil\cms\Entities\User');
-$user             = $userRepo->findOneBy(array('userName' => 'ramatil'));
-$_SESSION['user'] = $user;
-
 // enable this for log writing to file
 $logWriter        = new LogWriter(fopen(__DIR__.'/log/cms.log', 'a'));
 
@@ -72,7 +69,7 @@ $app              = new Slim(array(
                                 'controller.method_suffix'   => 'Action',
                                 'controller.template_suffix' => 'php',
                                 'log.writer'                 => $logWriter, // enable this forl log writing to file
-                                'templates.path'             => LOCAL_ROOT.'/web',
+                                'templates.path'             => LOCAL_ROOT.'/web/slim-templates',
                             ));
 
 // Add Doctrine Entity Manager to app
@@ -100,10 +97,18 @@ $app->container->singleton('registrationHandler', function() use ($registrationH
 });
 
 
+$app->add(new SecurityMiddleware(array('api')));
 
 // See https://github.com/fortrabbit/slimcontroller/issues/23 for overloading methods
 $app->addRoutes(array(
-    '/'                                 => 'Index:index',
+    '/'                                 => 'Flimsfestival:index',
+    '/cms'                              => 'Index:index',
+
+    // login
+    '/login'                            => array('get'     => 'Login:loginView'),
+    '/login/do-login'                   => array('post'    => 'Login:doLogin'),
+    '/login/do-logout'                  => array('get'     => 'Login:doLogout'),
+
     // articles
     '/api/articles'                     => array('get'     => 'Article:getArticles',
                                                  'post'    => 'Article:insertArticle'),
