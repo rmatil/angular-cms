@@ -34,7 +34,7 @@ class LoginController extends SlimController {
             $_SESSION['user_first_name'] = $user->getFirstName();
             $_SESSION['user_last_name'] = $user->getLastName();
             $_SESSION['user_last_login_date'] = $user->getLastLoginDate();
-            $_SESSION['is_logged_in'] = true;
+            $_SESSION['user_is_logged_in'] = true;
             $this->app->redirect('/cms');
         }
 
