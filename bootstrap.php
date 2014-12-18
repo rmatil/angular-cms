@@ -11,6 +11,7 @@ use JMS\Serializer\SerializerBuilder;
 use rmatil\cms\Handler\ThumbnailHandler;
 use rmatil\cms\Handler\FileHandler;
 use rmatil\cms\Handler\RegistrationHandler;
+use rmatil\cms\Middleware\SecurityMiddleware;
 
 // If $isDevMode is true caching is done in memory with the ArrayCache. Proxy objects are recreated on every request.
 $isDevMode = true;
@@ -96,6 +97,7 @@ $app->container->singleton('registrationHandler', function() use ($registrationH
 });
 
 
+$app->add(new SecurityMiddleware(array('api')));
 
 // See https://github.com/fortrabbit/slimcontroller/issues/23 for overloading methods
 $app->addRoutes(array(
