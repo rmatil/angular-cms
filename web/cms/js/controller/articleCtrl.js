@@ -136,7 +136,6 @@ angular.module('cms.controllers')
 
         $scope.apiPath   = 'articles';
         $scope.menuName  = 'Artikel hinzufügen';
-        $scope.deleteMsg = 'Löschen';
 
         // init content of ckEditor and prevent empty content
         $scope.article = {};
