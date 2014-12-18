@@ -4,14 +4,12 @@ namespace rmatil\cms\Controller;
 
 use SlimController\SlimController;
 use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Entities\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\DBALException;
 
 class RegistrationController extends SlimController {
-
-    protected static $USER_FULL_QUALIFIED_CLASSNAME     = 'rmatil\cms\Entities\User';
-    protected static $REGISTRATION_FULL_QUALIFIED_CLASSNAME = 'rmatil\cms\Entities\Registration';
 
     public function completeRegistrationAction($token) {
         $submittedPass          = $this->app->request->post('password');
@@ -22,7 +20,7 @@ class RegistrationController extends SlimController {
         }
 
         $entityManager          = $this->app->entityManager;
-        $registrationRepository = $entityManager->getRepository(self::$REGISTRATION_FULL_QUALIFIED_CLASSNAME);
+        $registrationRepository = $entityManager->getRepository(EntityNames::REGISTRATION);
         $origRegistration       = $registrationRepository->findOneBy(array('token' => $token));
 
         if ($origRegistration === null) {

@@ -16,4 +16,4 @@ composer.lock
 *.log
 
 # media dir
-/media
+/web/media/*

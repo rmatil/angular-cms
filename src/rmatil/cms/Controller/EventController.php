@@ -4,6 +4,7 @@ namespace rmatil\cms\Controller;
 
 use SlimController\SlimController;
 use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Entities\Article;
 use rmatil\cms\Entities\Event;
 use Doctrine\ORM\EntityManager;
@@ -12,14 +13,9 @@ use DateTime;
 
 class EventController extends SlimController {
 
-    private static $EVENT_FULL_QUALIFIED_CLASSNAME          = 'rmatil\cms\Entities\Event';
-    private static $USER_FULL_QUALIFIED_CLASSNAME           = 'rmatil\cms\Entities\User';
-    private static $FILE_FULL_QUALIFIED_CLASSNAME           = 'rmatil\cms\Entities\File';
-    private static $REPEAT_OPTION_FULL_QUALIFIED_CLASSNAME  = 'rmatil\cms\Entities\RepeatOption';
-
     public function getEventsAction() {
         $entityManager      = $this->app->entityManager;
-        $eventRepository    = $entityManager->getRepository(self::$EVENT_FULL_QUALIFIED_CLASSNAME);
+        $eventRepository    = $entityManager->getRepository(EntityNames::EVENT);
         $events             = $eventRepository->findAll();
 
         $this->app->response->header('Content-Type', 'application/json');
@@ -29,7 +25,7 @@ class EventController extends SlimController {
 
     public function getEventByIdAction($id) {
         $entityManager      = $this->app->entityManager;
-        $eventRepository    = $entityManager->getRepository(self::$EVENT_FULL_QUALIFIED_CLASSNAME);
+        $eventRepository    = $entityManager->getRepository(EntityNames::EVENT);
         $event              = $eventRepository->findOneBy(array('id' => $id));
 
         if ($event === null) {
@@ -43,7 +39,7 @@ class EventController extends SlimController {
             $event->setIsLockedBy(null);
         }
 
-        $userRepository = $this->app->entityManager->getRepository(self::$USER_FULL_QUALIFIED_CLASSNAME);
+        $userRepository = $this->app->entityManager->getRepository(EntityNames::USER);
         $origUser       = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
         $event->setAuthor($origUser);
 
@@ -66,22 +62,22 @@ class EventController extends SlimController {
     }
 
     public function updateEventAction($eventId) {
-        $eventObject        = $this->app->serializer->deserialize($this->app->request->getBody(), self::$EVENT_FULL_QUALIFIED_CLASSNAME, 'json');
+        $eventObject        = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::EVENT, 'json');
 
         // get original event
         $entityManager      = $this->app->entityManager;
-        $eventRepository    = $entityManager->getRepository(self::$EVENT_FULL_QUALIFIED_CLASSNAME);
+        $eventRepository    = $entityManager->getRepository(EntityNames::EVENT);
         $origEvent          = $eventRepository->findOneBy(array('id' => $eventId));
 
-        $userRepository     = $entityManager->getRepository(self::$USER_FULL_QUALIFIED_CLASSNAME);
+        $userRepository     = $entityManager->getRepository(EntityNames::USER);
         $origUser           = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
         $eventObject->setAuthor($origUser);
 
-        $repeatOptionRepository = $entityManager->getRepository(self::$REPEAT_OPTION_FULL_QUALIFIED_CLASSNAME);
+        $repeatOptionRepository = $entityManager->getRepository(EntityNames::REPEAT_OPTION);
         $origRepeatOption   = $repeatOptionRepository->findOneBy(array('id' => $eventObject->getRepeatOption()->getId()));
         $eventObject->setRepeatOption($origRepeatOption);
 
-        $fileRepository     = $entityManager->getRepository(self::$FILE_FULL_QUALIFIED_CLASSNAME);
+        $fileRepository     = $entityManager->getRepository(EntityNames::FILE);
         $origFile           = $fileRepository->findOneBy(array('id' => $eventObject->getFile()));
         $eventObject->setFile($origFile);
 
@@ -105,7 +101,7 @@ class EventController extends SlimController {
     }
 
     public function insertEventAction() {
-        $eventObject      = $this->app->serializer->deserialize($this->app->request->getBody(), self::$EVENT_FULL_QUALIFIED_CLASSNAME, 'json');
+        $eventObject      = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::EVENT, 'json');
 
         // set now as creation date
         $now                = new DateTime();
@@ -114,15 +110,15 @@ class EventController extends SlimController {
 
         $entityManager      = $this->app->entityManager;
 
-        $userRepository     = $entityManager->getRepository(self::$USER_FULL_QUALIFIED_CLASSNAME);
+        $userRepository     = $entityManager->getRepository(EntityNames::USER);
         $origUser           = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
         $eventObject->setAuthor($origUser);
 
-        $repeatOptionRepository = $entityManager->getRepository(self::$REPEAT_OPTION_FULL_QUALIFIED_CLASSNAME);
+        $repeatOptionRepository = $entityManager->getRepository(EntityNames::REPEAT_OPTION);
         $origRepeatOption   = $repeatOptionRepository->findOneBy(array('id' => $eventObject->getRepeatOption()->getId()));
         $eventObject->setRepeatOption($origRepeatOption);
 
-        $fileRepository     = $entityManager->getRepository(self::$FILE_FULL_QUALIFIED_CLASSNAME);
+        $fileRepository     = $entityManager->getRepository(EntityNames::FILE);
         $origFile           = $fileRepository->findOneBy(array('id' => $eventObject->getFile()));
         $eventObject->setFile($origFile);
 
@@ -144,7 +140,7 @@ class EventController extends SlimController {
 
     public function deleteEventByIdAction($id) {
         $entityManager      = $this->app->entityManager;
-        $eventRepository    = $entityManager->getRepository(self::$EVENT_FULL_QUALIFIED_CLASSNAME);
+        $eventRepository    = $entityManager->getRepository(EntityNames::EVENT);
         $event              = $eventRepository->findOneBy(array('id' => $id));
 
         if ($event === null) {
@@ -171,7 +167,7 @@ class EventController extends SlimController {
     public function getEmptyEventAction() {
         $event  = new Event();
 
-        $userRepository = $this->app->entityManager->getRepository(self::$USER_FULL_QUALIFIED_CLASSNAME);
+        $userRepository = $this->app->entityManager->getRepository(EntityNames::USER);
         $origUser       = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
         $event->setAuthor($origUser);
 

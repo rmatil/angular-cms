@@ -4,17 +4,16 @@ namespace rmatil\cms\Controller;
 
 use SlimController\SlimController;
 use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Entities\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\DBALException;
 
 class SettingController extends SlimController {
 
-    protected static $SETTING_FULL_QUALIFIED_CLASSNAME     = 'rmatil\cms\Entities\Setting';
-
     public function getSettingsAction() {
         $entityManager      = $this->app->entityManager;
-        $settingRepository  = $entityManager->getRepository(self::$SETTING_FULL_QUALIFIED_CLASSNAME);
+        $settingRepository  = $entityManager->getRepository(EntityNames::SETTING);
         $settings           = $settingRepository->findAll();
 
         $returnValues       = array();
@@ -31,7 +30,7 @@ class SettingController extends SlimController {
         $settings = json_decode($this->app->request->getBody(), true);
 
         $entityManager      = $this->app->entityManager;
-        $settingsRepository = $entityManager->getRepository(self::$SETTING_FULL_QUALIFIED_CLASSNAME);
+        $settingsRepository = $entityManager->getRepository(EntityNames::SETTING);
 
         foreach ($settings as $entry) {
             $origSetting = $settingsRepository->findOneBy(array('id' => $entry['id']));

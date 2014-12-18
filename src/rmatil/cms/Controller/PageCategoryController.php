@@ -11,11 +11,9 @@ use DateTime;
 
 class PageCategoryController extends SlimController {
 
-    private static $PAGE_FULL_QUALIFIED_CLASSNAME = 'rmatil\cms\Entities\PageCategory';
-
     public function getPageCategoriesAction() {
         $entityManager              = $this->app->entityManager;
-        $pageCategoryRepository     = $entityManager->getRepository(self::$PAGE_FULL_QUALIFIED_CLASSNAME);
+        $pageCategoryRepository     = $entityManager->getRepository(EntityNames::PAGE_CATEGORY);
         $pageCategories             = $pageCategoryRepository->findAll();
 
         $this->app->response->header('Content-Type', 'application/json');
@@ -25,7 +23,7 @@ class PageCategoryController extends SlimController {
 
     public function getPageCategoryByIdAction($id) {
         $entityManager              = $this->app->entityManager;
-        $pageCategoryRepository     = $entityManager->getRepository(self::$PAGE_FULL_QUALIFIED_CLASSNAME);
+        $pageCategoryRepository     = $entityManager->getRepository(EntityNames::PAGE);
         $pageCategory               = $pageCategoryRepository->findOneBy(array('id' => $id));
 
         if ($pageCategory === null) {
@@ -39,11 +37,11 @@ class PageCategoryController extends SlimController {
     }
 
     public function updatePageCategoryAction($pageCategoryId) {
-        $pageCategoryObj            = $this->app->serializer->deserialize($this->app->request->getBody(), self::$PAGE_FULL_QUALIFIED_CLASSNAME, 'json');
+        $pageCategoryObj            = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::PAGE, 'json');
 
         // get original page category
         $entityManager              = $this->app->entityManager;
-        $pageCategoryRepository     = $entityManager->getRepository(self::$PAGE_FULL_QUALIFIED_CLASSNAME);
+        $pageCategoryRepository     = $entityManager->getRepository(EntityNames::PAGE);
         $origPageCategory           = $pageCategoryRepository->findOneBy(array('id' => $pageCategoryId));
 
         $origPageCategory->update($pageCategoryObj);
@@ -64,7 +62,7 @@ class PageCategoryController extends SlimController {
     }
 
     public function insertPageAction() {
-        $pageCategoryObj          = $this->app->serializer->deserialize($this->app->request->getBody(), self::$PAGE_FULL_QUALIFIED_CLASSNAME, 'json');
+        $pageCategoryObj          = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::PAGE, 'json');
 
         $entityManager            = $this->app->entityManager;
         $entityManager->persist($pageCategoryObj);
@@ -85,7 +83,7 @@ class PageCategoryController extends SlimController {
 
     public function deletePageCategoryByIdAction($id) {
         $entityManager              = $this->app->entityManager;
-        $pageCategoryRepository     = $entityManager->getRepository(self::$PAGE_FULL_QUALIFIED_CLASSNAME);
+        $pageCategoryRepository     = $entityManager->getRepository(EntityNames::PAGE);
         $pageCategory               = $pageCategoryRepository->findOneBy(array('id' => $id));
 
         if ($pageCategory === null) {

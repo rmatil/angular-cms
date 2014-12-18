@@ -4,6 +4,7 @@ namespace rmatil\cms\Controller;
 
 use SlimController\SlimController;
 use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Entities\Article;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\DBALException;
@@ -11,11 +12,9 @@ use DateTime;
 
 class RepeatOptionController extends SlimController {
 
-    private static $REPEAT_OPTION_FULL_QUALIFIED_CLASSNAME = 'rmatil\cms\Entities\RepeatOption';
-
     public function getRepeatOptionsAction() {
         $entityManager              = $this->app->entityManager;
-        $repeatOptionRepository     = $entityManager->getRepository(self::$REPEAT_OPTION_FULL_QUALIFIED_CLASSNAME);
+        $repeatOptionRepository     = $entityManager->getRepository(EntityNames::REPEAT_OPTION);
         $repeatOptions              = $repeatOptionRepository->findAll();
 
         $this->app->response->header('Content-Type', 'application/json');
@@ -25,7 +24,7 @@ class RepeatOptionController extends SlimController {
 
     public function getRepeatOptionByIdAction($id) {
         $entityManager              = $this->app->entityManager;
-        $repeatOptionRepository     = $entityManager->getRepository(self::$REPEAT_OPTION_FULL_QUALIFIED_CLASSNAME);
+        $repeatOptionRepository     = $entityManager->getRepository(EntityNames::REPEAT_OPTION);
         $repeatOption               = $repeatOptionRepository->findOneBy(array('id' => $id));
 
         if ($repeatOption === null) {
@@ -38,11 +37,11 @@ class RepeatOptionController extends SlimController {
     }
 
     public function updateRepeatOptionAction($repeatOptionId) {
-        $repeatOptionObj            = $this->app->serializer->serialize($this->app->request->getBody(), self::$REPEAT_OPTION_FULL_QUALIFIED_CLASSNAME, 'json');
+        $repeatOptionObj            = $this->app->serializer->serialize($this->app->request->getBody(), EntityNames::REPEAT_OPTION, 'json');
 
         // get original repeat option
         $entityManager              = $this->app->entityManager;
-        $repeatOptionRepository     = $entityManager->getRepository(self::$REPEAT_OPTION_FULL_QUALIFIED_CLASSNAME);
+        $repeatOptionRepository     = $entityManager->getRepository(EntityNames::REPEAT_OPTION);
         $origRepeatOption           = $repeatOptionRepository->findOneBy(array('id' => $repeatOptionId));
 
         $origRepeatOption->update($repeatOptionObj);
@@ -63,7 +62,7 @@ class RepeatOptionController extends SlimController {
     }
 
     public function insertRepeatOptionAction() {
-        $repeatOptionObj            = $this->app->serializer->serialize($this->app->request->getBody(), self::$REPEAT_OPTION_FULL_QUALIFIED_CLASSNAME, 'json');
+        $repeatOptionObj            = $this->app->serializer->serialize($this->app->request->getBody(), EntityNames::REPEAT_OPTION, 'json');
 
         $entityManager              = $this->app->entityManager;
         $entityManager->persist($repeatOptionObj);
@@ -84,7 +83,7 @@ class RepeatOptionController extends SlimController {
 
     public function deleteRepeatOptionByIdAction($id) {
         $entityManager              = $this->app->entityManager;
-        $repeatOptionRepository     = $entityManager->getRepository(self::$REPEAT_OPTION_FULL_QUALIFIED_CLASSNAME);
+        $repeatOptionRepository     = $entityManager->getRepository(EntityNames::REPEAT_OPTION);
         $repeatOption               = $repeatOptionRepository->findOneBy(array('id' => $id));
 
         if ($repeatOption === null) {

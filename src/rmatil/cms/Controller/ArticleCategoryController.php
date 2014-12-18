@@ -4,6 +4,7 @@ namespace rmatil\cms\Controller;
 
 use SlimController\SlimController;
 use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Entities\Article;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\DBALException;
@@ -11,11 +12,9 @@ use DateTime;
 
 class ArticleCategoryController extends SlimController {
 
-    private static $ARTICLE_FULL_QUALIFIED_CLASSNAME = 'rmatil\cms\Entities\ArticleCategory';
-
     public function getArticleCategoriesAction() {
         $entityManager              = $this->app->entityManager;
-        $articleCategoryRepository  = $entityManager->getRepository(self::$ARTICLE_FULL_QUALIFIED_CLASSNAME);
+        $articleCategoryRepository  = $entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
         $articleCategories          = $articleCategoryRepository->findAll();
 
         $this->app->response->header('Content-Type', 'application/json');
@@ -25,7 +24,7 @@ class ArticleCategoryController extends SlimController {
 
     public function getArticleCategoryByIdAction($id) {
         $entityManager              = $this->app->entityManager;
-        $articleCategoryRepository  = $entityManager->getRepository(self::$ARTICLE_FULL_QUALIFIED_CLASSNAME);
+        $articleCategoryRepository  = $entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
         $articleCategory            = $articleCategoryRepository->findOneBy(array('id' => $id));
 
         if ($articleCategory === null) {
@@ -39,11 +38,11 @@ class ArticleCategoryController extends SlimController {
     }
 
     public function updateArticleCategoryAction($articleCategoryId) {
-        $articleCategoryObj         = $this->app->serializer->deserialize($this->app->request->getBody(), self::$ARTICLE_FULL_QUALIFIED_CLASSNAME, 'json');
+        $articleCategoryObj         = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::ARTICLE_CATEGORY, 'json');
 
         // get original article
         $entityManager              = $this->app->entityManager;
-        $articleCategoryRepository  = $entityManager->getRepository(self::$ARTICLE_FULL_QUALIFIED_CLASSNAME);
+        $articleCategoryRepository  = $entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
         $origArticleCategory        = $articleCategoryRepository->findOneBy(array('id' => $articleCategoryId));
 
         $origArticleCategory->update($articleCategoryObj);
@@ -64,7 +63,7 @@ class ArticleCategoryController extends SlimController {
     }
 
     public function insertArticleAction() {
-        $articleCategoryObj      = $this->app->serializer->deserialize($this->app->request->getBody(), self::$ARTICLE_FULL_QUALIFIED_CLASSNAME, 'json');
+        $articleCategoryObj      = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::ARTICLE_CATEGORY, 'json');
 
         $entityManager           = $this->app->entityManager;
         $entityManager->persist($articleCategoryObj);
@@ -85,7 +84,7 @@ class ArticleCategoryController extends SlimController {
 
     public function deleteArticleCategoryByIdAction($id) {
         $entityManager              = $this->app->entityManager;
-        $articleCategoryRepository  = $entityManager->getRepository(self::$ARTICLE_FULL_QUALIFIED_CLASSNAME);
+        $articleCategoryRepository  = $entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
         $articleCategory            = $articleCategoryRepository->findOneBy(array('id' => $id));
 
         if ($articleCategory === null) {

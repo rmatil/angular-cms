@@ -94,7 +94,7 @@ angular.module('cms.controllers')
 
 				if (data !== "") {
 					// error happend at file validation
-					toaster.pop('error', 'Datei', data);
+					toaster.pop('error', null, data);
 				} else {
 					toaster.pop('success', null, 'Die Datei wurde erfolgreich hochgeladen');
 					redirectTimeoutPromise = $timeout(function() {

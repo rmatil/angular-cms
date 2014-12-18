@@ -2,39 +2,15 @@
 
 /* controller for dashboard */
 angular.module('cms.controllers')
-	.controller('overviewCtrl', ['MenuService', 'OverviewService', '$scope', function(MenuService, OverviewService, $scope) {
+	.controller('overviewCtrl', ['MenuService', 'genService', '$scope', '$log', function(MenuService, genService, $scope, $log) {
 		// set Menu according to its Name
 		MenuService.update("Dashboard");
 
-		// select latest added articles
-		OverviewService.getNewestArticles().then(function(response) {
-			if (response == 'null') {
-				return;
+		genService.getAllObjects('statistics').then(function (response) {
+			if ($scope.debugModus) {
+				$log.log(response);
 			}
-			$scope.newestArticles = response;
+			$scope.statistics = response;
 		});
-
-		// select latest items
-		OverviewService.getNewestItems().then(function(response) {
-			if (response == 'null') {
-				return;
-			}
-			$scope.newestItems = response;
-		});
-
-		// select latest added user
-		OverviewService.getNewestUser().then(function(response) {
-			if (response == 'null') {
-				return;
-			}
-			$scope.newestUser = response;
-		});
-
-		// select next 5 events
-		OverviewService.getNewestEvents().then(function(response) {
-			if (response == 'null') {
-				return;
-			}
-			$scope.newestEvents = response;
-		});
+		
 	}]);
