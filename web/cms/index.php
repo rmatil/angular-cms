@@ -1,3 +1,6 @@
+<?php
+    @session_start();
+?>
 <!doctype html>
 <html lang="de" ng-app="cms">
 <head>
@@ -59,9 +62,9 @@
     <div class="wrapper">
         <div class="header">
             <div class="header-content">
-                Hallo, <?php //echo $_SESSION['firstname'] ?> | 
-                Dein letzter Besuch war am <?php //echo $_SESSION['timestamp'] ?> | 
-                <a href="authentication/index.php?logout=true" target="_self"><i class="fa fa-power-off"></i></a>
+                Hallo, <?php echo $_SESSION['user_first_name']; ?> | 
+                Dein letzter Besuch war am <?php echo $_SESSION['user_last_login_date']->format('d.m.Y'); ?> | 
+                <a href="/login/do-logout" target="_self"><i class="fa fa-power-off"></i></a>
             </div>
         </div>
         <div class="left-sidebar">
