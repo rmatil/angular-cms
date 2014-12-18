@@ -35,12 +35,12 @@ class PageController extends SlimController {
 
         // do not show lock if requested by the same user as currently locked
         if ($page->getIsLockedBy() !== null &&
-            $page->getIsLockedBy()->getId() === $_SESSION['user']->getId()) {
+            $page->getIsLockedBy()->getId() === $_SESSION['user_id']) {
             $page->setIsLockedBy(null);
         }
 
         $userRepository             = $entityManager->getRepository(EntityNames::USER);
-        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
+        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $page->setAuthor($origUser);
 
         $this->app->response->header('Content-Type', 'application/json');
@@ -77,7 +77,7 @@ class PageController extends SlimController {
         $pageObject->setLanguage($origLanguage);
 
         $userRepository             = $entityManager->getRepository(EntityNames::USER);
-        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
+        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $pageObject->setAuthor($origUser);
 
         $pageCategoryRepository     = $entityManager->getRepository(EntityNames::PAGE_CATEGORY);
@@ -151,7 +151,7 @@ class PageController extends SlimController {
         $pageObject->setLanguage($origLanguage);
 
         $userRepository             = $entityManager->getRepository(EntityNames::USER);
-        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
+        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $pageObject->setAuthor($origUser);
 
         $pageCategoryRepository     = $entityManager->getRepository(EntityNames::PAGE_CATEGORY);
@@ -211,7 +211,7 @@ class PageController extends SlimController {
         $page = new Page();
 
         $userRepository = $this->app->entityManager->getRepository(EntityNames::USER);
-        $origUser       = $userRepository->findOneBy(array('id' => $_SESSION['user']->getId()));
+        $origUser       = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $page->setAuthor($origUser);
 
         $now = new DateTime();

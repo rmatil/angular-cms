@@ -212,7 +212,6 @@ angular.module('cms.controllers')
 
 		$scope.apiPath 	 = 'locations';
 		$scope.menuName  = 'Veranstaltungsort hinzufügen';
-		$scope.deleteMsg = 'Löschen';
 
 		genService.getEmptyObject('location').then(function (response) {
 			$scope.initializeMap();
