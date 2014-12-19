@@ -60,7 +60,7 @@ class Location {
     /**
      * description of the location
      * 
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      *
      * @Type("string")
      * 
@@ -296,5 +296,23 @@ class Location {
         $this->setLastEditDate($location->getLastEditDate());
         $this->setCreationDate($location->getCreationDate());
         $this->setAuthor($location->getAuthor());
+    }
+
+    /**
+     * Gets the Id of the location.
+     *
+     * @return integer
+     */
+    public function getId() {
+        return $this->id;
+    }
+
+    /**
+     * Sets the Id of the location.
+     *
+     * @param integer $id the id
+     */
+    public function setId($id) {
+        $this->id = $id;
     }
 }

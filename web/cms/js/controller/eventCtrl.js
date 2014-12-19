@@ -119,7 +119,13 @@ angular.module('cms.controllers')
 
 			if (!$scope.eventEndTime) {
 				toaster.pop('warning', null, 'Die Endzeit muss angegeben werden');
+                return;
 			}
+
+            if (!pEvent.repeat_option) {
+                toaster.pop('warning', null, 'Eine Wiederholoption muss angegeben werden');
+                return;
+            }
 
 			// Unfortunately angular supports only strings in model
             // -> parse file and repeat_option to JSON if string
@@ -256,7 +262,13 @@ angular.module('cms.controllers')
 
 			if (!$scope.eventEndTime) {
 				toaster.pop('warning', null, 'Die Endzeit muss angegeben werden');
+                return;
 			}
+
+            if (!pEvent.repeat_option) {
+                toaster.pop('warning', null, 'Eine Wiederholoption muss angegeben werden');
+                return;
+            }
 
 			// Unfortunately angular supports only strings in model
             // -> parse file and repeat_option to JSON if string
