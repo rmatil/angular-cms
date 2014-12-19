@@ -79,19 +79,12 @@ angular.module('cms', [
 
             // On response failture
             responseError: function (rejection) {
-                console.log(rejection); // Contains the data about the error.
-                if (rejection.status === 403) {
-                    console.error("Access denied.");
-
-                    var currentUrl = window.location.href;
-                    var position = currentUrl.indexOf('/');
-                    if (position !== -1) {
-                        // position of /backend/ + 9
-                        // omit end pos to extract rest of string
-                        currentUrl = currentUrl.substr(position + 9);
-                    }
-                    window.location.href = 'authentication/index.php?redirect=' + currentUrl;
+                switch (rejection.status) {
+                case 401:
+                    window.location.href = 'login';
+                    break;
                 }
+
                 // Return the promise rejection.
                 return $q.reject(rejection);
             }
@@ -100,7 +93,7 @@ angular.module('cms', [
 
     // Add the interceptor to the $httpProvider.
     $httpProvider.interceptors.push('authInterceptor');
-}]).run(['DebugService', '$rootScope', '$window', function (DebugService, $rootScope, $window) {
+}]).run(['DebugService', '$rootScope', function (DebugService, $rootScope) {
     // determine debug status
     DebugService.getDebugStatus().then(function (response) {
         $rootScope.debugModus = response;
