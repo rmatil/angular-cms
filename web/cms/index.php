@@ -113,7 +113,8 @@
                     <li>
                         <i class="fa fa-calendar"></i> 
                         <?php
-                            echo $_SESSION['user_last_login_date']->format('d.m.Y');
+                            $now = new \DateTime();
+                            echo $now->format('d.m.Y');
                         ?>
                     </li>
                     <li>

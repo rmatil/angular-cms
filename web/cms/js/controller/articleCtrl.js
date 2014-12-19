@@ -10,16 +10,13 @@ angular.module('cms.controllers')
 
         $scope.loadingArticles = true;
         genService.getAllObjects('articles').then(function (response) {
-            if (response === 'null') {
-                return;
-            }
             $scope.articles = response;
             $timeout(function () {
                 $scope.loadingArticles = false;
             }, 300);
         });
     }])
-    .controller('articleDetailCtrl', ['genService', 'MenuService', '$scope', '$routeParams', '$timeout', '$location', '$log', 'toaster', 'localStorageService', function (genService, MenuService, $scope, $routeParams, $timeout, $location, $log, toaster, localStorageService) {
+    .controller('articleDetailCtrl', ['genService', 'MenuService', '$scope', '$routeParams', '$timeout', '$location', 'toaster', 'localStorageService', function (genService, MenuService, $scope, $routeParams, $timeout, $location, toaster, localStorageService) {
         // set Menu according to its Name
         MenuService.update("Artikel");
 
@@ -35,11 +32,6 @@ angular.module('cms.controllers')
         $scope.article.content = '';
 
         genService.getObjectById('articles', $routeParams.articleId).then(function (response) {
-            if ($scope.debugModus) {
-                $log.log("article received");
-                $log.log(response);
-            }
-
             // redirect to overview in case article doesn't exist anymore
             if (!response) {
                 toaster.pop('error', null, 'Uups. Der angeforderte Artikel exisitert nicht (mehr).');
@@ -69,20 +61,10 @@ angular.module('cms.controllers')
         });
 
         genService.getAllObjects('languages').then(function (response) {
-            if ($scope.debugModus) {
-                $log.log('languages received');
-                $log.log(response);
-            }
-
             $scope.allLanguages = response;
         });
 
         genService.getAllObjects('articleCategories').then(function (response) {
-            if ($scope.debugModus) {
-                $log.log('articleCategories received');
-                $log.log(response);
-            }
-
             $scope.allArticleCategories = response;
         });
 
@@ -105,20 +87,12 @@ angular.module('cms.controllers')
             }
 
             $scope.loading = true;
-            genService.updateObject($scope.apiPath, pArticle).then(function (response) {
-                if ($scope.debugModus) {
-                    $log.log(response);
-                }
-                if (response.data !== "") {
+            genService.updateObject($scope.apiPath, pArticle).then(function () {
+                toaster.pop('success', null, "Artikel wurde aktualisiert");
+                redirectTimeoutPromise = $timeout(function () {
+                    $location.path($scope.apiPath);
                     $scope.loading = false;
-                    toaster.pop('error', null, "Artikel konnte nicht aktualisiert werden: " + response.data);
-                } else {
-                    toaster.pop('success', null, "Artikel wurde aktualisiert");
-                    redirectTimeoutPromise = $timeout(function () {
-                        $location.path($scope.apiPath);
-                        $scope.loading = false;
-                    }, 2500);
-                }
+                }, 2500);
             });
         };
 
@@ -127,7 +101,7 @@ angular.module('cms.controllers')
             $timeout.cancel(redirectTimeoutPromise);
         });
     }])
-    .controller('articleAddCtrl', ['genService', 'MenuService', '$scope', '$location', '$timeout', '$log', 'toaster', function (genService, MenuService, $scope, $location, $timeout, $log, toaster) {
+    .controller('articleAddCtrl', ['genService', 'MenuService', '$scope', '$location', '$timeout', 'toaster', function (genService, MenuService, $scope, $location, $timeout, toaster) {
         // set Menu according to its Name
         MenuService.update("Artikel");
 
@@ -140,13 +114,8 @@ angular.module('cms.controllers')
         // init content of ckEditor and prevent empty content
         $scope.article = {};
         $scope.article.content = '';
-        
-        genService.getEmptyObject('article').then(function (response) {
-            if ($scope.debugModus) {
-                $log.log("empty article received");
-                $log.log(response);
-            }
 
+        genService.getEmptyObject('article').then(function (response) {
             // redirect to overview in case article doesn't exist
             if (!response) {
                 toaster.pop('error', null, 'Uups. Es konnte kein neuer Artikel erstellt werden');
@@ -156,20 +125,10 @@ angular.module('cms.controllers')
         });
 
         genService.getAllObjects('languages').then(function (response) {
-            if ($scope.debugModus) {
-                $log.log('languages received');
-                $log.log(response);
-            }
-
             $scope.allLanguages = response;
         });
 
         genService.getAllObjects('articleCategories').then(function (response) {
-            if ($scope.debugModus) {
-                $log.log('articleCategories received');
-                $log.log(response);
-            }
-
             $scope.allArticleCategories = response;
         });
 
@@ -192,20 +151,12 @@ angular.module('cms.controllers')
             }
 
             $scope.loading = true;
-            genService.insertObject($scope.apiPath, pArticle).then(function (response) {
-                if ($scope.debugModus) {
-                    $log.log(response);
-                }
-                if (response.data !== "") {
+            genService.insertObject($scope.apiPath, pArticle).then(function () {
+                toaster.pop('success', null, "Artikel wurde aktualisiert");
+                redirectTimeoutPromise = $timeout(function () {
+                    $location.path($scope.apiPath);
                     $scope.loading = false;
-                    toaster.pop('error', null, "Artikel konnte nicht aktualisiert werden: " + response.data);
-                } else {
-                    toaster.pop('success', null, "Artikel wurde aktualisiert");
-                    redirectTimeoutPromise = $timeout(function () {
-                        $location.path($scope.apiPath);
-                        $scope.loading = false;
-                    }, 2500);
-                }
+                }, 2500);
             });
         };
 
