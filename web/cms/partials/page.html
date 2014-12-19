@@ -2,39 +2,26 @@
 <form ng-submit="savePage(page)" novalidate>
 	<div class="left-wrapper">
 		<input type="text" ng-model="page.title" value="{{page.title}}" id="page-title" class="title" placeholder="Titel" tabindex="1" page-url-name>
-		<div class="left-body">
-			<div class="left">
-				<h2>ausgewählte Artikel</h2>
+		<div class="left-body table no-border">
+			<div class="table-cell width-40 border-2-dashed">
 				<table class="enumerate">
-					<thead>
-						<tr class="table-header">
-							<th>Titel</th>
-							<th>Kategorie</th>
-							<th></th>
+					<tbody>
+						<tr ng-repeat="article in page.articles | orderBy:'title'">
+							<td><a href="#/articles/{{article.id}}">{{article.title}}</a></td>
+							<td><span class="darkred cursor-pointer" ng-Click="removeArticleFromPage(article.id)">Entfernen</span></td>
 						</tr>
-					</thead>
-					<tr ng-repeat="article in page.articles | orderBy:'title'">
-						<td><a href="#/articles/{{article.id}}">{{article.title}}</a></td>
-						<td>{{article.category.name}}</td>
-						<td><span class="delete" ng-Click="removeArticleFromPage(article.id)">Entfernen</span></td>
-					</tr>
+					</tbody>
 				</table>
 			</div>
-			<div class="right">
-				<h2>alle Artikel</h2>
+			<div class="table-cell width-20 vertical-center horizontal-center"><i class="fa fa-exchange"></i></div>
+			<div class="table-cell width-40 border-2-dashed">
 				<table class="enumerate">
-					<thead>
-						<tr class="table-header">
-							<th>Titel</th>
-							<th>Kategorie</th>
-							<th></th>
+					<tbody>
+						<tr ng-repeat="article in allArticles | orderBy:'title'">
+							<td><a href="#/articles/{{article.id}}">{{article.title}}</a></td>
+							<td><span class="darkgreen cursor-pointer" ng-Click="addArticleToPage(article.id)">Hinzufügen</span></td>
 						</tr>
-					</thead>
-					<tr ng-repeat="article in allArticles | orderBy:'title'">
-						<td><a href="#/articles/{{article.id}}">{{article.title}}</a></td>
-						<td>{{article.category.name}}</td>
-						<td><span class="delete" ng-Click="addArticleToPage(article.id)">Hinzufügen</span></td>
-					</tr>
+					</tbody>
 				</table>
 			</div>
 			<div class="clear"></div>

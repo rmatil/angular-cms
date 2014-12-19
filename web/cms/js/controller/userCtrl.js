@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('cms.controllers')
-    .controller('userCtrl', ['MenuService', 'genService', '$scope', '$timeout', function(MenuService, genService, $scope, $timeout) {
+    .controller('userCtrl', ['MenuService', 'genService', '$scope', '$timeout', function (MenuService, genService, $scope, $timeout) {
         // set menu according to its Name
         MenuService.update("Benutzer");
 
@@ -10,18 +10,15 @@ angular.module('cms.controllers')
 
         // get all Users
         $scope.loadingUsers = true;
-        genService.getAllObjects('users').then(function(response) {
-            if (response == 'null') {
-                return;
-            }
+        genService.getAllObjects('users').then(function (response) {
             $scope.users = response;
-            $timeout(function() {
+            $timeout(function () {
                 $scope.loadingUsers = false;
             }, 300);
         });
 
     }])
-    .controller('userDetailCtrl', ['MenuService', 'genService', '$scope', '$routeParams', '$location', '$timeout', '$log', 'toaster', function(MenuService, genService, $scope, $routeParams, $location, $timeout, $log, toaster) {
+    .controller('userDetailCtrl', ['MenuService', 'genService', '$scope', '$routeParams', '$location', '$timeout', 'toaster', function (MenuService, genService, $scope, $routeParams, $location, $timeout, toaster) {
         // set Menu according to its Name
         MenuService.update("Benutzer");
 
@@ -36,29 +33,21 @@ angular.module('cms.controllers')
         $scope.pass1    = '';
 
         genService.getObjectById('users', $routeParams.userId).then(function (response) {
-            if ($scope.debugModus) {
-                $log.log(response);
-            }
-
             $scope.user = response;
         });
 
         genService.getAllObjects('usergroups').then(function (response) {
-            if ($scope.debugModus) {
-                $log.log(response);
-            }
-
             $scope.allUserGroups = response;
         });
 
         // save changes in page
-        $scope.saveUser = function(pUser) {
+        $scope.saveUser = function (pUser) {
             // save user with no new pass if empty
             if ($scope.pass1.length > 0) {
                 pUser.plain_password = $scope.pass1;
             }
 
-            if (pUser.username.length < 1) {
+            if (pUser.user_name.length < 1) {
                 toaster.pop('error', null, 'Vorname und Nachname muss ausgefüllt werden');
                 return;
             }
@@ -75,28 +64,21 @@ angular.module('cms.controllers')
             }
 
             $scope.loading = true;
-            genService.updateObject('users', pUser).then(function (response) {
-                if (response.data !== "") {
+            genService.updateObject('users', pUser).then(function () {
+                toaster.pop('success', null, "Benutzer wurde aktualisiert");
+                redirectTimeoutPromise = $timeout(function () {
+                    $location.path('/users');
                     $scope.loading = false;
-                    toaster.pop('error', null, "User konnte nicht aktualisiert werden: " + response.data);
-                } else {
-                    toaster.pop('success', null, "Benutzer wurde aktualisiert")
-                    redirectTimeoutPromise = $timeout(function() {
-                        $location.path('/users');
-                        $scope.loading = false;
-                    }, 2500);
-                }
-                
+                }, 2500);
             });
         };
 
         // cancel redirect promises on route change
-        $scope.$on('$locationChangeStart', function(){
+        $scope.$on('$locationChangeStart', function () {
             $timeout.cancel(redirectTimeoutPromise);
         });
-        
     }])
-    .controller('userAddCtrl', ['genService', 'MenuService', '$routeParams', '$scope', '$log', '$upload', '$window', '$location', '$timeout', 'toaster', function(genService, MenuService, $routeParams, $scope, $log, $upload, $window, $location, $timeout, toaster) {
+    .controller('userAddCtrl', ['genService', 'MenuService', '$scope', '$location', '$timeout', 'toaster', function (genService, MenuService, $scope, $location, $timeout, toaster) {
         // set Menu according to its Name
         MenuService.update("Benutzer");
 
@@ -110,28 +92,20 @@ angular.module('cms.controllers')
         $scope.pass1    = '';
 
         genService.getEmptyObject('user').then(function (response) {
-            if ($scope.debugModus) {
-                $log.log(response);
-            }
-
             $scope.user = response;
         });
 
         genService.getAllObjects('usergroups').then(function (response) {
-            if ($scope.debugModus) {
-                $log.log(response);
-            }
-
             $scope.allUserGroups = response;
         });
 
         // save changes in page
-        $scope.saveUser = function(pUser) {
-            if (pUser.username == '') {
+        $scope.saveUser = function (pUser) {
+            if (pUser.username === '') {
                 toaster.pop('error', null, 'Vorname und Nachname muss ausgefüllt werden');
                 return;
             }
-            if (pUser.email == '') {
+            if (pUser.email === '') {
                 toaster.pop('error', null, 'Email muss ausgefüllt werden');
                 return;
             }
@@ -144,23 +118,17 @@ angular.module('cms.controllers')
             }
 
             $scope.loading = true;
-            genService.insertObject('users', pUser).then(function (response) {
-                if (response.data !== "") {
+            genService.insertObject('users', pUser).then(function () {
+                toaster.pop('success', null, "Benutzer wurde aktualisiert");
+                redirectTimeoutPromise = $timeout(function () {
+                    $location.path('/users');
                     $scope.loading = false;
-                    toaster.pop('error', null, "User konnte nicht aktualisiert werden: " + response.data);
-                } else {
-                    toaster.pop('success', null, "Benutzer wurde aktualisiert")
-                    redirectTimeoutPromise = $timeout(function () {
-                        $location.path('/users');
-                        $scope.loading = false;
-                    }, 2500);
-                }
-                
+                }, 2500);
             });
         };
 
         // cancel redirect promises on route change
-        $scope.$on('$locationChangeStart', function(){
+        $scope.$on('$locationChangeStart', function () {
             $timeout.cancel(redirectTimeoutPromise);
         });
-    }])
+    }]);

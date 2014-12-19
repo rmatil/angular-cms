@@ -44,7 +44,6 @@ thtml, body {
 }
 
 b {
-  /* not that beautiful... */
   font-weight: 400;
 }
 
@@ -315,13 +314,73 @@ ul.navigation li ul {
   float: left;
 }
 
+.left-50 {
+  float: left;
+  width: 50%;
+}
+
+.left-40 {
+  float: left;
+  width: 40%;
+}
+
+.middle {
+  float: left;
+  text-align: center;
+}
+
+.middle-20 {
+  float: left;
+  margin: 0 5%;
+  width: 10%;
+  text-align: center;
+}
+
 .right {
   float: right;
 }
 
-/* use this after .left or .right to adjust the height */
+.right-50 {
+  float: right;
+  width: 50%;
+}
+
+.right-40 {
+  float: right;
+  width: 40%;
+}
+
 .clear {
   clear: both;
+}
+
+.table {
+  display: table;
+}
+
+.table-cell {
+  display: table-cell;
+}
+
+.width-20 {
+  width: 20%;
+}
+
+.width-40 {
+  width: 40%;
+}
+
+.horizontal-center {
+  text-align: center;
+}
+
+.vertical-center {
+  height: 100%;
+  vertical-align: middle;
+}
+
+.border-2-dashed {
+  border: 2px dashed #e5e5e5;
 }
 
 input {
@@ -593,6 +652,10 @@ button:focus {
   outline:0;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 .delete {
   color: #D8000C;
   cursor: pointer;
@@ -810,7 +873,7 @@ table.al-left tr td:first-child {
   width: 150px;
 }
 
-td.no-border {
+.no-border {
   border: none;
 }
 
