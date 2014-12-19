@@ -58,7 +58,7 @@ angular.module('cms.controllers')
                 pUser.plain_password = $scope.pass1;
             }
 
-            if (pUser.username.length < 1) {
+            if (pUser.user_name.length < 1) {
                 toaster.pop('error', null, 'Vorname und Nachname muss ausgefüllt werden');
                 return;
             }
