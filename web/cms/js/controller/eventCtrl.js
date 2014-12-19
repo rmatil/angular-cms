@@ -132,6 +132,10 @@ angular.module('cms.controllers')
                 pEvent.file = JSON.parse(pEvent.file);
             }
 
+            if (angular.isString(pEvent.location)) {
+                pEvent.location = JSON.parse(pEvent.location);
+            }
+
             // merge time and date
             var startDate = moment(new Date($scope.eventStartDate + ' ' + $scope.eventStartTime));
             // momentjs converts to a correct iso 8601 date string
@@ -263,6 +267,10 @@ angular.module('cms.controllers')
 
             if (angular.isString(pEvent.file)) {
                 pEvent.file = JSON.parse(pEvent.file);
+            }
+
+            if (angular.isString(pEvent.location)) {
+                pEvent.location = JSON.parse(pEvent.location);
             }
 
             // merge time and date

@@ -65,9 +65,13 @@
 	        </div>
 	        <div class="right-body-box">
 	        	<div class="left">Veranstaltungsort</div>
-		        <div class="right"><select data-ng-model="event.curLocation"
-		        							data-ng-options="a.locationName for a in event.allLocations" tabindex="7">
-	        						</select></div>
+		        <div class="right">
+		        	<select ng-model="event.location" required>
+					    <option ng-repeat="location in allLocations" value="{{location}}" ng-selected="event.location.id === location.id">
+					        {{ location.name }}
+					    </option>
+					</select>
+		        </div>
 	        	<div class="clear"></div>
 	        </div>
 		</div>
