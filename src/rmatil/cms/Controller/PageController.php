@@ -194,6 +194,14 @@ class PageController extends SlimController {
             return;
         }
 
+        $articleRepository = $entityManager->getRepository(EntityNames::ARTICLE);
+
+        // remove all corresponding articles
+        foreach ($page->getArticles() as $article) {
+            $origArticle = $articleRepository->findOneBy(array('id' => $article->getId()));
+            $origArticle->setPage(null);
+        }
+
         $entityManager->remove($page);
 
         try {
@@ -202,6 +210,7 @@ class PageController extends SlimController {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
             $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            return;
         }
 
         $this->app->response->setStatus(HttpStatusCodes::NO_CONTENT);
