@@ -358,4 +358,22 @@ class Event {
         $this->setLastEditDate($event->getLastEditDate());
         $this->setCreationDate($event->getCreationDate());
     }
+
+    /**
+     * Gets the Id of the Event.
+     *
+     * @return integer
+     */
+    public function getId() {
+        return $this->id;
+    }
+
+    /**
+     * Sets the Id of the Event.
+     *
+     * @param integer $id the id
+     */
+    public function setId($id) {
+        $this->id = $id;
+    }
 }
