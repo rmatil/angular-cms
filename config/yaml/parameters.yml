@@ -1,0 +1,13 @@
+database:
+    driver: pdo_mysql
+    username: root
+    password: root
+    dbname: cms
+
+mail:
+    char_set: utf-8
+    host: 
+    smtp_auth: true
+    username: 
+    password:
+    port: 587

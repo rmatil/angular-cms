@@ -5,6 +5,7 @@ require_once "vendor/autoload.php";
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Symfony\Component\Yaml\Yaml;
 use Slim\LogWriter;
 use SlimController\Slim;
 use JMS\Serializer\SerializerBuilder;
@@ -22,21 +23,24 @@ AnnotationRegistry::registerAutoloadNamespace(
     'JMS\Serializer\Annotation', __DIR__.'/vendor/jms/serializer/src'
 );
 
+
+$params = Yaml::parse(file_get_contents(__DIR__.'/config/yaml/parameters.yml'));
+
 // the connection configuration
 $dbParams = array(
-    'driver'   => 'pdo_mysql',
-    'user'     => 'root',
-    'password' => 'root',
-    'dbname'   => 'cms',
+    'driver'   => $params['database']['driver'],
+    'user'     => $params['database']['username'],
+    'password' => $params['database']['password'],
+    'dbname'   => $params['database']['dbname'],
 );
 
 $mailParams = array(
-    'CharSet'  => 'UTF-8',
-    'Host'     => '',
-    'SMTPAuth' => true,
-    'Username' => '',
-    'Password' => '',
-    'Port'     => 587
+    'CharSet'  => strtoupper($params['mail']['char_set']),
+    'Host'     => $params['mail']['host'],
+    'SMTPAuth' => $params['mail']['smtp_auth'],
+    'Username' => $params['mail']['username'],
+    'Password' => $params['mail']['password'],
+    'Port'     => $params['mail']['port']
 );
 
 // protocol of connection (either http or https)
