@@ -105,7 +105,7 @@ class Event {
     /**
      * The description of the event
      * 
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Type("string")
      * 
