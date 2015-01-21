@@ -122,9 +122,11 @@ class EventController extends SlimController {
         $origLocation       = $locationRepository->findOneBy(array('id' => $eventObject->getLocation()->getId()));
         $eventObject->setLocation($origLocation);
 
-        $repeatOptionRepository = $entityManager->getRepository(EntityNames::REPEAT_OPTION);
-        $origRepeatOption   = $repeatOptionRepository->findOneBy(array('id' => $eventObject->getRepeatOption()->getId()));
-        $eventObject->setRepeatOption($origRepeatOption);
+        if (null !== $eventObject->getRepeatOption()) {
+            $repeatOptionRepository = $entityManager->getRepository(EntityNames::REPEAT_OPTION);
+            $origRepeatOption   = $repeatOptionRepository->findOneBy(array('id' => $eventObject->getRepeatOption()->getId()));
+            $eventObject->setRepeatOption($origRepeatOption);
+        }
 
         $fileRepository     = $entityManager->getRepository(EntityNames::FILE);
         $origFile           = $fileRepository->findOneBy(array('id' => $eventObject->getFile()));
