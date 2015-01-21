@@ -58,7 +58,7 @@ angular.module('cms.controllers')
             genService.updateObject('locations', pLocation).then(function () {
                 toaster.pop('success', null, "Veranstaltungsort wurde aktualisiert");
                 redirectTimeoutPromise = $timeout(function () {
-                    $location.path('/locations');
+                    $location.path('/events');
                     $scope.loading = false;
                 }, 2500);
             });
