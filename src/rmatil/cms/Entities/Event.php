@@ -83,7 +83,7 @@ class Event {
     /**
      * DateTime object of the start date
      * 
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      *
      * @Type("DateTime")
      * 
@@ -94,7 +94,7 @@ class Event {
     /**
      * DateTime object of the end date
      * 
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      *
      * @Type("DateTime")
      * 
