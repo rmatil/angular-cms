@@ -30,28 +30,35 @@
 					<input type="time" ng-model="eventEndTime">
 				</div>
 				<div class="clear"></div>
-				<div class="left">Startdatum</div>
+				<div class="left">Datum</div>
 				<div class="right">
-					<div pickadate ng-model="eventStartDate"></div>
+					<input type="date" ng-model="eventStartDate">
+					<!--
+						<div pickadate ng-model="eventStartDate"></div>
+					-->
 				</div>
 				<div class="clear"></div>
-				<div class="left" ng-show="event.repeat_option">Enddatum</div>
-				<div class="right" ng-show="event.repeat_option">
-					<div pickadate ng-model="eventEndDate"></div>
-				</div>
-				<div class="clear"></div>
+				<!--
+					<div class="left" ng-show="event.repeat_option">Enddatum</div>
+					<div class="right" ng-show="event.repeat_option">	
+						<div pickadate ng-model="eventEndDate"></div>
+					</div>
+					<div class="clear"></div>
+				-->
 	        </div>
-			<div class="right-body-box">
-				<div class="left">Wiederholen</div>
-				<div class="right">
-					<select ng-model="event.repeat_option" required>
-					    <option ng-repeat="repeatOption in allRepeatOptions" value="{{repeatOption}}" ng-selected="event.repeat_option.id === repeatOption.id">
-					        {{ repeatOption.option_value }}
-					    </option>
-					</select>
-				</div>
-	        	<div class="clear"></div>
-	        </div>
+	        <!--
+				<div class="right-body-box">
+					<div class="left">Wiederholen</div>
+					<div class="right">
+						<select ng-model="event.repeat_option" required>
+						    <option ng-repeat="repeatOption in allRepeatOptions" value="{{repeatOption}}" ng-selected="event.repeat_option.id === repeatOption.id">
+						        {{ repeatOption.option_value }}
+						    </option>
+						</select>
+					</div>
+		        	<div class="clear"></div>
+		        </div>
+		    -->
 			<div class="right-body-box">
 				<div class="left">Dateianhang</div>
 				<div class="right">
@@ -84,12 +91,11 @@
 		<div class="right-heading {{ backgroundColorClass }}" ng-show="debugModus">Debug Info</div>
 		<div class="right-body" ng-show="debugModus">
 			<pre class="light">
-startTime: {{ eventStartTime}}
-endTime: {{ eventEndTime }}
-startDate: {{ eventStartDate }}
-endDate: {{ eventEndDate }}
-{{ event | json }}
-				</p>
+				startTime: {{ eventStartTime}}
+				endTime: {{ eventEndTime }}
+				startDate: {{ eventStartDate }}
+				endDate: {{ eventEndDate }}
+				{{ event | json }}
 			</pre>
 		</div>
 	</div>

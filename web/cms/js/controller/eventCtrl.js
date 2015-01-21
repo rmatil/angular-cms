@@ -199,27 +199,27 @@ angular.module('cms.controllers')
                 return;
             }
 
-            if (!$scope.eventStartTime) {
-                toaster.pop('warning', null, 'Die Startzeit muss angegeben werden');
-                return;
-            }
+            // if (!$scope.eventStartTime) {
+            //     toaster.pop('warning', null, 'Die Startzeit muss angegeben werden');
+            //     return;
+            // }
 
             if (!$scope.eventEndTime) {
                 toaster.pop('warning', null, 'Die Endzeit muss angegeben werden');
                 return;
             }
 
-            if (!pEvent.repeat_option) {
-                toaster.pop('warning', null, 'Eine Wiederholoption muss angegeben werden');
-                return;
-            }
+            // if (!pEvent.repeat_option) {
+            //     toaster.pop('warning', null, 'Eine Wiederholoption muss angegeben werden');
+            //     return;
+            // }
 
             // Unfortunately angular supports only strings in model
             // -> parse file and repeat_option to JSON if string
             // -> http://stackoverflow.com/questions/14832405/angularjs-ng-model-converts-object-to-string
-            if (angular.isString(pEvent.repeat_option)) {
-                pEvent.repeat_option = JSON.parse(pEvent.repeat_option);
-            }
+            // if (angular.isString(pEvent.repeat_option)) {
+            //     pEvent.repeat_option = JSON.parse(pEvent.repeat_option);
+            // }
 
             if (angular.isString(pEvent.file)) {
                 pEvent.file = JSON.parse(pEvent.file);
@@ -233,13 +233,13 @@ angular.module('cms.controllers')
             var startDate = moment(new Date($scope.eventStartDate + ' ' + $scope.eventStartTime));
             // momentjs converts to a correct iso 8601 date string
             pEvent.start_date = startDate.format();
-            if ($scope.eventEndDate) {
-                var endDate = moment(new Date($scope.eventEndDate + ' ' + $scope.eventEndTime));
-                // momentjs converts to a correct iso 8601 date string
-                pEvent.end_date = endDate.format();
-            } else {
-                pEvent.end_date = pEvent.start_date;
-            }
+            // if ($scope.eventEndDate) {
+            //     var endDate = moment(new Date($scope.eventEndDate + ' ' + $scope.eventEndTime));
+            //     // momentjs converts to a correct iso 8601 date string
+            //     pEvent.end_date = endDate.format();
+            // } else {
+            //     pEvent.end_date = pEvent.start_date;
+            // }
 
             $scope.loading = true;
             genService.insertObject('events', pEvent).then(function () {
