@@ -34,8 +34,8 @@ angular.module('cms.controllers')
         // these values get merged to a datetime object on save
         $scope.eventStartDate = {};
         $scope.eventEndDate = {};
-        $scope.eventStartTime = {};
-        $scope.eventEndTime = {};
+        $scope.eventStartTime = '00:00';
+        $scope.eventEndTime = '00:00';
 
         // init content of ckEditor and prevent empty content
         $scope.event = {};
@@ -54,8 +54,8 @@ angular.module('cms.controllers')
             var endDate           = new Date($scope.event.end_date);
             $scope.eventStartDate = dateFilter(startDate, 'yyyy-MM-dd');
             $scope.eventEndDate   = dateFilter(endDate, 'yyyy-MM-dd');
-            $scope.eventStartTime = startDate.getHours() + ':' + startDate.getMinutes();
-            $scope.eventEndTime   = endDate.getHours() + ':' + endDate.getMinutes();
+            $scope.eventStartTime = ('0' + startDate.getHours()).substr(-2) + ':' + ('0' + startDate.getMinutes()).substr(-2);
+            $scope.eventEndTime   = ('0' + endDate.getHours()).substr(-2) + ':' + ('0' + endDate.getMinutes()).substr(-2);
         });
 
         genService.getAllObjects('repeatOptions').then(function (response) {
