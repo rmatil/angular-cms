@@ -73,6 +73,10 @@ class EventController extends SlimController {
         $origUser           = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $eventObject->setAuthor($origUser);
 
+        $locationRepository = $entityManager->getRepository(EntityNames::LOCATION);
+        $origLocation       = $locationRepository->findOneBy(array('id' => $eventObject->getLocation()->getId()));
+        $eventObject->setLocation($origLocation);
+
         $repeatOptionRepository = $entityManager->getRepository(EntityNames::REPEAT_OPTION);
         $origRepeatOption   = $repeatOptionRepository->findOneBy(array('id' => $eventObject->getRepeatOption()->getId()));
         $eventObject->setRepeatOption($origRepeatOption);
@@ -83,7 +87,7 @@ class EventController extends SlimController {
 
         $origEvent->update($eventObject);
         // release lock on editing
-        $origArticle->setIsLockedBy(null);
+        $origEvent->setIsLockedBy(null);
 
         // force update
         try {
