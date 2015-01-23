@@ -7,9 +7,9 @@ use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Entities\Article;
 use Doctrine\ORM\EntityManager;
 
-class FlimsfestivalController extends SlimController {
+class HomepageController extends SlimController {
 
     public function indexAction() {
-        $this->app->response->setBody("yeee");
+        $this->app->response->setBody("This is the index page of your Slim application");
     }
 }
