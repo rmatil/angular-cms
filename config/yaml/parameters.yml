@@ -3,6 +3,7 @@ database:
     username: root
     password: root
     dbname: cms
+    host: localhost
 
 mail:
     char_set: utf-8

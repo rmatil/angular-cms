@@ -25,6 +25,9 @@ $dbParams = array(
     'user'     => $params['database']['username'],
     'password' => $params['database']['password'],
     'dbname'   => $params['database']['dbname'],
+    'host'     => $params['database']['host'],
+    // http://php.net/manual/en/ref.pdo-mysql.php#pdo.constants.mysql-attr-init-command
+    'driverOptions' => array(1002 => 'SET NAMES utf8')
 );
 
 $mailParams = array(
