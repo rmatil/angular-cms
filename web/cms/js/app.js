@@ -93,11 +93,9 @@ angular.module('cms', [
 
     // Add the interceptor to the $httpProvider.
     $httpProvider.interceptors.push('authInterceptor');
-}]).run(['DebugService', '$rootScope', function (DebugService, $rootScope) {
+}]).run(['genService', '$rootScope', function (genService, $rootScope) {
     // determine debug status
-    DebugService.getDebugStatus().then(function (response) {
-        $rootScope.debugModus = response;
-        console.log('force debugModus to true');
-        $rootScope.debugModus = true;
+    genService.getAllObjects('settings').then(function (response) {
+        $rootScope.debugModus = response.debug_mode.value;
     });
 }]);
