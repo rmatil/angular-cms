@@ -78,7 +78,7 @@ angular.module('cms.controllers')
                 // file has been uploaded successfully
                 toaster.pop('success', null, 'Die Datei wurde erfolgreich hochgeladen');
                 redirectTimeoutPromise = $timeout(function () {
-                    $location.path('/media');
+                    $location.path('/files');
                 }, 1000);
             }).error(function (data, status, headers, config) {
                 if (status === 409) {
