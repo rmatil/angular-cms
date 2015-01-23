@@ -14,8 +14,9 @@ After download, set up the connection to your database in `config/yaml/parameter
 
 Generate the database schema using `vendor/bin/doctrine orm:schema-tool:create` in the root folder of this application.
 
-You also may want to change the locale used for this application, which you can do in this file  [here](https://github.com/rmatil/angular-cms/blob/master/setup.php#L39). 
-Additionally, you can change the path to the media directory for uploaded files [here](https://github.com/rmatil/angular-cms/blob/master/setup.php#L35) and [here](https://github.com/rmatil/angular-cms/blob/master/setup.php#L36). It might be necessary to give your webserver write permissions on this folder.
+You also may want to change the locale used for this application, which you can do in this file 
+[here](https://github.com/rmatil/angular-cms/tree/v0.1/setup.php#L39). 
+Additionally, you can change the path to the media directory for uploaded files [here](https://github.com/rmatil/angular-cms/tree/v0.1/setup.php#L35) and [here](https://github.com/rmatil/angular-cms/tree/v0.1/setup.php#L36). It might be necessary to give your webserver write permissions on this folder.
 
 Login to backend
 ================
