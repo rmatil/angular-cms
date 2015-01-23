@@ -160,7 +160,6 @@ angular.module('cms.directives', []).
 
                             decreasePromise.then(function () {
                                 scope.deleteMsg = 'Gelöscht';
-                                console.log(attrs);
                                 genService.deleteObjectById(attrs.deleteObjectPath, attrs.deleteObjectId).then(function () {
                                     $timeout(function() {
                                         $location.path('/' + attrs.deleteObjectPath);
