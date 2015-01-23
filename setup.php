@@ -36,9 +36,9 @@ define('HTTP_MEDIA_DIR', HTTP_ROOT.'/media');
 define('LOCAL_MEDIA_DIR', LOCAL_ROOT.'/web/media');
 
 // set locale to german
-$newLocale = setlocale(LC_TIME, 'ch_DE', 'ch_DE.UTF-8');
+$newLocale = setlocale(LC_TIME, 'de_CH.UTF-8', 'de_CH');
 
-session_cache_limiter(false);
+session_cache_limiter("public");
 session_start();
 
 
