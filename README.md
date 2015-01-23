@@ -5,7 +5,7 @@ Angular CMS is a simple Content Management System (CMS) which is based on the st
 
 Installation
 ============
-As of now, you have to download the repo via git. Composer will available in the future.
+As of now, you have to download the repo via git. Composer will be available in the future.
 
 Then use composer in the root folder to install required dependencies: `composer install`.
 In `web/cms/` run `bower install` to download all required frontend packages.
@@ -25,3 +25,5 @@ Navigate in your browser to `your-webserver/login` to login with specified usern
 Registration Endpoint
 =====================
 Registration endpoint is specified at `api/registration/:token`
+
+
