@@ -38,7 +38,8 @@ define('LOCAL_MEDIA_DIR', LOCAL_ROOT.'/web/media');
 // set locale to german
 $newLocale = setlocale(LC_TIME, 'de_CH.UTF-8', 'de_CH');
 
-session_cache_limiter("public");
+// prevent PHP from sending conficting cache expiration headers with the HTTP response
+session_cache_limiter(false);
 session_start();
 
 
