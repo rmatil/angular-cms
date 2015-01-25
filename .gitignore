@@ -17,3 +17,6 @@ composer.lock
 
 # media dir
 /web/media/*
+
+# gulp.js
+node_modules
