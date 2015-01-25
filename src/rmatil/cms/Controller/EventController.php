@@ -18,6 +18,7 @@ class EventController extends SlimController {
         $eventRepository    = $entityManager->getRepository(EntityNames::EVENT);
         $events             = $eventRepository->findAll();
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($events, 'json'));
@@ -43,6 +44,7 @@ class EventController extends SlimController {
         $origUser       = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $event->setAuthor($origUser);
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($event, 'json'));       
@@ -99,6 +101,7 @@ class EventController extends SlimController {
             return;
         }
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($origEvent, 'json'));

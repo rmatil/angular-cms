@@ -17,6 +17,7 @@ class ArticleController extends SlimController {
         $articleRepository  = $entityManager->getRepository(EntityNames::ARTICLE);
         $articles           = $articleRepository->findAll();
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($articles, 'json'));
@@ -42,6 +43,7 @@ class ArticleController extends SlimController {
         $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $article->setAuthor($origUser);
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($article, 'json'));
@@ -101,6 +103,7 @@ class ArticleController extends SlimController {
             return;
         }
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($origArticle, 'json'));

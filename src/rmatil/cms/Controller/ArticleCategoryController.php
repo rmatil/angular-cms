@@ -17,6 +17,7 @@ class ArticleCategoryController extends SlimController {
         $articleCategoryRepository  = $entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
         $articleCategories          = $articleCategoryRepository->findAll();
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($articleCategories, 'json'));
@@ -32,6 +33,7 @@ class ArticleCategoryController extends SlimController {
             return;
         }
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($articleCategory, 'json'));
@@ -57,6 +59,7 @@ class ArticleCategoryController extends SlimController {
             return;
         }
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($origArticleCategory, 'json'));

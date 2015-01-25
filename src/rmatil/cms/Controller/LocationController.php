@@ -17,6 +17,7 @@ class LocationController extends SlimController {
         $locationRepository  = $entityManager->getRepository(EntityNames::LOCATION);
         $locations           = $locationRepository->findAll();
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($locations, 'json'));
@@ -42,6 +43,7 @@ class LocationController extends SlimController {
         $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $location->setAuthor($origUser);
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($location, 'json'));
@@ -86,6 +88,7 @@ class LocationController extends SlimController {
             return;
         }
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($origLocation, 'json'));

@@ -17,6 +17,7 @@ class RepeatOptionController extends SlimController {
         $repeatOptionRepository     = $entityManager->getRepository(EntityNames::REPEAT_OPTION);
         $repeatOptions              = $repeatOptionRepository->findAll();
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($repeatOptions, 'json'));
@@ -31,6 +32,7 @@ class RepeatOptionController extends SlimController {
             $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
         }
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($repeatOption, 'json'));
@@ -56,6 +58,7 @@ class RepeatOptionController extends SlimController {
             return;
         }
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($origArticleCategory, 'json'));

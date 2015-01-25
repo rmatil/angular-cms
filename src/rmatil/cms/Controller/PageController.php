@@ -18,6 +18,7 @@ class PageController extends SlimController {
         $pageRepository  = $entityManager->getRepository(EntityNames::PAGE);
         $pages           = $pageRepository->findAll();
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($pages, 'json'));
@@ -43,6 +44,7 @@ class PageController extends SlimController {
         $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $page->setAuthor($origUser);
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($page, 'json'));
@@ -132,6 +134,7 @@ class PageController extends SlimController {
             return;
         }
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($origPage, 'json'));
