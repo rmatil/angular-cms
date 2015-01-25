@@ -91,6 +91,12 @@ angular.module('cms.controllers')
             //     return;
             // }
 
+            if (Object.prototype.toString.call($scope.eventEndDate) !== "[object Date]" ||
+                (Object.prototype.toString.call($scope.eventEndDate) === "[object Date]" && !isNaN( $scope.eventEndTime.getTime()))) {
+                // event end date is not a date
+                $scope.eventEndDate = null;
+            }
+
             // if (!$scope.eventEndTime) {
             //     toaster.pop('warning', null, 'Die Endzeit muss angegeben werden');
             //     return;
