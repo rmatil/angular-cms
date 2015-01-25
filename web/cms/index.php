@@ -42,22 +42,22 @@
     <script src="bower_components/moment/min/moment.min.js"></script>
     
     <!-- app -->
-    <script src="js/app.js"></script>
-    <script src="js/services.js"></script>
-    <script src="js/genServices.js"></script>
-    <script src="js/filters.js"></script>
-    <script src="js/directives.js"></script>
+    <script src="js/build/app.min.js"></script>
+    <script src="js/build/services.min.js"></script>
+    <script src="js/build/genServices.min.js"></script>
+    <script src="js/build/filters.min.js"></script>
+    <script src="js/build/directives.min.js"></script>
 
-    <script src="js/controller/controllers.js"></script>
-    <script src="js/controller/overviewCtrl.js"></script>
-    <script src="js/controller/articleCtrl.js"></script>
-    <script src="js/controller/pageCtrl.js"></script>
-    <script src="js/controller/eventCtrl.js"></script>
-    <script src="js/controller/locationCtrl.js"></script>
-    <script src="js/controller/mediaCtrl.js"></script>
-    <script src="js/controller/userCtrl.js"></script>
-    <script src="js/controller/settingCtrl.js"></script>
-    <script src="js/controller/errorCtrl.js"></script>
+    <script src="js/build/controllers.min.js"></script>
+    <script src="js/build/overviewCtrl.min.js"></script>
+    <script src="js/build/articleCtrl.min.js"></script>
+    <script src="js/build/pageCtrl.min.js"></script>
+    <script src="js/build/eventCtrl.min.js"></script>
+    <script src="js/build/locationCtrl.min.js"></script>
+    <script src="js/build/mediaCtrl.min.js"></script>
+    <script src="js/build/userCtrl.min.js"></script>
+    <script src="js/build/settingCtrl.min.js"></script>
+    <script src="js/build/errorCtrl.min.js"></script>
 </head>
 <body>
     <div class="overlay" ng-class="{'hidden': isLocked != true}">
