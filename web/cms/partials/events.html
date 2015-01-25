@@ -32,7 +32,13 @@
 				<a ng-href="events/{{ event.id}}">{{ event.name }}</a>  um {{ event.start_date | date:"HH:mm 'Uhr am' dd.MM.yyyy" }}
 			</div>
 			<div class="right" ng-show="event.file">
-				<a ng-href="events/{{ event.id }}"><img ng-src="{{event.file.link}}" width="24" height="24"></a>
+				<a ng-href="events/{{ event.id }}">
+					<img ng-src="{{event.file.link}}" ng-if="event.file.link.match('(.jpg|.png|.jpeg|.gif|.bmp)') !== null" width="24" height="24">
+					<i ng-if="event.file.link.match('.pdf') !== null" class="fa fa-file-pdf-o"></i>
+					<i ng-if="event.file.link.match('(.mp3|.m4a|.aac)')" class="fa fa-file-audio-o"></i>
+					<i ng-if="event.file.link.match('(.mp4|.mpeg)')" class="fa fa-file-video-o"></i>
+					<i ng-if="event.file.link.match('(.zip|.tar)')" class="fa fa-file-archive-o"></i>
+				</a>
 			</div>
 			<div class="clear"></div>
 		</div>
