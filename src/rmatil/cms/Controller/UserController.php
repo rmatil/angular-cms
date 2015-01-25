@@ -18,6 +18,7 @@ class UserController extends SlimController {
         $userRepository  = $entityManager->getRepository(EntityNames::USER);
         $users           = $userRepository->findAll();
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($users, 'json'));
@@ -39,6 +40,7 @@ class UserController extends SlimController {
             $user->setIsLockedBy(null);
         }
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($user, 'json'));
@@ -93,6 +95,7 @@ class UserController extends SlimController {
             return;
         }
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($origUser, 'json'));

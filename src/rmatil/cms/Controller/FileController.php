@@ -21,6 +21,7 @@ class FileController extends SlimController {
         $fileRepository     = $entityManager->getRepository(EntityNames::FILE);
         $files              = $fileRepository->findAll();
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($files, 'json'));
@@ -36,6 +37,7 @@ class FileController extends SlimController {
             return;
         }
 
+        $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($file, 'json'));
