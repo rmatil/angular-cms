@@ -56,6 +56,11 @@ angular.module('cms.controllers')
                 return;
             }
 
+            if (!pUser.user_group) {
+                toaster.pop('error', null, 'Usergroup muss ausgewählt werden');
+                return;
+            }
+
             // Unfortunately angular supports only strings in model
             // -> parse usergroup to JSON
             // -> http://stackoverflow.com/questions/14832405/angularjs-ng-model-converts-object-to-string
