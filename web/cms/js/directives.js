@@ -61,27 +61,13 @@ angular.module('cms.directives', []).
         };
         
     }])
-    .directive('sameAs', function() {
-        return {
-            require: 'ngModel',
-            link: function(scope, elm, attrs, ctrl) {
-                ctrl.$parsers.unshift(function(viewValue) {
-                    if (scope.debugModus) {
-                        console.log("pw1: "+scope[attrs.sameAs]);
-                        console.log("pw2: "+viewValue);
-                    }
-                    var isEqual = viewValue === scope[attrs.sameAs];
-                    ctrl.$setValidity('sameas', isEqual);
-                    
-                });
-            }
-        };
-    })
     .directive('username', [ function() {
         return {
             restrict: 'A', // only activate on element attribute
             link: function link(scope, element, attributes) {
-                console.log(attributes);
+                if (scope.debugModus) {
+                    console.log(attributes);
+                }
                 // inital values
                 var firstnameShort = '',
                     lastnameShort  = '',
