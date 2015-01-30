@@ -19,7 +19,7 @@
 				</tr>
 				<tr class="no-border">
 					<td class="no-border"><label for="email">Email</label></td>
-					<td class="no-border"><input type="email" id="email" name="email" ng-model="user.email" ng-value="{{user.email}}" tabindex="3" required/><i class="fa fa-check-circle-o" ng-show="userUpdateForm.email.$valid"></i><i class="fa fa-times-circle-o" ng-show="userUpdateForm.email.$invalid"></i></td>
+					<td class="no-border"><input type="email" id="email" name="email" ng-model="user.email" ng-value="{{user.email}}" tabindex="3" required/><i class="fa fa-check-circle-o" ng-show="userUpdateForm.email.$valid && !userUpdateForm.email.$pristine"></i><i class="fa fa-times-circle-o" ng-show="userUpdateForm.email.$invalid"></i></td>
 				</tr>
 			</table>
 		</div>
