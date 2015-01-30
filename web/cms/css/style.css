@@ -1,4 +1,4 @@
-thtml, body {
+html, body {
   height: 100%;
   width: 100%;
   margin: 0;
@@ -391,15 +391,34 @@ input {
   padding: 3px 5px 3px 10px;  
 }
 
-input.search-input {
+input[type=text],
+input[type=password],
+input[type=text],
+input[type=date],
+input[type=time]{
+  width: 100%;
+  line-height: 17px;
+  text-indent: 0;
   font-size: 15px;
   -webkit-font-smoothing: antialiased;
+  display: inline-block;
+  padding: 10px;
+  border: 1px solid #e5e5e5;
+  -moz-appearance: textfield;
+  -webkit-appearance: textfield;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+input.search-input {
   display: block;
   width: 200px;
-  height: 15px;
-  padding: 15px 10px;
-  border: 1px solid #e5e5e5;
   margin: 10px 0 30px 0;
+  padding: 15px 10px;
+  font-size: 15px;
+  border: 1px solid #e5e5e5;
 }
 
 input.search-input::-webkit-input-placeholder   {
@@ -446,55 +465,9 @@ input[type=file]  {
   padding: 0;
 }
 
-input[type=password] {
-  width: 100%;
-  line-height: 17px;
-  text-indent: 0;
-  display: inline-block;
-  -moz-appearance: textfield;
-  -webkit-appearance: textfield;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  box-sizing: border-box;
-}
-
-input[type=text] {
-  line-height: 17px;
-  text-indent: 0;
-  display: inline-block;
-  -moz-appearance: textfield;
-  -webkit-appearance: textfield;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  box-sizing: border-box;
-  width: 100%;
-}
-
-input[type=email] {
-  line-height: 17px;
-  text-indent: 0;
-  display: inline-block;
-  -moz-appearance: textfield;
-  -webkit-appearance: textfield;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  box-sizing: border-box;
-  width: 100%;
-}
-
-input[type=search] {
-  line-height: 17px;
-  text-indent: 0;
-  display: inline-block;
-  -moz-appearance: textfield;
-  -webkit-appearance: textfield;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  box-sizing: border-box;
+input[type=date],
+input[type=time] {
+  height: 16px;
 }
 
 input.loading {
