@@ -25,8 +25,8 @@
 		</div>
 		<br />
 		<h2 ng-show="menuName !== 'Benutzer hinzufügen'">Passwort ändern</h2>
-		<div class="left-body">
-			<table ng-show="menuName !== 'Benutzer hinzufügen'">
+		<div class="left-body" ng-show="menuName !== 'Benutzer hinzufügen'">
+			<table>
 				<tr class="no-border">
 					<td><label for="pass1">Passwort</label></td>
 					<td>
@@ -60,7 +60,7 @@
 			<div class="right-body-box">
 				<div class="left">Rechte wählen</div>
 				<div class="right">
-					<select ng-model="user.user_group" required>
+					<select ng-model="user.user_group" tabindex="5" required>
 					    <option ng-repeat="user_group in allUserGroups" value="{{user_group}}" ng-selected="user.user_group.id === user_group.id">
 					        {{user_group.name}}
 					    </option>
