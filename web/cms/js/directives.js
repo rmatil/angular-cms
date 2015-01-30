@@ -22,7 +22,7 @@ angular.module('cms.directives', []).
                         return '';
                     }
                     var articleTitle = pInputValue;
-                    var urlName = articleTitle.replace(/[\x7f-\xff]/g, '').replace(/[ \t\r\n\v\f]/g, '-');
+                    var urlName = articleTitle.replace(/['ä']/g, 'a').replace(/['ö']/g, 'o').replace(/['ü']/g, 'u').replace(/[\x7f-\xff]/g, '-').replace(/[\s]/g, '-');
                     return urlName;    
                 };
 
