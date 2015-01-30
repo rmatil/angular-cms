@@ -24,7 +24,7 @@ filter can not handle objects, only arrays
 		<th><a href="" ng-click="predicate = 'dimensions'; reverse=!reverse"><i class="fa fa-sort"></i> Dimensionen</a></a></th>
 		<th><a href="" ng-click="predicate = 'category.name'; reverse=!reverse"><i class="fa fa-sort"></i> Kategorie</a></a></th>
 		<th><a href="" ng-click="predicate = 'creation_date'; reverse=!reverse"><i class="fa fa-sort"></i> Hochgeladen am</a></a></th>
-		<td>Löschen</td>
+		<th></th>
 	</tr>
 	<tr ng-repeat="file in files | filter:fileFilter | orderBy:predicate:reverse">
 		<td>

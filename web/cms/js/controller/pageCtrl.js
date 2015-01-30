@@ -6,6 +6,9 @@ angular.module('cms.controllers')
         // set Menu according to its Name
         MenuService.update("Artikel");
 
+        $scope.apiPath   = 'pages'; // used for genService
+        $scope.deleteMsg = 'Löschen';
+
         $scope.loadingPages = true;
         genService.getAllObjects('pages').then(function (response) {
             $scope.pages = response;
