@@ -12,7 +12,7 @@
 					<td class="no-border"><label for="address">Adresse</td>
 					<td class="no-border"><input type="text" ng-model="location.address" id="address" tabindex="3" geocode></td>
 				</tr>
-				<tr>
+				<tr ng-show="noResultsFound || addressIsLoading">
 					<td></td>
 					<td>
 						<span style="height: 20px">&nbsp;</span>
