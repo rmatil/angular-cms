@@ -125,7 +125,7 @@ class FileHandler {
 
         $retThumbnail = true;
         if (file_exists($file->getLocalThumbnailPath())) {
-            $ret = @unlink($file->getLocalThumbnailPath());
+            $retThumbnail = @unlink($file->getLocalThumbnailPath());
         }
 
         if (!$ret) {
