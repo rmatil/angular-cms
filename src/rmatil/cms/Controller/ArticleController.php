@@ -69,9 +69,6 @@ class ArticleController extends SlimController {
         $now                        = new DateTime();
         $articleObject->setLastEditDate($now);
 
-        // TODO: what if an user simultaneously deleted this article?
-        // -> insert it again? 
-
         // get original article
         $entityManager              = $this->app->entityManager;
         $articleRepository          = $entityManager->getRepository(EntityNames::ARTICLE);
