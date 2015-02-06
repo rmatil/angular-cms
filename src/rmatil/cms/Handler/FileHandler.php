@@ -111,23 +111,29 @@ class FileHandler {
             throw new FileNotSavedException('An unknown error occured');
         }
         $fileObject->setLink(sprintf('%s/%s.%s', $this->httpPathToMediaDir, $_FILES['file']['name'], $fileExtension));
+        $fileObject->setLocalPath(sprintf('%s/%s.%s', $this->localPathToMediaDir, $_FILES['file']['name'], $fileExtension));
 
         // create thumbnail with width of 40px
         ThumbnailHandler::createThumbnail($fileObject, $this->httpPathToMediaDir, $this->localPathToMediaDir, $_FILES['file']['name'], $fileExtension, 40, null);
     }
 
-    public function deleteFileOnDisk($fileName, $extension) {
-        $path = sprintf('%s/%s.%s', $this->localPathToMediaDir, $fileName, $extension);
-        
+    public function deleteFileOnDisk(File $file) {
         $ret = true;
-        if (file_exists($path)) {
-            $ret = @unlink($path);
+        if (file_exists($file->getLocalPath())) {
+            $ret = @unlink($file->getLocalPath());
         }
 
-        // TODO: delete thumbnail
+        $retThumbnail = true;
+        if (file_exists($file->getLocalThumbnailPath())) {
+            $retThumbnail = @unlink($file->getLocalThumbnailPath());
+        }
 
         if (!$ret) {
-            throw new \Exception(error_get_last());
+            throw new \Exception(sprintf('Failed to delete file %s with path %s', $file->getName(), $file->getLocalPath()));
+        }
+
+        if (!$retThumbnail) {
+            throw new \Exception(sprintf('Failed to delete file %s with path %s', $file->getName(), $file->getLocalThumbnailPath()));
         }
     }
 

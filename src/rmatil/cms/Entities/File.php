@@ -59,6 +59,17 @@ class File {
     protected $link;
 
     /**
+     * The local path to this file
+     *
+     * @ORM\Column(type="string")
+     *
+     * @Type("string")
+     * 
+     * @var string
+     */
+    protected $localPath;
+
+    /**
      * The link to a thumbnail of this file
      * 
      * @ORM\Column(type="string", nullable=true) 
@@ -68,6 +79,17 @@ class File {
      * @var string
      */
     protected $thumbnailLink;
+
+    /**
+     * The local path to the thumbnail of this file
+     *
+     * @ORM\Column(type="string", nullable=true)
+     *
+     * @Type("string")
+     * 
+     * @var string
+     */
+    protected $localThumbnailPath;
 
     /**
      * File category
@@ -191,6 +213,24 @@ class File {
     }
 
     /**
+     * Gets the The local path to this file.
+     *
+     * @return string
+     */
+    public function getLocalPath() {
+        return $this->localPath;
+    }
+
+    /**
+     * Sets the The local path to this file.
+     *
+     * @param string $localPath the local path
+     */
+    public function setLocalPath($localPath) {
+        $this->localPath = $localPath;
+    }
+
+    /**
      * Gets the The link to a thumbnail of this file.
      *
      * @return string
@@ -206,6 +246,24 @@ class File {
      */
     public function setThumbnailLink($thumbnailLink) {
         $this->thumbnailLink = $thumbnailLink;
+    }
+
+    /**
+     * Gets the The local path to the thumbnail of this file.
+     *
+     * @return string
+     */
+    public function getLocalThumbnailPath() {
+        return $this->localThumbnailPath;
+    }
+
+    /**
+     * Sets the The local path to the thumbnail of this file.
+     *
+     * @param string $localThumbnailPath the local thumbnail path
+     */
+    public function setLocalThumbnailPath($localThumbnailPath) {
+        $this->localThumbnailPath = $localThumbnailPath;
     }
 
     /**
@@ -320,7 +378,9 @@ class File {
         $this->setName($file->getName());
         $this->setDescription($file->getDescription());
         $this->setLink($file->getLink());
+        $this->setLocalPath($file->getLocalPath());
         $this->setThumbnailLink($file->getThumbnailLink());
+        $this->setLocalThumbnailPath($file->getLocalThumbnailPath());
         $this->setCategory($file->getCategory());
         $this->setExtension($file->getExtension());
         $this->setSize($file->getSize());
