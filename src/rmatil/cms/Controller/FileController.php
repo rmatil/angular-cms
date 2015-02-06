@@ -110,7 +110,7 @@ class FileController extends SlimController {
         }
 
         try {
-            $this->app->fileHandler->deleteFileOnDisk($file->getName(), $file->getExtension());
+            $this->app->fileHandler->deleteFileOnDisk($file);
         } catch (\Exception $e) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $e->getMessage()));

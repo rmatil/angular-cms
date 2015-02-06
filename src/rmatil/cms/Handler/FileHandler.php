@@ -117,18 +117,23 @@ class FileHandler {
         ThumbnailHandler::createThumbnail($fileObject, $this->httpPathToMediaDir, $this->localPathToMediaDir, $_FILES['file']['name'], $fileExtension, 40, null);
     }
 
-    public function deleteFileOnDisk($fileName, $extension) {
-        $path = sprintf('%s/%s.%s', $this->localPathToMediaDir, $fileName, $extension);
-        
+    public function deleteFileOnDisk(File $file) {
         $ret = true;
-        if (file_exists($path)) {
-            $ret = @unlink($path);
+        if (file_exists($file->getLocalPath())) {
+            $ret = @unlink($file->getLocalPath());
         }
 
-        // TODO: delete thumbnail
+        $retThumbnail = true;
+        if (file_exists($file->getLocalThumbnailPath())) {
+            $ret = @unlink($file->getLocalThumbnailPath());
+        }
 
         if (!$ret) {
-            throw new \Exception(sprintf('Failed to delete file %s.%s with path %s', $fileName, $extension, $path));
+            throw new \Exception(sprintf('Failed to delete file %s with path %s', $file->getName(), $file->getLocalPath()));
+        }
+
+        if (!$retThumbnail) {
+            throw new \Exception(sprintf('Failed to delete file %s with path %s', $file->getName(), $file->getLocalThumbnailPath()));
         }
     }
 
