@@ -82,6 +82,7 @@ class ThumbnailHandler {
 
         $fileObject->setDimensions(sprintf('%sx%s', $imagick->getImageWidth(), $imagick->getImageHeight()));
         $fileObject->setThumbnailLink(sprintf('%s/%sx%s-thumbnail-%s.%s', $httpPathToMediaDir, $imagick->getImageWidth(), $imagick->getImageHeight(), $fileName, $fileExtension));
+        $fileObject->setLocalThumbnailPath(sprintf('%s/%sx%s-thumbnail-%s.%s', $pathToMediaDirectory, $imagick->getImageWidth(), $imagick->getImageHeight(), $fileName, $fileExtension));
 
         // free up associated resources
         $imagick->destroy();
@@ -155,7 +156,9 @@ class ThumbnailHandler {
             throw new ThumbnailCreationFailedException('Thumbnail creation failed on saving thumbnail');
         }
 
+        $fileObject->setDimensions(sprintf('%sx%s', $newWidth, $newHeight));
         $fileObject->setThumbnailLink(sprintf('%s/%sx%s-thumbnail-%s.%s', $httpPathToMediaDir, $newWidth, $newHeight, $fileName, $fileExtension));
+        $fileObject->setLocalThumbnailPath(sprintf('%s/%sx%s-thumbnail-%s.%s', $pathToMediaDirectory, $newWidth, $newHeight, $fileName, $fileExtension));
 
         // free memory
         imagedestroy($tmpImg);
