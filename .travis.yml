@@ -5,3 +5,10 @@ php:
   - "5.3"
 install:
   - composer install
+branches:
+  only:
+    - master
+cache:
+  directories:
+  - vendor
+  - node_modules
