@@ -1,8 +1,8 @@
 database:
     driver: pdo_mysql
-    username: root
-    password: root
-    dbname: cms
+    username: cmsv4
+    password: cmsv4
+    dbname: cmsv4
     host: localhost
 
 mail:
