@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit bootstrap="src/rmatil/cms/Tests/bootstrap.php" colors="true">
+    <testsuites>
+        <testsuite name="Default Test Suite">
+            <directory>./src/rmatil/cms/Tests/</directory>
+        </testsuite>
+    </testsuites>
+
+    <!-- Include for test coverage -->
+    <filter>
+        <whitelist>
+            <directory>./src/rmatil/cms/</directory>
+            <exclude>
+                <directory>./src/rmatil/cms/Tests</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>
