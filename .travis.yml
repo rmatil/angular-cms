@@ -12,3 +12,5 @@ cache:
   directories:
   - vendor
   - node_modules
+
+script: phpunit src/rmatil/cms/Tests
