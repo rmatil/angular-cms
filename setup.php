@@ -25,7 +25,7 @@ use rmatil\cms\Handler\RegistrationHandler;
  */
 
 // doctrine and password for database and smtp server
-require_once('../bootstrap.php');
+require_once('bootstrap.php');
 
 // protocol of connection (either http or https)
 (!isset($_SERVER['HTTPS']) OR $_SERVER['HTTPS']=='off') ? $protocol = 'http://' : $protocol = 'https://';
