@@ -3,7 +3,7 @@
 namespace rmatil\cms\Entities;
 
 use JMS\Serializer\Annotation\Type;
-use Doctrine\ORM\Mapping AS ORM;
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**

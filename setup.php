@@ -28,7 +28,7 @@ use rmatil\cms\Handler\RegistrationHandler;
 require_once('bootstrap.php');
 
 // protocol of connection (either http or https)
-(!isset($_SERVER['HTTPS']) OR $_SERVER['HTTPS']=='off') ? $protocol = 'http://' : $protocol = 'https://';
+(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off') ? $protocol = 'http://' : $protocol = 'https://';
 
 define('HTTP_ROOT', $protocol.$_SERVER['HTTP_HOST']);
 define('LOCAL_ROOT', __DIR__);

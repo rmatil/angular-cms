@@ -22,21 +22,23 @@ class FileUtils {
      * @return integer      An integer representation in bytes
      */
     public static function getFileSizeInBytes($size)  {  
-        $l = substr($size, -1);  
+        $length = substr($size, -1);  
         $ret = substr($size, 0, -1);  
-        switch(strtoupper($l)){  
-        case 'P':  
-            $ret *= 1024;  
-        case 'T':  
-            $ret *= 1024;  
-        case 'G':  
-            $ret *= 1024;  
-        case 'M':  
-            $ret *= 1024;  
-        case 'K':  
-            $ret *= 1024;  
-            break;  
-        }  
+        
+        switch(strtoupper($length)) {  
+            case 'P':  
+                $ret *= 1024;  
+            case 'T':  
+                $ret *= 1024;  
+            case 'G':  
+                $ret *= 1024;  
+            case 'M':  
+                $ret *= 1024;  
+            case 'K':  
+                $ret *= 1024;  
+                break;  
+        }
+
         return $ret;  
     }
 
@@ -51,7 +53,7 @@ class FileUtils {
 
         if ($bytes>=1024) {
             // output in kb with one decimal place
-            $kb     = sprintf("%01.1f",$bytes/1024);
+            $kb     = sprintf("%01.1f", $bytes/1024);
             $output = "$kb KB";
         }
 
@@ -63,13 +65,13 @@ class FileUtils {
 
         // bigger than 1024 KB
         if ($bytes>=1024*1024) {
-            $mb     = sprintf("%01.1f",$bytes/1048576);
+            $mb     = sprintf("%01.1f", $bytes/1048576);
             $output = "$mb MB";
         }
 
         // bigger than 1024 MB
         if ($bytes>=1024*1024*1024) {
-            $gb     = sprintf("%01.1f",$bytes/1073741824);
+            $gb     = sprintf("%01.1f", $bytes/1073741824);
             $output = "$gb GB";
         }
     

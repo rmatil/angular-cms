@@ -6,7 +6,7 @@ use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\Exclude;
 use rmatil\cms\Entities\BaseEntity;
 use rmatil\cms\Entities\UserGroup;
-use Doctrine\ORM\Mapping AS ORM;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity 
@@ -561,5 +561,3 @@ class User {
         $this->setIsLockedBy($user->getIsLockedBy());
     }
 }
-
-?>
