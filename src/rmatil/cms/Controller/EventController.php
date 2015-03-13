@@ -162,7 +162,7 @@ class EventController extends SlimController {
         }
 
         // prevent conflict on foreign key constraint
-        $article->setIsLockedBy(null);
+        $event->setIsLockedBy(null);
 
         $entityManager->remove($event);
 
