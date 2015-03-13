@@ -2,6 +2,7 @@ angular-cms
 ===========
 
 [![Build Status](https://magnum.travis-ci.com/rmatil/angular-cms.svg?token=YH9Jjv7jtWKZMq8uyuEi&branch=master)](https://magnum.travis-ci.com/rmatil/angular-cms)
+[![Codacy Badge](https://www.codacy.com/project/badge/a49a99aed4c149f0815fbaf87fe65d74)](https://www.codacy.com)
 
 Angular CMS is a simple Content Management System (CMS) which is based on the structure of a [Slim Application](https://github.com/codeguy/Slim). The content managamenet is implemented as a single page application with AngularJS.
 
