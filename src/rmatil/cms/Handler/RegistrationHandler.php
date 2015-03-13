@@ -46,7 +46,7 @@ class RegistrationHandler {
         $websiteReplyToEmail = $settingsRepo->findOneBy(array('name' => 'website_reply_to_email'));
         $websiteUrl          = $settingsRepo->findOneBy(array('name' => 'website_url'));
 
-        $registrationLink = sprintf('%s/registration/%s',$websiteUrl->getValue(), $registration->getToken());
+        $registrationLink = sprintf('%s/registration/%s', $websiteUrl->getValue(), $registration->getToken());
 
         $this->entityManager->persist($user);
         $this->entityManager->persist($registration);

@@ -4,7 +4,7 @@ namespace rmatil\cms\Entities;
 
 use JMS\Serializer\Annotation\Type;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping AS ORM;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity 
