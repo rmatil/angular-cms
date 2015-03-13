@@ -131,7 +131,7 @@ class ThumbnailHandler {
         if ($width && !$height) {
             $newHeight = floor($imgHeight * ($width / $imgWidth));
             $newWidth  = $width;
-        } elseif (!$width && $height) {
+        } else if (!$width && $height) {
             $newHeight = $height;
             $newWidth  = floor($imgWidth * ($height / $imgHeight));
         }
