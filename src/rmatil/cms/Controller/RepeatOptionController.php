@@ -61,7 +61,7 @@ class RepeatOptionController extends SlimController {
         $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($origArticleCategory, 'json'));
+        $this->app->response->setBody($this->app->serializer->serialize($origRepeatOption, 'json'));
     }
 
     public function insertRepeatOptionAction() {

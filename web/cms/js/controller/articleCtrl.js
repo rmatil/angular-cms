@@ -1,5 +1,5 @@
 /*jslint browser: true, sloppy: true, plusplus: true, nomen: true*/
-/*globals angular, window */
+/*globals angular */
 'use strict';
 
 /* controller for articles */

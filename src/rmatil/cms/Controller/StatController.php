@@ -13,7 +13,6 @@ class StatController extends SlimController {
 
     public function getStatisticsAction() {
         $entityManager      = $this->app->entityManager;
-        $eventRepository    = $entityManager->getRepository(EntityNames::EVENT);
 
         $lastEvents         = $entityManager->createQueryBuilder()
                                 ->select('e')
