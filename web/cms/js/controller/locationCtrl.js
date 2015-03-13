@@ -1,5 +1,5 @@
 /*jslint browser: true, sloppy: true, plusplus: true, nomen: true*/
-/*globals angular, window, google */
+/*globals angular, google */
 'use strict';
 
 /* controller for locations */

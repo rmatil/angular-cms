@@ -1,5 +1,5 @@
 /*jslint browser: true, sloppy: true, plusplus: true, nomen: true*/
-/*globals angular, window, moment */
+/*globals angular, moment */
 'use strict';
 
 /* controller for articles */
@@ -92,7 +92,7 @@ angular.module('cms.controllers')
             // }
 
             if (Object.prototype.toString.call($scope.eventEndDate) !== "[object Date]" ||
-                (Object.prototype.toString.call($scope.eventEndDate) === "[object Date]" && !isNaN( $scope.eventEndTime.getTime()))) {
+                    (Object.prototype.toString.call($scope.eventEndDate) === "[object Date]" && !isNaN($scope.eventEndTime.getTime()))) {
                 // event end date is not a date
                 $scope.eventEndDate = null;
             }
