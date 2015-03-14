@@ -2,16 +2,18 @@ angular-cms
 ===========
 
 [![Build Status](https://magnum.travis-ci.com/rmatil/angular-cms.svg?token=YH9Jjv7jtWKZMq8uyuEi&branch=master)](https://magnum.travis-ci.com/rmatil/angular-cms)
-[![Codacy Badge](https://www.codacy.com/project/badge/a49a99aed4c149f0815fbaf87fe65d74)](https://www.codacy.com)
+[![Codacy Badge](https://www.codacy.com/project/badge/29fc1a82158346ddb42cd13cdde3a163)](https://www.codacy.com)
 
 Angular CMS is a simple Content Management System (CMS) which is based on the structure of a [Slim Application](https://github.com/codeguy/Slim). The content managamenet is implemented as a single page application with AngularJS.
 
 Installation
 ============
-As of now, you have to download the repo via git. Composer will be available in the future.
+As of now, you have to clone the repo via git.
 
-Then use composer in the root folder to install required dependencies: `composer install`.
+Once downloaded, use composer in the root folder to install required dependencies: `composer install`.
 In `web/cms/` run `bower install` to download all required frontend packages.
+
+To minify all assets, run `gulp` in the project root folder.
 
 After download, set up the connection to your database in `config/yaml/parameters.yml`. Furthermore, you can setup the credentials for a mailserver which gets used for sending emails for user registration purposes.
 
@@ -23,11 +25,12 @@ Additionally, you can change the path to the media directory for uploaded files 
 
 Login to backend
 ================
-As until now, you have to generate a user entry in the database. Use `sha512` as hash algorithm for field `passwordHash`.
-Navigate in your browser to `your-webserver/login` to login with specified username and credentials.
+As of now, you have to generate a user entry in the database. Use `sha512` as hash algorithm for field `passwordHash`.
+Navigate in your browser to `your-webserver/login` to login with specified username and password.
 
 Registration Endpoint
 =====================
 Registration endpoint is specified at `api/registration/:token`
+
 
 
