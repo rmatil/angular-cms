@@ -83,9 +83,9 @@
 	        </div>
 		</div>
 		<div class="right-footer">
-	        <button type="submit" tabindex="8">Speichern</button>
+	        <button class="darkpink" type="submit" tabindex="8">Speichern</button>
 	     	<img class="img-center" src="img/loading.gif" height="18" width="18" alt="loading" ng-show="loading">
-	        <span class="right delete" delete-object delete-object-id="{{ event.id }}" delete-object-path="{{ apiPath }}" tabindex="7">{{deleteMsg}}</span>
+	        <button type="button" ng-show="deleteMsg" class="right delete" delete-object delete-object-id="{{ event.id }}" delete-object-path="{{ apiPath }}" tabindex="7">{{deleteMsg}}</button>
 		</div>
 		<p></p>
 		<div class="right-heading {{ backgroundColorClass }}" ng-show="debugModus">Debug Info</div>

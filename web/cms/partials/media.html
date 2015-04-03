@@ -42,6 +42,6 @@ filter can not handle objects, only arrays
 		<td>{{file.dimensions}}</td>
 		<td>{{file.category.name}} </td>
 		<td>{{file.creation_date | date:"HH:mm 'Uhr am' dd.MM.yyyy"}}</td>
-		<td><span class="right delete" delete-object delete-object-id="{{ file.id }}" delete-object-path="{{ apiPath }}" tabindex="7">{{deleteMsg}}</span></td>
+		<td><span class="right cursor-pointer delete" delete-object delete-object-id="{{ file.id }}" delete-object-path="{{ apiPath }}" tabindex="7">{{deleteMsg}}</span></td>
 	</tr>
 </table>

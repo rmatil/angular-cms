@@ -592,6 +592,19 @@ p.correct {
 }
 
 button {
+  min-width: 100px;
+  line-height: 20px;
+  padding: 5px;
+  background: #fff;
+  border: 2px solid #000;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+/*
+button {
   height: 25px;
   min-width: 60px;
   line-height: 20px;
@@ -621,7 +634,7 @@ button:active {
   background-image: -ms-linear-gradient(bottom,#fff,#e4e4e4);
   background-image: linear-gradient(bottom,#fff,#e4e4e4);
 }
-
+*/
 button:focus {
   outline:0;
 }
@@ -630,12 +643,20 @@ button:focus {
   cursor: pointer;
 }
 
+button.delete {
+  color: #000;
+  border: 2px solid #000;
+}
+
+button.delete:hover,
+button.delete:active {
+  color: #fff;
+  background: #d8000c;
+  border: 2px solid #d8000c;
+}
+
 .delete {
-  color: #D8000C;
-  cursor: pointer;
-  text-decoration: none;
-  height: 25px;
-  line-height: 25px;
+  color: #d8000c;
 }
 
 .sortable {
@@ -922,9 +943,6 @@ table.table-settings td:first-child {
 /* Borders */
 /***********************************************/
 
-
-/* 2px left/right borders for table */
-
 /*right */
 .lightred-right-border {
   border-right: 2px solid #e7494a;
@@ -1185,4 +1203,150 @@ ul.navigation li.darkpink-border {
   color: #ffffff;
   padding-left: 8px;
   padding-right: 8px;
+}
+
+/* Buttons */
+
+button.lightred {
+  background: #fff;
+  color: #e7494a;
+  border: 2px solid #e7494a;
+}
+
+button.lightred:hover,
+button.lightred:active {
+  color: #fff;;
+  background: #e7494a;
+}
+
+button.darkred {
+  background: #fff;
+  color: #c22727;
+  border: 2px solid  #c22727;
+}
+
+button.darkred:hover,
+button.darkred:active {
+  color: #fff;
+  background: #c22727;
+}
+
+button.lightblue {
+  background: #fff;
+  color: #3498db;
+  border: 2px solid #3498db;
+}
+
+button.lightblue:hover,
+button.lightblue:active {
+  color: #fff;
+  background: #3498db;
+}
+
+button.darkblue {
+  background: #fff;
+  color: #2980b9;
+  border: 2px solid  #2980b9;
+}
+
+button.darkblue:hover,
+button.darkblue:active {
+  color: #fff;
+  background: #2980b9;
+}
+
+button.lightpurple {
+  background: #fff;
+  color: #9b59b6;
+  border: 2px solid #9b59b6;
+}
+
+button.lightpurple:hover,
+button.lightpurple:active {
+  color: #fff;
+  background: #9b59b6;
+}
+
+button.darkpurple  {
+  background: #fff;
+  color: #8e44ad;
+  border: 2px solid #8e44ad;
+}
+
+button.darkpurple:hover,
+button.darkpurple.active {
+  color: #fff;
+  background: #8e44ad;
+}
+
+button.lightyellow  {
+  background: #fff;
+  color: #efcf4d;
+  border: 2px solid  #efcf4d;
+}
+
+button.lightyellow:hover,
+button.lightyellow:active {
+  color: #fff;
+  background: #efcf4d;
+}
+
+button.darkyellow {
+  background: #fff;
+  color: #f2ac3e;
+  border: 2px solid  #f2ac3e;
+}
+
+button.darkyellow:hover,
+button.darkyellow:active {
+  color: #fff;
+  background: #f2ac3e;
+}
+
+button.lightgreen {
+  background: #fff;
+  color: #2ecc71;
+  border: 2px solid  #2ecc71;
+}
+
+button.lightgreen:hover,
+button.lightgreen:active {
+  color: #fff;
+  background: #2ecc71;
+}
+
+button.darkgreen {
+  background: #fff;
+  color: #27ae60;
+  border: 2px solid  #27ae60;
+}
+
+button.darkgreen:hover,
+button.darkgreen.active {
+  color: #fff;
+  background: #27ae60;
+}
+
+button.darkpink {
+  background: #fff;
+  color: #c227ae;
+  border: 2px solid #c227ae;
+}
+
+button.darkpink:hover,
+button.darkpink:active {
+  background: #c227ae;
+  color: #fff;
+}
+
+button.lightpink {
+  background: #fff;
+  color: #ee51da;
+  border: 2px solid #ee51da;
+}
+
+button.lightpink:hover,
+button.lightpink:active {
+  color: #fff;
+  background: #ee51da;
 }
