@@ -41,7 +41,7 @@ angular.module('cms.controllers')
         genService.getObjectById('locations', $routeParams.locationId).then(function (response) {
             if (!response) {
                 toaster.pop('error', null, 'Uups. Der angeforderte Veranstaltungsort exisitert nicht (mehr).');
-                $location.path("/locations");
+                $location.path("/events");
             }
             $scope.location = response;
 

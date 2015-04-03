@@ -46,7 +46,7 @@
 		<div class="right-footer">
 	        <button class="darkpink" type="submit" tabindex="4">Speichern</button>
 	     	<img class="img-center" src="img/loading.gif" height="18" width="18" alt="loading" ng-show="loading">
-	     	<button type="button" ng-show="deleteMsg" class="right delete" delete-object delete-object-id="{{ location.id }}" delete-object-path="{{ apiPath }}" tabindex="7">{{deleteMsg}}</button>
+	     	<button type="button" ng-show="deleteMsg" class="right delete" delete-object delete-object-id="{{ location.id }}" delete-object-path="{{ apiPath }}" delete-redirect-path="events" tabindex="7">{{deleteMsg}}</button>
 		</div>
 		<p></p>
 		<div class="right-heading {{ backgroundColorClass }}" ng-show="debugModus">Debug Info</div>

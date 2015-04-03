@@ -141,7 +141,9 @@ angular.module('cms.directives', []).
                             scope.deleteMsg = 'Gelöscht';
                             genService.deleteObjectById(attrs.deleteObjectPath, attrs.deleteObjectId).then(function () {
                                 $timeout(function () {
-                                    $location.path('/' + attrs.deleteObjectPath);
+                                    var redirectPath = attrs.deleteRedirectPath || attrs.deleteObjectPath;
+
+                                    $location.path('/' + redirectPath);
                                 }, 2500);
                             });
                         });
