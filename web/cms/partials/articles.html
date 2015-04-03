@@ -27,6 +27,6 @@
 		<td>{{article.language.name}}</td>
 		<td>{{article.author.user_name}}</td>
 		<td>{{article.last_edit_date | date:"HH:mm 'Uhr am' dd.MM.yyyy"}}</td>
-		<td><span class="right delete" delete-object delete-object-id="{{ article.id }}" delete-object-path="{{ apiPath }}" tabindex="7">{{ deleteMsg }}</span></td>
+		<td><span class="right cursor-pointer delete" delete-object delete-object-id="{{ article.id }}" delete-object-path="{{ apiPath }}" tabindex="7">{{ deleteMsg }}</span></td>
 	</tr>
 </table>

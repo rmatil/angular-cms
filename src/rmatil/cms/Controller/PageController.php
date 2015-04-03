@@ -166,6 +166,7 @@ class PageController extends SlimController {
         // get origArticles
         foreach ($pageObject->getArticles()->toArray() as $article) {
             $origArticle = $articleRepository->findOneBy(array('id' => $article->getId()));
+            $origArticle->setPage($pageObject);
             $origArticles->add($origArticle);
         }
         $pageObject->setArticles($origArticles);
