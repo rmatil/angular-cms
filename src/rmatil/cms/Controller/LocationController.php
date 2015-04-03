@@ -134,6 +134,14 @@ class LocationController extends SlimController {
             return;
         }
 
+        $attachedEvents = $entityManager->getRepository(EntityNames::EVENT)->findBy(array(
+            'location' => $location->getId()
+        ));
+
+        foreach ($attachedEvents as $event) {
+            $event->setLocation(null);
+        }
+
         $entityManager->remove($location);
 
         try {
