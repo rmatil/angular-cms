@@ -6,6 +6,8 @@ angular-cms
 
 Angular CMS is a simple Content Management System (CMS) which is based on the structure of a [Slim Application](https://github.com/codeguy/Slim). The content managamenet is implemented as a single page application with AngularJS.
 
+![ScreenShot](/web/media/overview.png)
+
 Installation
 ============
 As of now, you have to clone the repo via git.
