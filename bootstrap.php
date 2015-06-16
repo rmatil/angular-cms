@@ -39,12 +39,4 @@ $mailParams = array(
     'Port'     => $params['mail']['port']
 );
 
-
 $entityManager       = EntityManager::create($dbParams, $config);
-
-
-
-
-
-
-

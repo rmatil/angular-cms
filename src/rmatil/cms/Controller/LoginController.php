@@ -6,7 +6,6 @@ use SlimController\SlimController;
 use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Utils\PasswordUtils;
-use Doctrine\ORM\EntityManager;
 
 class LoginController extends SlimController {
 
