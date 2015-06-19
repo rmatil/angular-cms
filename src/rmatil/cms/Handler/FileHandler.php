@@ -8,6 +8,9 @@ use rmatil\cms\Exceptions\DocTypeNotFoundException;
 use rmatil\cms\Exceptions\FileNotSavedException;
 use rmatil\cms\Handler\ThumbnailHandler;
 use rmatil\cms\Utils\FileUtils;
+use rmatil\cms\Constants\FilePaths;
+use Symfony\Component\Yaml\Yaml;
+use RuntimeException;
 
 class FileHandler {
 
@@ -223,4 +226,33 @@ class FileHandler {
     public function setAllowedFileExtensions(array $allowedFileExtensions) {
         $this->allowedFileExtensions = $allowedFileExtensions;
     }
+    
+    /**
+      * Writes the given config to the config.yml file
+      * 
+      * @param array $config The config to write
+      * @throws RuntimeException When keys database or mail do not exist
+      */
+     public function rewriteConfigFile(array $config) {
+        if (!array_key_exists('database', $config) ||
+            !array_key_exists('mail', $config)) {
+            throw new RuntimeException('Key database or mail is required');
+        }
+         
+        $params = Yaml::parse(file_get_contents(FilePaths::CONFIG_FILE));
+        
+        $params['database']['driver'] = $config['database']['driver'];
+        $params['database']['username'] = $config['database']['user'];
+        $params['database']['password'] = $config['database']['password'];
+        $params['database']['dbname'] = $config['database']['dbname'];
+        $params['database']['host'] = $config['database']['host'];
+        
+        $params['mail']['host'] = $config['mail']['host'];
+        $params['mail']['smtp_auth'] = $config['mail']['smtp_auth'];
+        $params['mail']['username'] = $config['mail']['username'];
+        $params['mail']['password'] = $config['mail']['password'];
+        $params['mail']['port'] = $config['mail']['port'];
+     
+        file_put_contents(FilePaths::CONFIG_FILE, Yaml::dump($params, 2, 4, true));
+     }
 }
