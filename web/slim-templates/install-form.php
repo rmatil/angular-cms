@@ -148,6 +148,20 @@
 <body>
 
     <h1>Installation - Angular CMS</h1>
+    <?php
+        if (isset($errors)) {
+            echo '<section>';
+            echo 'Leider ist bei der Installation ein Fehler aufgetreten:';
+            echo '<ul>';
+            foreach ($errors as $error) {
+                echo '<li>'.$error->getMessage().'</li>';
+            }
+            echo '</ul>';
+            echo '</section>';
+        }
+    
+    ?>
+    
     <form action="/install/do-install" method="post">
         <table>
             <col style="width:150px">
@@ -158,17 +172,9 @@
                     <label for="database-type">Datenbank Type</label>
                 </td>
                 <td>
-                    <select id="database-type" name="database-type">
+                    <select id="database-type" name="database-type" required>
                         <option value="pdo_mysql">MySQL</option>
                     </select>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="database-create">Datenbank Type</label>
-                </td>
-                <td>
-                    <input type="checkbox" name="database-create" value="true"/>
                 </td>
             </tr>
             <tr>
@@ -176,7 +182,7 @@
                     <label for="db-host">Datenbank Host</label>
                 </td>
                 <td>
-                    <input type="text" id="db-host" name="db-host" value="localhost"/>
+                    <input type="text" id="db-host" name="db-host" value="localhost" required/>
                 </td>
             </tr>
             <tr>
@@ -184,7 +190,7 @@
                     <label for="db-port">Datenbank Port</label>
                 </td>
                 <td>
-                    <input type="number" id="db-port" name="db-port" value="3306"/>
+                    <input type="number" id="db-port" name="db-port" value="3306" required/>
                 </td>
             </tr>
             <tr>
@@ -192,7 +198,7 @@
                     <label for="db-name">Datenbank Name</label>
                 </td>
                 <td>
-                    <input type="text" id="db-name" name="db-name"/>
+                    <input type="text" id="db-name" name="db-name" required/>
                 </td>
             </tr>
             <tr>
@@ -200,7 +206,7 @@
                     <label for="db-user">Benutzername</label>
                 </td>
                 <td>
-                    <input type="text" id="db-user" name="db-user"/>
+                    <input type="text" id="db-user" name="db-user" required/>
                 </td>
             </tr>
             <tr>
@@ -208,7 +214,91 @@
                     <label for="db-password">Datenbank Passwort</label>
                 </td>
                 <td>
-                    <input type="password" id="db-password" name="db-password"/>
+                    <input type="password" id="db-password" name="db-password" required/>
+                </td>
+            </tr>
+        </table>
+        
+        <h2>Email</h2>
+        <table>
+            <col style="width:150px">
+            <col style="width:auto">
+            <tr>
+                <td>
+                    <label for="mail-host">Host</label>
+                </td>
+                <td>
+                    <input type="text" id="mail-host" name="mail-host" required/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="mail-port">Port</label>
+                </td>
+                <td>
+                    <input type="number" id="mail-port" name="mail-port" value="587" required/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="mail-smtp-auth">SMTP Authentication</label>
+                </td>
+                <td>
+                    <input type="checkbox" id="mail-smtp-auth" name="mail-smtp-auth" value="true"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="mail-username">Benutzername</label>
+                </td>
+                <td>
+                    <input type="text" id="mail-username" name="mail-username" required/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="mail-password">Passwort</label>
+                </td>
+                <td>
+                    <input type="password" id="mail-password" name="mail-password" required/>
+                </td>
+            </tr>
+        </table>
+        
+        <h2>Website</h2>
+        <table>
+            <col style="width:150px">
+            <col style="width:auto">
+            <tr>
+                <td>
+                    <label for="website-name">Website Name</label>
+                </td>
+                <td>
+                    <input type="text" id="website-name" name="website-name" required/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="website-name">Website Email Address</label>
+                </td>
+                <td>
+                    <input type="email" id="website-email" name="website-email" required/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="website-name">Website Reply To Email</label>
+                </td>
+                <td>
+                    <input type="email" id="website-reply-to-email" name="website-reply-to-email" required/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="website-url">Website URL</label>
+                </td>
+                <td>
+                    <input type="text" id="website-url" name="website-url" value="<?php echo $_SERVER['SERVER_NAME']; ?>" required/>
                 </td>
             </tr>
         </table>
@@ -222,7 +312,7 @@
                     <label for="encryption-code">Verschlüsselungs Code</label>
                 </td>
                 <td>
-                    <input type="text" id="encryption-code" name="encryption-code"/>
+                    <input type="text" id="encryption-code" name="encryption-code" value="ThisIsNotSafeChangeIt"/>
                 </td>
             </tr>
         </table>
@@ -236,7 +326,7 @@
                     <label for="admin-user">Benutzername</label>
                 </td>
                 <td>
-                    <input type="text" id="admin-user" name="admin-user"/>
+                    <input type="text" id="admin-user" name="admin-user" required/>
                 </td>
             </tr>
             <tr>
@@ -244,7 +334,7 @@
                     <label for="admin-password">Passwort</label>
                 </td>
                 <td>
-                    <input type="password" id="admin-password" name="admin-password"/>
+                    <input type="password" id="admin-password" name="admin-password" required/>
                 </td>
             </tr>
             <tr>
@@ -252,7 +342,7 @@
                     <label for="admin-email">Email</label>
                 </td>
                 <td>
-                    <input type="email" id="admin-email" name="admin-email"/>
+                    <input type="email" id="admin-email" name="admin-email" required/>
                 </td>
             </tr>
             
