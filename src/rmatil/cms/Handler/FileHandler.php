@@ -9,6 +9,7 @@ use rmatil\cms\Exceptions\FileNotSavedException;
 use rmatil\cms\Handler\ThumbnailHandler;
 use rmatil\cms\Utils\FileUtils;
 use rmatil\cms\Constants\FilePaths;
+use rmatil\cms\Constants\ConfigurationNames;
 use Symfony\Component\Yaml\Yaml;
 use RuntimeException;
 
@@ -241,18 +242,22 @@ class FileHandler {
          
         $params = Yaml::parse(file_get_contents(FilePaths::CONFIG_FILE));
         
-        $params['database']['driver'] = $config['database']['driver'];
-        $params['database']['username'] = $config['database']['user'];
-        $params['database']['password'] = $config['database']['password'];
-        $params['database']['dbname'] = $config['database']['dbname'];
-        $params['database']['host'] = $config['database']['host'];
+        $params[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_DRIVER] = $config[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_DRIVER];
+        $params[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_USER] = $config[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_USER];
+        $params[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_PASSWORD] = $config[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_PASSWORD];
+        $params[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_DBNAME] = $config[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_DBNAME];
+        $params[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_HOST] = $config[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_HOST];
         
-        $params['mail']['host'] = $config['mail']['host'];
-        $params['mail']['smtp_auth'] = $config['mail']['smtp_auth'];
-        $params['mail']['username'] = $config['mail']['username'];
-        $params['mail']['password'] = $config['mail']['password'];
-        $params['mail']['port'] = $config['mail']['port'];
+        $params[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_HOST] = $config[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_HOST];
+        $params[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_SMTP_AUTH] = $config[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_SMTP_AUTH];
+        $params[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_USERNAME] = $config[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_USERNAME];
+        $params[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_PASSWORD] = $config[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_PASSWORD];
+        $params[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_PORT] = $config[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_PORT];
      
         file_put_contents(FilePaths::CONFIG_FILE, Yaml::dump($params, 2, 4, true));
+     }
+     
+     public function getConfigFileContents() {
+         return Yaml::parse(file_get_contents(FilePaths::CONFIG_FILE));
      }
 }
