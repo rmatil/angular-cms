@@ -8,7 +8,6 @@ use rmatil\cms\Exceptions\DocTypeNotFoundException;
 use rmatil\cms\Exceptions\FileNotSavedException;
 use rmatil\cms\Handler\ThumbnailHandler;
 use rmatil\cms\Utils\FileUtils;
-use rmatil\cms\Constants\FilePaths;
 use rmatil\cms\Constants\ConfigurationNames;
 use Symfony\Component\Yaml\Yaml;
 use RuntimeException;
@@ -240,7 +239,7 @@ class FileHandler {
             throw new RuntimeException('Key database or mail is required');
         }
          
-        $params = Yaml::parse(file_get_contents(FilePaths::CONFIG_FILE));
+        $params = Yaml::parse(file_get_contents(CONFIG_FILE));
         
         $params[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_DRIVER] = $config[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_DRIVER];
         $params[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_USER] = $config[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_USER];
@@ -254,10 +253,10 @@ class FileHandler {
         $params[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_PASSWORD] = $config[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_PASSWORD];
         $params[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_PORT] = $config[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_PORT];
      
-        file_put_contents(FilePaths::CONFIG_FILE, Yaml::dump($params, 2, 4, true));
+        file_put_contents(CONFIG_FILE, Yaml::dump($params, 2, 4, true));
      }
      
-     public function getConfigFileContents() {
-         return Yaml::parse(file_get_contents(FilePaths::CONFIG_FILE));
+     public function getConfigFileContents($configFilePath) {
+         return Yaml::parse(file_get_contents($configFilePath));
      }
 }

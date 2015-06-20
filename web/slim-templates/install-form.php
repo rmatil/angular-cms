@@ -154,7 +154,7 @@
             echo 'Leider ist bei der Installation ein Fehler aufgetreten:';
             echo '<ul>';
             foreach ($errors as $error) {
-                echo '<li>'.$error->getMessage().'</li>';
+                echo '<li>'.$error.'</li>';
             }
             echo '</ul>';
             echo '</section>';

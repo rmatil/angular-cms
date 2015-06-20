@@ -3,9 +3,8 @@
 use Slim\LogWriter;
 use SlimController\Slim;
 use JMS\Serializer\SerializerBuilder;
-use rmatil\cms\Handler\ThumbnailHandler;
-use rmatil\cms\Handler\FileHandler;
-use rmatil\cms\Handler\RegistrationHandler;
+use rmatil\cms\Handler\HandlerSingleton;
+use rmatil\cms\Utils\EntityManagerFactory;
 
 /**
  * Setup of Slim application. 
@@ -35,6 +34,7 @@ define('LOCAL_ROOT', __DIR__);
 define('HTTP_MEDIA_DIR', HTTP_ROOT.'/media');
 define('LOCAL_MEDIA_DIR', LOCAL_ROOT.'/web/media');
 define('CONFIG_FILE', LOCAL_ROOT.'/config/yaml/parameters.yml');
+define('SRC_FOLDER', LOCAL_ROOT.'/src');
 
 // set locale to german
 $newLocale = setlocale(LC_TIME, 'de_CH.UTF-8', 'de_CH');
@@ -42,12 +42,6 @@ $newLocale = setlocale(LC_TIME, 'de_CH.UTF-8', 'de_CH');
 // prevent PHP from sending conficting cache expiration headers with the HTTP response
 session_cache_limiter(false);
 session_start();
-
-
-$thumbnailHandler    = new ThumbnailHandler();
-$fileHandler         = new FileHandler(HTTP_MEDIA_DIR, LOCAL_MEDIA_DIR);
-$phpMailer           = new PHPMailer();
-$registrationHandler = new RegistrationHandler($entityManager, $phpMailer, $mailParams);
 
 // enable this for log writing to file
 $logWriter        = new LogWriter(fopen(__DIR__.'/log/cms.log', 'a'));
@@ -64,14 +58,27 @@ $app              = new Slim(array(
                                 'templates.path'             => LOCAL_ROOT.'/web/slim-templates',
                             ));
 
-// Add Doctrine Entity Manager to app
-$app->container->singleton('entityManager', function () use ($dbParams, $config, $entityManager) {
-    return $entityManager;
-});
-
 // Add JMS Serializer to app
 $app->container->singleton('serializer', function () {
     return SerializerBuilder::create()->build();
+});
+
+// reinit because only here the constants are available
+$entityManager = EntityManagerFactory::createEntityManager(HTTP_MEDIA_DIR, LOCAL_MEDIA_DIR, CONFIG_FILE, SRC_FOLDER, $devMode);
+
+HandlerSingleton::setEntityManager($entityManager);
+$thumbnailHandler = HandlerSingleton::getThumbnailHandler();
+$fileHandler = HandlerSingleton::getFileHandler(HTTP_MEDIA_DIR, LOCAL_MEDIA_DIR);
+$registrationHandler = HandlerSingleton::getRegistrationHandler();
+$databaseHandler = HandlerSingleton::getDatabaseHandler();
+
+// Add Doctrine Entity Manager to app
+$app->container->singleton('entityManager', function () use ($entityManager) {
+    return $entityManager;
+});
+
+$app->container->singleton('databaseHandler', function () use ($databaseHandler) {
+    return $databaseHandler;
 });
 
 // Add thumbnail handler to app

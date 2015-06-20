@@ -2,103 +2,74 @@
 
 namespace rmatil\cms\Controller;
 
-use SlimController\SlimController;
-use Symfony\Component\Yaml\Yaml;
-use Doctrine\ORM\Tools\SchemaTool;
+use DateTime;
 use Doctrine\ORM\EntityManager;
-use rmatil\cms\Constants\EntityNames;
+use Exception;
+use JMS\Serializer\SerializerBuilder;
+use rmatil\cms\Constants\ConfigurationNames;
 use rmatil\cms\Entities\User;
 use rmatil\cms\Entities\UserGroup;
+use rmatil\cms\Handler\HandlerSingleton;
 use rmatil\cms\Utils\PasswordUtils;
-use DateTime;
+use rmatil\cms\Utils\EntityManagerFactory;
+use SlimController\SlimController;
 
 class InstallController extends SlimController {
 
     public function installAction() {
         $this->app->render('install-form.php');
     }
-    
+
     public function doInstallAction() {
         $dbParams = array(
-            'driver' => $this->app->request->params('database-type'),
-            'user' => $this->app->request->params('db-user'),
-            'password' => $this->app->request->params('db-password'),
-            'dbname' => $this->app->request->params('db-name'),
-            'host' => $this->app->request->params('db-host'),
+            ConfigurationNames::DB_DRIVER => $this->app->request->params('database-type'),
+            ConfigurationNames::DB_USER => $this->app->request->params('db-user'),
+            ConfigurationNames::DB_PASSWORD => $this->app->request->params('db-password'),
+            ConfigurationNames::DB_DBNAME => $this->app->request->params('db-name'),
+            ConfigurationNames::DB_HOST => $this->app->request->params('db-host'),
             // http://php.net/manual/en/ref.pdo-mysql.php#pdo.constants.mysql-attr-init-command
-            'driverOptions' => array(1002 => 'SET NAMES utf8')
+            ConfigurationNames::DB_DRIVER_OPTIONS => array(1002 => 'SET NAMES utf8')
         );
         
         $mailParams = array(
-            'host' => '',
-            'smtp_auth' => '',
-            'username' => '',
-            'password' => '',
-            'port' => ''
+            ConfigurationNames::MAIL_HOST => $this->app->request->params('mail-host'),
+            ConfigurationNames::MAIL_SMTP_AUTH => boolval($this->app->request->params('mail-smtp-auth')),
+            ConfigurationNames::MAIL_USERNAME => $this->app->request->params('mail-username'),
+            ConfigurationNames::MAIL_PASSWORD => $this->app->request->params('mail-password'),
+            ConfigurationNames::MAIL_PORT => intval($this->app->request->params('mail-port'))
         );
         
         $userParams = array(
-            'username' => $this->app->request->params('admin-user'),
-            'password' => $this->app->request->params('admin-password'),
-            'email' => $this->app->request->params('admin-email')
+            ConfigurationNames::ADMIN_USERNAME => $this->app->request->params('admin-user'),
+            ConfigurationNames::ADMIN_PASSWORD => $this->app->request->params('admin-password'),
+            ConfigurationNames::ADMIN_EMAIL => $this->app->request->params('admin-email')
         );
         
-        $config['database'] = $dbParams;
-        $config['mail'] = $mailParams;
-        $config['admin'] = $userParams;
+        $config[ConfigurationNames::DATABASE_PREFIX] = $dbParams;
+        $config[ConfigurationNames::MAIL_PREFIX] = $mailParams;
+        $config[ConfigurationNames::ADMIN_PREFIX] = $userParams;
         
-        $this->rewriteConfig($config);
-        $em = EntityManager::create($dbParams, $this->app->entityManager->getConfiguration());
-        $this->app->container->singleton('entityManager', function () use ($em) {
-            return $em;
-        });
+        try {            
+            $this->app->fileHandler->rewriteConfigFile($config);
+            // uses the freshly written config file params
+            $em = EntityManagerFactory::createEntityManager(HTTP_MEDIA_DIR, LOCAL_MEDIA_DIR, CONFIG_FILE, SRC_FOLDER, true);
+            
+            // inits singletons, like all handlers
+            $this->initAppSingletons($em);    
+            $this->app->databaseHandler->setupDatabase();
+            $this->app->databaseHandler->initDatabaseSettings(
+                $this->app->request->params('website-name'),
+                $this->app->request->params('website-email'),
+                $this->app->request->params('website-reply-to-email'),
+                $this->app->request->params('website-url')
+            );
+            $this->createAdminUser($config);
+        } catch (Exception $e) {
+            $this->app->databaseHandler->deleteDatabase();
+            return $this->app->render('install-form.php', array('errors' => array($e->getMessage(), $e->getTraceAsString())));
+        }
         
-        $this->initDatabase();
-        $this->createAdminUser($config);
-    }
-    
-    protected function rewriteConfig(array $config) {
-        $params = Yaml::parse(file_get_contents(CONFIG_FILE));
-        
-        $params['database']['driver'] = $config['database']['driver'];
-        $params['database']['username'] = $config['database']['user'];
-        $params['database']['password'] = $config['database']['password'];
-        $params['database']['dbname'] = $config['database']['dbname'];
-        $params['database']['host'] = $config['database']['host'];
-        
-        $params['mail']['host'] = $config['mail']['host'];
-        $params['mail']['smtp_auth'] = $config['mail']['smtp_auth'];
-        $params['mail']['username'] = $config['mail']['username'];
-        $params['mail']['password'] = $config['mail']['password'];
-        $params['mail']['port'] = $config['mail']['port'];
-     
-        file_put_contents(CONFIG_FILE, Yaml::dump($params, 2, 4, true));
-    }
-    
-    protected function initDatabase() {
-        $entityManager = $this->app->entityManager;
-        
-        $tool = new SchemaTool($entityManager);
-
-        $classes = array(
-            $entityManager->getClassMetadata(EntityNames::ARTICLE),
-            $entityManager->getClassMetadata(EntityNames::ARTICLE_CATEGORY),
-            $entityManager->getClassMetadata(EntityNames::EVENT),
-            $entityManager->getClassMetadata(EntityNames::FILE),
-            $entityManager->getClassMetadata(EntityNames::FILE_CATEGORY),
-            $entityManager->getClassMetadata(EntityNames::LANGUAGE),
-            $entityManager->getClassMetadata(EntityNames::LOCATION),
-            $entityManager->getClassMetadata(EntityNames::PAGE),
-            $entityManager->getClassMetadata(EntityNames::PAGE_CATEGORY),
-            $entityManager->getClassMetadata(EntityNames::REGISTRATION),
-            $entityManager->getClassMetadata(EntityNames::REPEAT_OPTION),
-            $entityManager->getClassMetadata(EntityNames::SETTING),
-            $entityManager->getClassMetadata(EntityNames::USER),
-            $entityManager->getClassMetadata(EntityNames::USER_GROUP)
-        );
-
-
-        $tool->createSchema($classes, true);
+        $this->app->redirect('/login');
     }
     
     protected function createAdminUser(array $config) {
@@ -111,19 +82,66 @@ class InstallController extends SlimController {
         $user->setIsLocked(false);
         
         $userGroup = new UserGroup();
-        $userGroup->setName('super_admin');
+        $userGroup->setName('Super Admin');
         $userGroup->setRole('ROLE_SUPER_ADMIN');
-        
+
+
         $now = new DateTime();
         $user->setRegistrationDate($now);
         $user->setLastLoginDate($now);
         $user->setHasEmailValidated(false);
         $user->setUserGroup($userGroup);
-        
+
         $em = $this->app->entityManager;
         $em->persist($userGroup);
-        $em->persist($user);
-        $em->flush();
+        $em->flush();        
+        
+        $this->app->registrationHandler->registerUser($user);
+    }
+    
+    protected function initAppSingletons(EntityManager $entityManager) {
+        $this->app->container->singleton('entityManager', function () use ($entityManager) {
+            return $entityManager;
+        });
+
+        // Add JMS Serializer to app
+        $this->app->container->singleton('serializer', function () {
+            return SerializerBuilder::create()->build();
+        });
+
+        HandlerSingleton::setEntityManager($this->app->container->entityManager);
+        $thumbnailHandler = HandlerSingleton::getThumbnailHandler();
+        $fileHandler = HandlerSingleton::getFileHandler(HTTP_MEDIA_DIR, LOCAL_MEDIA_DIR);
+        $registrationHandler = HandlerSingleton::getRegistrationHandler();
+        $databaseHandler = HandlerSingleton::getDatabaseHandler();
+
+        // Add Doctrine Entity Manager to app
+        $this->app->container->remove('entityManager');
+        $this->app->container->singleton('entityManager', function () use ($entityManager) {
+            return $entityManager;
+        });
+
+        $this->app->container->remove('databaseHandler');
+        $this->app->container->singleton('databaseHandler', function () use ($databaseHandler) {
+            return $databaseHandler;
+        });
+
+        // Add thumbnail handler to app
+        $this->app->container->remove('thumbnailHandler');
+        $this->app->container->singleton('thumbnailHandler', function () use ($thumbnailHandler) {
+            return $thumbnailHandler;
+        });
+
+        // add file handler to app
+        $this->app->container->remove('fileHandler');
+        $this->app->container->singleton('fileHandler', function () use ($fileHandler) {
+            return $fileHandler;
+        });
+        
+        $this->app->container->remove('registrationHandler');
+        $this->app->container->singleton('registrationHandler', function() use ($registrationHandler) {
+            return $registrationHandler;
+        });
     }
 }
 
