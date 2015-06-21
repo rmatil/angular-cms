@@ -23,7 +23,7 @@ class RegistrationHandler {
 
     protected $defaultMailerSettings = array();
 
-    public function __construct(EntityManager $entityManager, PHPMailer $phpMailer, array $mailerSettings = array()) {
+    public function __construct(EntityManager $entityManager, PHPMailer $phpMailer) {
         $this->entityManager    = $entityManager;
         $this->phpMailer        = $phpMailer;
         $this->initMailer();
@@ -54,7 +54,7 @@ class RegistrationHandler {
         $websiteReplyToEmail = $settingsRepo->findOneBy(array('name' => 'website_reply_to_email'));
         $websiteUrl          = $settingsRepo->findOneBy(array('name' => 'website_url'));
 
-        $registrationLink = sprintf('%s/registration/%s', $websiteUrl->getValue(), $registration->getToken());
+        $registrationLink = sprintf(PROTOCOL.'%s/api/registration/%s', $websiteUrl->getValue(), $registration->getToken());
 
         $this->entityManager->persist($user->getUserGroup());
         $this->entityManager->persist($user);

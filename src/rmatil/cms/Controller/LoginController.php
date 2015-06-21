@@ -2,10 +2,10 @@
 
 namespace rmatil\cms\Controller;
 
-use SlimController\SlimController;
-use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Constants\EntityNames;
+use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Utils\PasswordUtils;
+use SlimController\SlimController;
 
 class LoginController extends SlimController {
 

@@ -4,14 +4,13 @@ namespace rmatil\cms\Controller;
 
 use DateTime;
 use Doctrine\ORM\EntityManager;
-use Exception;
 use JMS\Serializer\SerializerBuilder;
 use rmatil\cms\Constants\ConfigurationNames;
 use rmatil\cms\Entities\User;
 use rmatil\cms\Entities\UserGroup;
 use rmatil\cms\Handler\HandlerSingleton;
-use rmatil\cms\Utils\PasswordUtils;
 use rmatil\cms\Utils\EntityManagerFactory;
+use rmatil\cms\Utils\PasswordUtils;
 use SlimController\SlimController;
 
 class InstallController extends SlimController {
@@ -52,7 +51,7 @@ class InstallController extends SlimController {
         try {            
             $this->app->fileHandler->rewriteConfigFile($config);
             // uses the freshly written config file params
-            $em = EntityManagerFactory::createEntityManager(HTTP_MEDIA_DIR, LOCAL_MEDIA_DIR, CONFIG_FILE, SRC_FOLDER, true);
+            $em = EntityManagerFactory::createEntityManager(\HTTP_MEDIA_DIR, \LOCAL_MEDIA_DIR, \CONFIG_FILE, \SRC_FOLDER, true);
             
             // inits singletons, like all handlers
             $this->initAppSingletons($em);    
@@ -111,7 +110,7 @@ class InstallController extends SlimController {
 
         HandlerSingleton::setEntityManager($this->app->container->entityManager);
         $thumbnailHandler = HandlerSingleton::getThumbnailHandler();
-        $fileHandler = HandlerSingleton::getFileHandler(HTTP_MEDIA_DIR, LOCAL_MEDIA_DIR);
+        $fileHandler = HandlerSingleton::getFileHandler(\HTTP_MEDIA_DIR, \LOCAL_MEDIA_DIR);
         $registrationHandler = HandlerSingleton::getRegistrationHandler();
         $databaseHandler = HandlerSingleton::getDatabaseHandler();
 

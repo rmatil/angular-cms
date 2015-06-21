@@ -2,14 +2,12 @@
 
 namespace rmatil\cms\Controller;
 
-use SlimController\SlimController;
-use rmatil\cms\Constants\HttpStatusCodes;
-use rmatil\cms\Constants\EntityNames;
-use rmatil\cms\Entities\Article;
-use rmatil\cms\Entities\Event;
-use Doctrine\ORM\EntityManager;
-use Doctrine\DBAL\DBALException;
 use DateTime;
+use Doctrine\DBAL\DBALException;
+use rmatil\cms\Constants\EntityNames;
+use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Entities\Event;
+use SlimController\SlimController;
 
 class EventController extends SlimController {
 
