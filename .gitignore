@@ -12,6 +12,9 @@ composer.lock
 # Netbeans
 /nbproject/private/
 
+# PHPStorm
+.idea
+
 # OS X
 .DS_Store
 
@@ -26,3 +29,7 @@ node_modules
 
 # Config
 /config
+
+# Vagrant
+.vagrant
+/puphpet
