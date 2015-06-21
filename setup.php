@@ -29,6 +29,7 @@ require_once('bootstrap.php');
 // protocol of connection (either http or https)
 (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off') ? $protocol = 'http://' : $protocol = 'https://';
 
+define('PROTOCOL', $protocol);
 define('HTTP_ROOT', $protocol.$_SERVER['HTTP_HOST']);
 define('LOCAL_ROOT', __DIR__);
 define('HTTP_MEDIA_DIR', HTTP_ROOT.'/media');
