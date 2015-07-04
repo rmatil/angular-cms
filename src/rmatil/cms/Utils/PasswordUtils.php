@@ -2,16 +2,45 @@
 
 namespace rmatil\cms\Utils;
 
-class PasswordUtils {
+/**
+ * Utilities to handle hashes and strings
+ * 
+ * @author Raphael Matile <raphael.matile@gmail.com>
+ */
+abstract class PasswordUtils {
 
-    private static $HASH_ALGORITHM = 'sha512';
-    private static $HASH_SALT = 'thisIsNotSafeChangeIt';
+    /**
+     * The hash algorithm used to hash strings
+     * @var string
+     */
+    private static $hashAlgorithm = 'sha512';
+    
+    /**
+     * The salt used to hash strings
+     * @var string
+     */
+    private static $hashSalt = 'thisIsNotSafeChangeIt';
 
+    /**
+     * Hashes the given token using the hash algorithm and salt 
+     * specified in this class.
+     * 
+     * @param string $token The token to hash
+     * @return string The hashed token
+     */
     public static function hash($token) {
-        return hash(self::$HASH_ALGORITHM, $token.self::$HASH_SALT);
+        return hash(self::$hashAlgorithm, $token.self::$hashSalt);
     }
 
+    /**
+     * Checks whether the given plainToken is equal to the given hash
+     * using the hash algorithm and hash salt specified in this class.
+     * 
+     * @param string $plainToken Unhashed token to check for equality
+     * @param string $hash Hashed string used to compare $plainToken
+     * @return boolean True, if the hash of $plainToken is equal to the given hash
+     */
     public static function isEqual($plainToken, $hash) {
-        return (hash(self::$HASH_ALGORITHM, $plainToken.self::$HASH_SALT) === $hash);
+        return (hash(self::$hashAlgorithm, $plainToken.self::$hashSalt) === $hash);
     }
 }

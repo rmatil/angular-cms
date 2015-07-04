@@ -2,13 +2,12 @@
 
 namespace rmatil\cms\Controller;
 
-use SlimController\SlimController;
-use rmatil\cms\Constants\HttpStatusCodes;
-use rmatil\cms\Constants\EntityNames;
-use rmatil\cms\Entities\User;
-use rmatil\cms\Utils\PasswordUtils;
-use Doctrine\ORM\EntityManager;
+use DateTime;
 use Doctrine\DBAL\DBALException;
+use rmatil\cms\Constants\EntityNames;
+use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Utils\PasswordUtils;
+use SlimController\SlimController;
 
 class RegistrationController extends SlimController {
 
@@ -16,8 +15,7 @@ class RegistrationController extends SlimController {
         $submittedPass          = $this->app->request->post('password');
 
         if (strlen($submittedPass) < 8) {
-            $this->app->response->setStatus(HttpStatusCodes::BAD_REQUEST);
-            return;
+            return $this->app->response->setStatus(HttpStatusCodes::BAD_REQUEST);
         }
 
         $entityManager          = $this->app->entityManager;
@@ -25,8 +23,7 @@ class RegistrationController extends SlimController {
         $origRegistration       = $registrationRepository->findOneBy(array('token' => $token));
 
         if ($origRegistration === null) {
-            $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
-            return;
+            return $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
         }
 
         $passwordHash = PasswordUtils::hash($submittedPass);

@@ -2,7 +2,13 @@
 
 namespace rmatil\cms\Utils;
 
-class FileUtils {
+/**
+ * Utilities to handle information of files like 
+ * its filesizes, etc.
+ * 
+ * @author Raphael Matile <raphael.matile@gmail.com>
+ */
+abstract class FileUtils {
 
     /**
      * Returns the maximum value of post_max_size and upload_max_filesize
@@ -85,7 +91,6 @@ class FileUtils {
     * string to lowercase.
     * 
     * @param string $string The string to apply this functionality on.
-    * 
     * @return string The edited string
     */
     public static function replaceWhitespacesFromString($string) {

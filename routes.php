@@ -14,6 +14,8 @@ $app->add(new SecurityMiddleware(array('api')));
 $app->addRoutes(array(
     '/'                                 => 'Homepage:index',
     '/cms'                              => 'Index:index',
+    '/install'                          => 'Install:install',
+    '/install/do-install'               => 'Install:doInstall',
 
     // login
     '/login'                            => array('get'     => 'Login:loginView'),

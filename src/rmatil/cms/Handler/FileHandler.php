@@ -8,6 +8,9 @@ use rmatil\cms\Exceptions\DocTypeNotFoundException;
 use rmatil\cms\Exceptions\FileNotSavedException;
 use rmatil\cms\Handler\ThumbnailHandler;
 use rmatil\cms\Utils\FileUtils;
+use rmatil\cms\Constants\ConfigurationNames;
+use Symfony\Component\Yaml\Yaml;
+use RuntimeException;
 
 class FileHandler {
 
@@ -223,4 +226,37 @@ class FileHandler {
     public function setAllowedFileExtensions(array $allowedFileExtensions) {
         $this->allowedFileExtensions = $allowedFileExtensions;
     }
+    
+    /**
+      * Writes the given config to the config.yml file
+      * 
+      * @param array $config The config to write
+      * @throws RuntimeException When keys database or mail do not exist
+      */
+     public function rewriteConfigFile(array $config) {
+        if (!array_key_exists('database', $config) ||
+            !array_key_exists('mail', $config)) {
+            throw new RuntimeException('Key database or mail is required');
+        }
+         
+        $params = Yaml::parse(file_get_contents(CONFIG_FILE));
+        
+        $params[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_DRIVER] = $config[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_DRIVER];
+        $params[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_USER] = $config[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_USER];
+        $params[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_PASSWORD] = $config[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_PASSWORD];
+        $params[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_DBNAME] = $config[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_DBNAME];
+        $params[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_HOST] = $config[ConfigurationNames::DATABASE_PREFIX][ConfigurationNames::DB_HOST];
+        
+        $params[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_HOST] = $config[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_HOST];
+        $params[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_SMTP_AUTH] = $config[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_SMTP_AUTH];
+        $params[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_USERNAME] = $config[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_USERNAME];
+        $params[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_PASSWORD] = $config[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_PASSWORD];
+        $params[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_PORT] = $config[ConfigurationNames::MAIL_PREFIX][ConfigurationNames::MAIL_PORT];
+     
+        file_put_contents(CONFIG_FILE, Yaml::dump($params, 2, 4, true));
+     }
+     
+     public function getConfigFileContents($configFilePath) {
+         return Yaml::parse(file_get_contents($configFilePath));
+     }
 }
