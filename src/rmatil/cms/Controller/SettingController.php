@@ -33,6 +33,10 @@ class SettingController extends SlimController {
         $settingsRepository = $entityManager->getRepository(EntityNames::SETTING);
 
         foreach ($settings as $entry) {
+            if (!is_array($entry)) {
+                continue;
+            }
+
             $origSetting = $settingsRepository->findOneBy(array('id' => $entry['id']));
 
             if ($origSetting === null) {

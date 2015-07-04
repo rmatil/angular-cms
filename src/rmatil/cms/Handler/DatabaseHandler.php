@@ -5,14 +5,26 @@ namespace rmatil\cms\Handler;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;
 use rmatil\cms\Constants\EntityNames;
+use rmatil\cms\Entities\ArticleCategory;
+use rmatil\cms\Entities\PageCategory;
 use rmatil\cms\Entities\Setting;
+use rmatil\cms\Entities\UserGroup;
 
 class DatabaseHandler {
-    
+
+    /**
+     * @var $entityManager EntityManager
+     */
     protected $entityManager;
-    
+
+    /**
+     * @var $classes \Doctrine\ORM\Mapping\ClassMetadata[]
+     */
     protected $classes;
-    
+
+    /**
+     * @var $tool SchemaTool
+     */
     protected $tool;
     
     public function __construct(EntityManager $entityManager) {
@@ -46,7 +58,7 @@ class DatabaseHandler {
     /**
      * Checks whether the table already exists in the database
      * 
-     * @param type $tableName The name of the table
+     * @param string $tableName The name of the table
      * @return bool true|false True if the table exists
      */
     public function tableExists($tableName) {
@@ -59,7 +71,12 @@ class DatabaseHandler {
      * @return bool true|false True if all tables were generated, otherwise false
      */
     public function schemaExists() {
-        return $this->entityManager->getConnection()->getSchemaManager()->tablesExist($this->classes);
+        $tableNames = array();
+        foreach ($this->classes as $class) {
+            $tableNames[] = $class->getTableName();
+        }
+
+        return $this->entityManager->getConnection()->getSchemaManager()->tablesExist($tableNames);
     }
     
     /**
@@ -68,7 +85,15 @@ class DatabaseHandler {
     public function deleteDatabase() {
         $this->tool->dropDatabase();
     }
-    
+
+    /**
+     * Initalises the default settings used for this application
+     *
+     * @param $websiteName The name of the website
+     * @param $websiteEmail The email of the website
+     * @param $websiteReplyToEmail The email to which users may reply
+     * @param $websiteUrl The url of the website
+     */
     public function initDatabaseSettings($websiteName, $websiteEmail, $websiteReplyToEmail, $websiteUrl) {
         $websiteNameSetting = new Setting();
         $websiteNameSetting->setName('website_name');
@@ -85,11 +110,29 @@ class DatabaseHandler {
         $websiteUrlSetting = new Setting();
         $websiteUrlSetting->setName('website_url');
         $websiteUrlSetting->setValue($websiteUrl);
+
+        $debugMode = new Setting();
+        $debugMode->setName('debug_mode');
+        $debugMode->setValue(false);
+
+        $defaultArticleCategory = new ArticleCategory();
+        $defaultArticleCategory->setName('Default');
+
+        $defaultPageCategory = new PageCategory();
+        $defaultPageCategory->setName('Default');
+
+        $defaultUserGroup = new UserGroup();
+        $defaultUserGroup->setName('User');
+        $defaultUserGroup->setRole('ROLE_USER');
         
         $this->entityManager->persist($websiteNameSetting);
         $this->entityManager->persist($websiteEmailSetting);
         $this->entityManager->persist($websiteReplyToEmailSetting);
         $this->entityManager->persist($websiteUrlSetting);
+        $this->entityManager->persist($debugMode);
+        $this->entityManager->persist($defaultArticleCategory);
+        $this->entityManager->persist($defaultPageCategory);
+        $this->entityManager->persist($defaultUserGroup);
         
         $this->entityManager->flush();
     }

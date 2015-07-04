@@ -16,10 +16,19 @@ use SlimController\SlimController;
 class InstallController extends SlimController {
 
     public function installAction() {
+        if ($this->app->databaseHandler->schemaExists()) {
+            // installation is already done
+            return $this->app->redirect('/login');
+        }
         $this->app->render('install-form.php');
     }
 
     public function doInstallAction() {
+        if ($this->app->databaseHandler->schemaExists()) {
+            // installation is already done
+            return $this->app->redirect('/login');
+        }
+
         $dbParams = array(
             ConfigurationNames::DB_DRIVER => $this->app->request->params('database-type'),
             ConfigurationNames::DB_USER => $this->app->request->params('db-user'),
@@ -54,7 +63,7 @@ class InstallController extends SlimController {
             $em = EntityManagerFactory::createEntityManager(\HTTP_MEDIA_DIR, \LOCAL_MEDIA_DIR, \CONFIG_FILE, \SRC_FOLDER, true);
             
             // inits singletons, like all handlers
-            $this->initAppSingletons($em);    
+            $this->reinitAppSingletons($em);
             $this->app->databaseHandler->setupDatabase();
             $this->app->databaseHandler->initDatabaseSettings(
                 $this->app->request->params('website-name'),
@@ -70,7 +79,18 @@ class InstallController extends SlimController {
         
         $this->app->redirect('/login');
     }
-    
+
+    /**
+     * Creates the admin user based on the configuration data.<br>
+     * Required keys in $config are
+     * <ul>
+     *   <li>[admin][username]</li>
+     *   <li>[admin][password]</li>
+     *   <li>[admin][email]</li>
+     * </ul>
+     *
+     * @param array $config The array holding the above keys
+     */
     protected function createAdminUser(array $config) {
         $user = new User;
         $user->setFirstName('');
@@ -93,12 +113,18 @@ class InstallController extends SlimController {
 
         $em = $this->app->entityManager;
         $em->persist($userGroup);
-        $em->flush();        
-        
+        $em->flush();
+
         $this->app->registrationHandler->registerUser($user);
     }
-    
-    protected function initAppSingletons(EntityManager $entityManager) {
+
+    /**
+     * Reinitialises the singletons used by this app to make
+     * use of the newly configured parameters.
+     *
+     * @param EntityManager $entityManager The entity manager created with the new parameters
+     */
+    protected function reinitAppSingletons(EntityManager $entityManager) {
         $this->app->container->singleton('entityManager', function () use ($entityManager) {
             return $entityManager;
         });
