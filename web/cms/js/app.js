@@ -15,7 +15,8 @@ angular.module('cms', [
     'cms.controllers',
     'angularFileUpload',
     'pickadate',
-    'ngCkeditor'
+    'ngCkeditor',
+    'angular-momentjs'
 ]).config(['$routeProvider', '$locationProvider', '$provide', '$httpProvider', function ($routeProvider, $locationProvider, $provide, $httpProvider) {
     $routeProvider.when('/', {templateUrl: 'partials/overview.html', controller: 'overviewCtrl'});
     $routeProvider.when('/overview', {templateUrl: 'partials/overview.html', controller: 'overviewCtrl'});

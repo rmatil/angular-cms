@@ -40,6 +40,7 @@
     <script src="bower_components/AngularJS-Toaster/toaster.js"></script>
     <script src="bower_components/angular-local-storage/dist/angular-local-storage.min.js"></script>
     <script src="bower_components/moment/min/moment.min.js"></script>
+    <script src="bower_components/angular-momentjs/angular-momentjs.min.js"></script>
     
     <!-- app -->
     <script src="js/build/app.min.js"></script>
@@ -58,6 +59,24 @@
     <script src="js/build/userCtrl.min.js"></script>
     <script src="js/build/settingCtrl.min.js"></script>
     <script src="js/build/errorCtrl.min.js"></script>
+    <!--
+    <script src="js/app.js"></script>
+    <script src="js/services.js"></script>
+    <script src="js/genServices.js"></script>
+    <script src="js/filters.js"></script>
+    <script src="js/directives.js"></script>
+
+    <script src="js/controller/controllers.js"></script>
+    <script src="js/controller/overviewCtrl.js"></script>
+    <script src="js/controller/articleCtrl.js"></script>
+    <script src="js/controller/pageCtrl.js"></script>
+    <script src="js/controller/eventCtrl.js"></script>
+    <script src="js/controller/locationCtrl.js"></script>
+    <script src="js/controller/mediaCtrl.js"></script>
+    <script src="js/controller/userCtrl.js"></script>
+    <script src="js/controller/settingCtrl.js"></script>
+    <script src="js/controller/errorCtrl.js"></script>
+    -->
 </head>
 <body>
     <div class="overlay" ng-class="{'hidden': isLocked != true}">
