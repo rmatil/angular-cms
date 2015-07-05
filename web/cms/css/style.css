@@ -388,7 +388,8 @@ input {
   color: #8c8c8c;
   border: 1px solid #d0d0d0;
   box-shadow: none;
-  padding: 3px 5px 3px 10px;  
+  padding: 3px 5px 3px 10px;
+  margin: 2px 0;
 }
 
 input[type=text],
@@ -466,9 +467,10 @@ input[type=file]  {
   padding: 0;
 }
 
-input[type=date],
-input[type=time] {
-  height: 16px;
+input[type=date], input.date,
+input[type=time], input.time {
+    height: 80%;
+    text-align: right;
 }
 
 input.loading {
