@@ -20,22 +20,23 @@ angular.module('cms.controllers')
             $scope.allEvents = response;
         });
     }])
-    .controller('eventDetailCtrl', ['MenuService', '$scope', '$routeParams', '$timeout', '$location', 'genService', 'toaster', 'dateFilter', function (MenuService, $scope, $routeParams, $timeout, $location, genService, toaster, dateFilter) {
+    .controller('eventDetailCtrl', ['MenuService', '$scope', '$routeParams', '$timeout', '$location', 'genService', 'toaster', 'dateFilter', '$moment', function (MenuService, $scope, $routeParams, $timeout, $location, genService, toaster, dateFilter, $moment) {
         // set Menu according to its Name
         MenuService.update("Veranstaltungen");
 
         // cancel this promise on route change
-        var redirectTimeoutPromise;
+        var redirectTimeoutPromise,
+            now = $moment();
 
         $scope.apiPath   = 'events';
         $scope.menuName  = 'Veranstaltung bearbeiten';
         $scope.deleteMsg = 'Löschen';
 
         // these values get merged to a datetime object on save
-        $scope.eventStartDate = {};
-        $scope.eventEndDate = {};
-        $scope.eventStartTime = '00:00';
-        $scope.eventEndTime = '00:00';
+        $scope.eventStartDate = now.format('DD.MM.YYYY');
+        $scope.eventStartTime = now.format('HH.mm');
+        $scope.eventEndDate = now.format('DD.MM.YYYY');
+        $scope.eventEndTime = now.add(1, 'h').format('HH.mm');
 
         // init content of ckEditor and prevent empty content
         $scope.event = {};
@@ -52,8 +53,8 @@ angular.module('cms.controllers')
             // setup start resp. end date
             var startDate         = new Date($scope.event.start_date);
             var endDate           = new Date($scope.event.end_date);
-            $scope.eventStartDate = dateFilter(startDate, 'yyyy-MM-dd');
-            $scope.eventEndDate   = dateFilter(endDate, 'yyyy-MM-dd');
+            $scope.eventStartDate = dateFilter(startDate, 'dd.MM.yyyy');
+            $scope.eventEndDate   = dateFilter(endDate, 'dd.MM.yyyy');
             $scope.eventStartTime = ('0' + startDate.getHours()).substr(-2) + ':' + ('0' + startDate.getMinutes()).substr(-2);
             $scope.eventEndTime   = ('0' + endDate.getHours()).substr(-2) + ':' + ('0' + endDate.getMinutes()).substr(-2);
         });
@@ -63,11 +64,25 @@ angular.module('cms.controllers')
         });
 
         genService.getAllObjects('files').then(function (response) {
-            $scope.allFiles = response;
+            $scope.allFiles = [{
+                'id': -1,
+                'name':  'Kein Anhang'
+            }];
+
+            response.forEach(function (element, index, array) {
+                $scope.allFiles.push(element);
+            });
         });
 
         genService.getAllObjects('locations').then(function (response) {
-            $scope.allLocations = response;
+            $scope.allLocations = [{
+                'id': -1,
+                'name': 'Kein Veranstaltungsort'
+            }];
+
+            response.forEach(function (element, index, array) {
+                $scope.allLocations.push(element);
+            })
         });
 
         $scope.deleteMsg = "Event löschen";
@@ -86,53 +101,48 @@ angular.module('cms.controllers')
                 return;
             }
 
-            // if (!$scope.eventStartTime) {
-            //     toaster.pop('warning', null, 'Die Startzeit muss angegeben werden');
-            //     return;
-            // }
-
-            if (Object.prototype.toString.call($scope.eventEndDate) !== "[object Date]" ||
-                    (Object.prototype.toString.call($scope.eventEndDate) === "[object Date]" && !isNaN($scope.eventEndTime.getTime()))) {
-                // event end date is not a date
-                $scope.eventEndDate = null;
+            if (!$scope.eventStartTime) {
+                toaster.pop('warning', null, 'Die Startzeit muss angegeben werden');
+                return;
             }
 
-            // if (!$scope.eventEndTime) {
-            //     toaster.pop('warning', null, 'Die Endzeit muss angegeben werden');
-            //     return;
-            // }
-
-            // if (!pEvent.repeat_option) {
-            //     toaster.pop('warning', null, 'Eine Wiederholoption muss angegeben werden');
-            //     return;
-            // }
-
-            // Unfortunately angular supports only strings in model
-            // -> parse file and repeat_option to JSON if string
-            // -> http://stackoverflow.com/questions/14832405/angularjs-ng-model-converts-object-to-string
-            if (angular.isString(pEvent.repeat_option)) {
-                pEvent.repeat_option = JSON.parse(pEvent.repeat_option);
+            if (!$scope.eventEndTime) {
+                toaster.pop('warning', null, 'Die Endzeit muss angegeben werden');
+                return;
             }
 
             if (angular.isString(pEvent.file)) {
                 pEvent.file = JSON.parse(pEvent.file);
+
+                if (pEvent.file.id === -1) {
+                    pEvent.file = null;
+                }
             }
 
             if (angular.isString(pEvent.location)) {
                 pEvent.location = JSON.parse(pEvent.location);
+
+                if (pEvent.location.id === -1) {
+                    pEvent.location = null;
+                }
             }
 
             // merge time and date
-            var startDate = moment(new Date($scope.eventStartDate + ' ' + $scope.eventStartTime));
-            // momentjs converts to a correct iso 8601 date string
-            pEvent.start_date = startDate.format();
-            if ($scope.eventEndDate) {
-                var endDate = moment(new Date($scope.eventEndDate + ' ' + $scope.eventEndTime));
-                // momentjs converts to a correct iso 8601 date string
-                pEvent.end_date = endDate.format();
-            } else {
-                pEvent.end_date = pEvent.start_date;
+            var startDate = $moment($scope.eventStartDate + ' ' + $scope.eventStartTime, 'MM.DD.YYYY HH:mm');
+            var endDate = $moment($scope.eventEndDate + ' ' + $scope.eventEndTime, 'MM.DD.YYYY HH:mm');
+
+            if (!startDate.isValid()) {
+                toaster.pop('warning', null, 'Das Startdatum ist invalid');
+                return;
             }
+
+            if (!endDate.isValid()) {
+                toaster.pop('warning', null, 'Das Enddatum ist invalid');
+                return;
+            }
+
+            pEvent.start_date = startDate.format();
+            pEvent.end_date = endDate.format();
 
             $scope.loading = true;
             genService.updateObject('events', pEvent).then(function () {
@@ -149,30 +159,32 @@ angular.module('cms.controllers')
             $timeout.cancel(redirectTimeoutPromise);
         });
     }])
-    .controller('eventAddCtrl', ['genService', 'MenuService', '$scope', '$location', '$timeout', 'toaster', function (genService, MenuService, $scope, $location, $timeout, toaster) {
+    .controller('eventAddCtrl', ['genService', 'MenuService', '$scope', '$location', '$timeout', 'toaster', '$moment', function (genService, MenuService, $scope, $location, $timeout, toaster, $moment) {
         // set Menu according to its Name
         MenuService.update("Veranstaltungen");
 
         // cancel this promise on route change
-        var redirectTimeoutPromise;
+        var redirectTimeoutPromise,
+            now = $moment();
 
         $scope.apiPath   = 'events';
         $scope.menuName  = 'Veranstaltung hinzufügen';
 
         // these values get merged to a datetime object on save
-        $scope.eventStartDate = {};
-        $scope.eventEndDate = {};
-        $scope.eventStartTime = {};
-        $scope.eventEndTime = {};
+        $scope.eventStartDate = now.format('DD.MM.YYYY');
+        $scope.eventStartTime = now.format('HH.mm');
+        $scope.eventEndDate = now.format('DD.MM.YYYY');
+        $scope.eventEndTime = now.add(1, 'h').format('HH.mm');
 
         // init content of ckEditor and prevent empty content
-        $scope.event = {};
-        $scope.event.description = '';
+        $scope.event = {
+            'description': ''
+        };
 
         // get event
         genService.getEmptyObject('event').then(function (response) {
             if (!response) {
-                toaster.pop('error', null, 'Uups. Der angeforderte Event exisitert nicht (mehr).');
+                toaster.pop('error', null, 'Der angeforderte Event exisitert nicht (mehr).');
                 $location.path("/events");
             }
             $scope.event = response;
@@ -183,11 +195,25 @@ angular.module('cms.controllers')
         });
 
         genService.getAllObjects('files').then(function (response) {
-            $scope.allFiles = response;
+            $scope.allFiles = [{
+                'id': -1,
+                'name':  'Kein Anhang'
+            }];
+
+            response.forEach(function (element, index, array) {
+                $scope.allFiles.push(element);
+            });
         });
 
         genService.getAllObjects('locations').then(function (response) {
-            $scope.allLocations = response;
+            $scope.allLocations = [{
+                'id': -1,
+                'name': 'Kein Veranstaltungsort'
+            }];
+
+            response.forEach(function (element, index, array) {
+                $scope.allLocations.push(element);
+            })
         });
 
 
@@ -205,47 +231,48 @@ angular.module('cms.controllers')
                 return;
             }
 
-            // if (!$scope.eventStartTime) {
-            //     toaster.pop('warning', null, 'Die Startzeit muss angegeben werden');
-            //     return;
-            // }
+            if (!$scope.eventStartTime) {
+                 toaster.pop('warning', null, 'Die Startzeit muss angegeben werden');
+                 return;
+            }
 
-            // if (!$scope.eventEndTime) {
-            //     toaster.pop('warning', null, 'Die Endzeit muss angegeben werden');
-            //     return;
-            // }
-
-            // if (!pEvent.repeat_option) {
-            //     toaster.pop('warning', null, 'Eine Wiederholoption muss angegeben werden');
-            //     return;
-            // }
-
-            // Unfortunately angular supports only strings in model
-            // -> parse file and repeat_option to JSON if string
-            // -> http://stackoverflow.com/questions/14832405/angularjs-ng-model-converts-object-to-string
-            // if (angular.isString(pEvent.repeat_option)) {
-            //     pEvent.repeat_option = JSON.parse(pEvent.repeat_option);
-            // }
+            if (!$scope.eventEndTime) {
+                 toaster.pop('warning', null, 'Die Endzeit muss angegeben werden');
+                 return;
+            }
 
             if (angular.isString(pEvent.file)) {
                 pEvent.file = JSON.parse(pEvent.file);
+
+                if (pEvent.file.id === -1) {
+                    pEvent.file = null;
+                }
             }
 
             if (angular.isString(pEvent.location)) {
                 pEvent.location = JSON.parse(pEvent.location);
+
+                if (pEvent.location.id === -1) {
+                    pEvent.location = null;
+                }
             }
 
             // merge time and date
-            var startDate = moment(new Date($scope.eventStartDate + ' ' + $scope.eventStartTime));
-            // momentjs converts to a correct iso 8601 date string
+            var startDate = $moment($scope.eventStartDate + ' ' + $scope.eventStartTime, 'MM.DD.YYYY HH:mm');
+            var endDate = $moment($scope.eventEndDate + ' ' + $scope.eventEndTime, 'MM.DD.YYYY HH:mm');
+
+            if (!startDate.isValid()) {
+                toaster.pop('warning', null, 'Das Startdatum ist invalid');
+                return;
+            }
+
+            if (!endDate.isValid()) {
+                toaster.pop('warning', null, 'Das Enddatum ist invalid');
+                return;
+            }
+
             pEvent.start_date = startDate.format();
-            // if ($scope.eventEndDate) {
-            //     var endDate = moment(new Date($scope.eventEndDate + ' ' + $scope.eventEndTime));
-            //     // momentjs converts to a correct iso 8601 date string
-            //     pEvent.end_date = endDate.format();
-            // } else {
-            //     pEvent.end_date = pEvent.start_date;
-            // }
+            pEvent.end_date = endDate.format();
 
             $scope.loading = true;
             genService.insertObject('events', pEvent).then(function () {

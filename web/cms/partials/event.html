@@ -20,24 +20,27 @@
 				<div class="clear"></div>
 			</div>
 			<div class="right-body-box">
-				<div class="left">Startzeit (HH:mm)</div>
+				<div class="left">Startdatum</div>
 				<div class="right">
-					<input type="time" ng-model="eventStartTime">
+                    <input class="date" type="text" ng-model="eventStartDate" placeholder="dd.mm.YYYY">
+                </div>
+				<div class="clear"></div>
+				<div class="left">Startzeit</div>
+				<div class="right">
+                    <input class="time" type="text" ng-model="eventStartTime" placeholder="hh:MM">
 				</div>
 				<div class="clear"></div>
-				<div class="left">Endzeit (HH:mm)</div>
-				<div class="right">
-					<input type="time" ng-model="eventEndTime">
-				</div>
-				<div class="clear"></div>
-				<div class="left">Datum</div>
-				<div class="right">
-					<input type="date" ng-model="eventStartDate">
-					<!--
-						<div pickadate ng-model="eventStartDate"></div>
-					-->
-				</div>
-				<div class="clear"></div>
+                <div class="left">Enddatum</div>
+                <div class="right">
+                    <input class="date" type="text" ng-model="eventEndDate" placeholder="dd.mm.YYYY">
+                </div>
+                <div class="clear"></div>
+                <div class="left">Endzeit</div>
+                <div class="right">
+                    <input class="time" type="text" ng-model="eventEndTime" placeholder="hh:MM">
+                </div>
+                <div class="clear"></div>
+
 				<!--
 					<div class="left" ng-show="event.repeat_option">Enddatum</div>
 					<div class="right" ng-show="event.repeat_option">	
@@ -63,7 +66,7 @@
 				<div class="left">Dateianhang</div>
 				<div class="right">
 					<select ng-model="event.file" required>
-					    <option ng-repeat="file in allFiles" value="{{file}}" ng-selected="event.file.id === file.id">
+					    <option ng-repeat="file in allFiles" value="{{file}}" ng-selected="event.file.id === file.id || -1 === file.id">
 					        {{ file.name }}
 					    </option>
 					</select>
@@ -74,7 +77,7 @@
 	        	<div class="left">Veranstaltungsort</div>
 		        <div class="right">
 		        	<select ng-model="event.location" required>
-					    <option ng-repeat="location in allLocations" value="{{location}}" ng-selected="event.location.id === location.id">
+					    <option ng-repeat="location in allLocations" value="{{location}}" ng-selected="event.location.id === location.id || -1 === location.id">
 					        {{ location.name }}
 					    </option>
 					</select>
@@ -91,10 +94,10 @@
 		<div class="right-heading {{ backgroundColorClass }}" ng-show="debugModus">Debug Info</div>
 		<div class="right-body" ng-show="debugModus">
 			<pre class="light">
-				startTime: {{ eventStartTime}}
-				endTime: {{ eventEndTime }}
-				startDate: {{ eventStartDate }}
-				endDate: {{ eventEndDate }}
+				startTime: {{ eventStartTime | json}}
+				endTime: {{ eventEndTime | json}}
+				startDate: {{ eventStartDate | json}}
+				endDate: {{ eventEndDate | json}}
 				{{ event | json }}
 			</pre>
 		</div>
