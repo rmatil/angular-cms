@@ -79,6 +79,7 @@
     <!-- services -->
     <script src="components/navigation/navigationService.js"></script>
     <script src="components/api/genericApiService.js"></script>
+    <script src="components/article/articleService.js"></script>
 
     <!-- directives -->
     <script src="components/navigation/navigation.js"></script>

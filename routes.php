@@ -26,6 +26,7 @@ $app->addRoutes(array(
     '/api/articles'                     => array('get'     => 'Article:getArticles',
                                                  'post'    => 'Article:insertArticle'),
     '/api/articles/:id'                 => array('get'     => 'Article:getArticleById',
+						 'put'     => 'Article:updateArticle',
                                                  'delete'  => 'Article:deleteArticleById'),
     '/api/articles/update/:id'          => array('post'    => 'Article:updateArticle'),
 

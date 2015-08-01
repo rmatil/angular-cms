@@ -16,7 +16,7 @@
             <th></th>
         </tr>
         <tr ng-repeat="article in vm.articles | filter:articleFilter | orderBy:predicate:reverse">
-            <td><a href="articles/{{article.id}}">{{article.title}}</a></td>
+            <td><a ng-href="articles/article/{{article.id}}">{{article.title}}</a></td>
             <td>{{article.category.name}}</td>
             <td>{{article.language.name}}</td>
             <td>{{article.author.user_name}}</td>

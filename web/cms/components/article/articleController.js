@@ -1,24 +1,92 @@
 'use strict';
 
-function ArticleController(GenericApiService) {
+function ArticleController(ArticleService) {
 
-    var vm = this,
-        apiService = GenericApiService;
+    var vm = this;
 
     vm.articles = [];
 
-    getArticles();
+    activate();
 
 
-    function getArticles () {
-        vm.articles = apiService.getArticles();
+    function activate () {
+        ArticleService.getArticles()
+            .then(function (data) {
+                vm.articles = data;
+                return vm.data;
+            });
+
+    }
+}
+
+function ArticleDetailController(ArticleService, $routeParams) {
+    var vm = this,
+        articleId = $routeParams.id;
+
+    vm.article = {};
+    vm.article.content = ''; // init this to solve a problem with ckEditor
+
+    activate(articleId);
+
+    vm.saveArticle = function() {
+        saveArticle()
+    };
+
+    vm.deleteArticle = function() {
+        deleteArticle();
+    };
+
+    function activate(articleId) {
+        ArticleService.getArticle(articleId)
+            .then(function (data) {
+                vm.article = data;
+                return data;
+            });
+    }
+
+    function saveArticle() {
+        ArticleService.putArticle(vm.article);
+    }
+
+    function deleteArticle() {
+        ArticleService.deleteArticle(vm.article.id);
+    }
+}
+
+function ArticleAddController(ArticleService) {
+    var vm = this;
+
+    vm.article = {};
+    vm.article.content = ''; // init this to solve a problem with ckEditor
+
+    activate();
+
+    function activate() {
+        ArticleService.getEmptyArticle()
+            .then(function (data) {
+                vm.article = data;
+                return vm.article;
+            });
+    }
+
+    vm.saveArticle = function() {
+        createArticle();
+    };
+
+    function createArticle() {
+        ArticleService.postArticle(vm.article);
     }
 }
 
 (function () {
     angular
         .module('cms.controllers')
-        .controller('ArticleController',ArticleController);
+        .controller('ArticleController', ArticleController)
+        .controller('ArticleDetailController', ArticleDetailController)
+        .controller('ArticleAddController', ArticleAddController);
 
-    ArticleController.$inject = ['GenericApiService']
+    ArticleController.$inject = ['ArticleService'];
+    ArticleDetailController.$inject = ['ArticleService', '$routeParams'];
+    ArticleAddController.$inject = ['ArticleService'];
+
 }());

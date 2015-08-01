@@ -31,9 +31,21 @@
                     controller: 'DashboardController'
                 });
 
-                $routeProvider.when('/article/articles', {
+                $routeProvider.when('/articles/list', {
                     templateUrl: 'components/article/articles.html',
                     controller: 'ArticleController',
+                    controllerAs: 'vm'
+                });
+
+                $routeProvider.when('/articles/article/:id', {
+                    templateUrl: 'components/article/article.html',
+                    controller: 'ArticleDetailController',
+                    controllerAs: 'vm'
+                });
+
+                $routeProvider.when('/articles/add', {
+                    templateUrl: 'components/article/article.html',
+                    controller: 'ArticleAddController',
                     controllerAs: 'vm'
                 });
 
