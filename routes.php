@@ -26,9 +26,8 @@ $app->addRoutes(array(
     '/api/articles'                     => array('get'     => 'Article:getArticles',
                                                  'post'    => 'Article:insertArticle'),
     '/api/articles/:id'                 => array('get'     => 'Article:getArticleById',
-						 'put'     => 'Article:updateArticle',
+                                                 'put'     => 'Article:updateArticle',
                                                  'delete'  => 'Article:deleteArticleById'),
-    '/api/articles/update/:id'          => array('post'    => 'Article:updateArticle'),
 
     // articleCategories
     '/api/articleCategories'            => array('get'     => 'ArticleCategory:getArticleCategories',
@@ -111,11 +110,11 @@ $app->addRoutes(array(
 
 
     // empty objects
-    '/api/empty/article'              => array('get'      => 'Article:getEmptyArticle'),
-    '/api/empty/page'                 => array('get'      => 'Page:getEmptyPage'),
-    '/api/empty/event'                => array('get'      => 'Event:getEmptyEvent'),
-    '/api/empty/location'             => array('get'      => 'Location:getEmptyLocation'),
-    '/api/empty/user'                 => array('get'      => 'User:getEmptyUser'),
+    '/api/empty/articles'              => array('get'      => 'Article:getEmptyArticle'),
+    '/api/empty/pages'                 => array('get'      => 'Page:getEmptyPage'),
+    '/api/empty/events'                => array('get'      => 'Event:getEmptyEvent'),
+    '/api/empty/locations'             => array('get'      => 'Location:getEmptyLocation'),
+    '/api/empty/users'                 => array('get'      => 'User:getEmptyUser'),
 
 ));
 

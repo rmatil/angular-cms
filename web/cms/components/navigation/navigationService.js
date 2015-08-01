@@ -13,21 +13,21 @@ function NavigationService() {
                 }
             ]
         },
-        "article": {
+        "articles": {
             "backgroundColorClass": "darkred",
             "topBorderClass": "lightred-top-border",
             "menuArray": [
                 {
                     "name": "Article Overview",
-                    "link": "article\/articles\/"
+                    "link": "articles\/list\/"
                 },
                 {
                     "name": "Add Article",
-                    "link": "article\/add\/"
+                    "link": "articles\/add\/"
                 },
                 {
                     "name": "Page Overview",
-                    "link": "pages\/page\/"
+                    "link": "pages\/list\/"
                 },
                 {
                     "name": "Add Page",
@@ -35,7 +35,7 @@ function NavigationService() {
                 }
             ]
         }
-        //"media": {
+        //"files": {
         //    "backgroundColorClass": "darkpurple",
         //    "topBorderClass": "lightpurple-top-border",
         //    "menuArray": [
@@ -49,7 +49,7 @@ function NavigationService() {
         //        }
         //    ]
         //},
-        //"event": {
+        //"events": {
         //    "backgroundColorClass": "darkpink",
         //    "topBorderClass": "lightpink-top-border",
         //    "menuArray": [
@@ -67,7 +67,7 @@ function NavigationService() {
         //        }
         //    ]
         //},
-        //"user": {
+        //"users": {
         //    "backgroundColorClass": "darkblue",
         //    "topBorderClass": "lightblue-top-border",
         //    "menuArray": [
@@ -81,7 +81,7 @@ function NavigationService() {
         //        }
         //    ]
         //},
-        //"setting": {
+        //"settings": {
         //    "backgroundColorClass": "darkgreen",
         //    "topBorderClass": "lightgreen-top-border",
         //    "menuArray": [
