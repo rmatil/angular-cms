@@ -105,6 +105,10 @@ a {
     color: #8c8c8c;
 }
 
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 200;
+}
+
 nav {
     position: fixed;
     top: 0;
@@ -198,11 +202,90 @@ ul.status-bar li i {
 article {
     position: relative;
     top: 10em;
-    margin: 0 0 0 2em;
+    margin: 0 0 0 3.5em;
+    float: left;
+    clear: left;
+    width: 65%;
 }
 
+article input:first-of-type {
+    margin: 0 0 1em 0;
+}
 
+aside {
+    position: relative;
+    top: 10em;
+    margin: 5.5em 0 0 3.5em;
+    float: left;
+    width: 25%;
+}
 
+aside header {
+    padding: 0 0.8em;
+    color: #8c8c8c;
+}
+
+aside h1 {
+    font-size: 1.3em;
+    padding: 0.5em 0;
+    margin: 0;
+}
+
+aside section {
+    margin: 0 0 1em 0;
+}
+
+aside dl {
+    margin: 0;
+    padding: 0.8em;
+    background: #ffffff;
+}
+
+aside dl dt {
+    display: block;
+    float: left;
+    clear: left;
+}
+
+aside dl dd {
+    display: block;
+    text-align: right;
+    color: #222222;
+}
+
+aside footer {
+    padding: 0.8em;
+    background: #ffffff;
+    border-top: 1px solid #e5e5e5;
+}
+
+input {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    padding: 0.2em 0;
+}
+
+input[type=text],
+input[type=password],
+input[type=email],
+input[type=date],
+input[type=time] {
+    text-indent: 0;
+    -webkit-font-smoothing: antialiased;
+    display: inline-block;
+    padding: 0.9em;
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+    box-sizing: border-box;
+}
+
+input:focus {
+    outline: 0;
+}
 
 
 
@@ -359,7 +442,7 @@ article {
    Note: declaration must occur after the overwritten styles
    ========================================================================== */
 
-@media only screen and (max-width: 667px) {
+@media only screen and (max-width: 1000px) {
 
     nav {
         width: 4em;
@@ -390,6 +473,19 @@ article {
         width: 20em;
     }
 
+}
+
+@media only screen and (max-width: 1200px) {
+    article {
+        width: 55%;
+        margin: 0;
+        padding: 0 3.5em;
+
+    }
+
+    aside {
+        margin: 5.5em 0 0 0;
+    }
 }
 
 /* ==========================================================================
