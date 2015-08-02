@@ -273,7 +273,8 @@ input[type=text],
 input[type=password],
 input[type=email],
 input[type=date],
-input[type=time] {
+input[type=time],
+input[type=search] {
     text-indent: 0;
     -webkit-font-smoothing: antialiased;
     display: inline-block;
@@ -287,7 +288,23 @@ input:focus {
     outline: 0;
 }
 
+table {
+    width: 100%;
+}
 
+thead {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+}
+
+th {
+    padding: 0.9em 0 0.9em 0.5em;
+    text-align: left;
+}
+
+td {
+    padding: 0.9em 0 0.9em 0.5em;
+}
 
 
 
