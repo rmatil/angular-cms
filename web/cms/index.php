@@ -80,6 +80,7 @@
     <script src="components/navigation/navigationService.js"></script>
     <script src="components/api/genericApiService.js"></script>
     <script src="components/article/articleService.js"></script>
+    <script src="components/page/pageService.js"></script>
 
     <!-- directives -->
     <script src="components/navigation/navigation.js"></script>
@@ -87,6 +88,7 @@
 
     <!-- controllers -->
     <script src="components/article/articleController.js"></script>
+    <script src="components/page/pageController.js"></script>
     <script src="components/dashboard/dashboardController.js"></script>
 
     <!-- run app -->

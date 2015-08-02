@@ -34,6 +34,28 @@ function NavigationService() {
                     "link": "pages\/add\/"
                 }
             ]
+        },
+        "pages": {
+            "backgroundColorClass": "darkred",
+            "topBorderClass": "lightred-top-border",
+            "menuArray": [
+                {
+                    "name": "Article Overview",
+                    "link": "articles\/list\/"
+                },
+                {
+                    "name": "Add Article",
+                    "link": "articles\/add\/"
+                },
+                {
+                    "name": "Page Overview",
+                    "link": "pages\/list\/"
+                },
+                {
+                    "name": "Add Page",
+                    "link": "pages\/add\/"
+                }
+            ]
         }
         //"files": {
         //    "backgroundColorClass": "darkpurple",

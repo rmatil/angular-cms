@@ -49,6 +49,12 @@
                     controllerAs: 'vm'
                 });
 
+                $routeProvider.when('/pages/list', {
+                    templateUrl: 'components/page/pages.html',
+                    controller: 'PageController',
+                    controllerAs: 'vm'
+                });
+
                 // use HTML5 history API
                 $locationProvider.html5Mode(true);
 
