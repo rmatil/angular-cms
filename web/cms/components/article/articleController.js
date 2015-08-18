@@ -19,13 +19,14 @@ function ArticleController(ArticleService) {
     }
 }
 
-function ArticleDetailController(ArticleService, LanguageService, $routeParams) {
+function ArticleDetailController(ArticleService, LanguageService, ArticleCategoryService, $routeParams) {
     var vm = this,
         articleId = $routeParams.id;
 
     vm.article = {};
     vm.article.content = ''; // init this to solve a problem with ckEditor
     vm.languages = [];
+    vm.articleCategories = [];
 
     activate(articleId);
 
@@ -46,6 +47,11 @@ function ArticleDetailController(ArticleService, LanguageService, $routeParams) 
         LanguageService.getLanguages()
             .then(function (data) {
                 vm.languages = data;
+                return data;
+            });
+        ArticleCategoryService.getArticleCategories()
+            .then(function (data) {
+                vm.articleCategories = data;
                 return data;
             });
     }
@@ -92,7 +98,7 @@ function ArticleAddController(ArticleService) {
         .controller('ArticleAddController', ArticleAddController);
 
     ArticleController.$inject = ['ArticleService'];
-    ArticleDetailController.$inject = ['ArticleService', 'LanguageService', '$routeParams'];
+    ArticleDetailController.$inject = ['ArticleService', 'LanguageService', 'ArticleCategoryService', '$routeParams'];
     ArticleAddController.$inject = ['ArticleService'];
 
 }());

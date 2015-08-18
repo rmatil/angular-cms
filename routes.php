@@ -30,11 +30,11 @@ $app->addRoutes(array(
                                                  'delete'  => 'Article:deleteArticleById'),
 
     // articleCategories
-    '/api/articleCategories'            => array('get'     => 'ArticleCategory:getArticleCategories',
-                                                 'post'    => 'ArticleCategory:insertArticleCategory'),
-    '/api/articleCategories/:id'        => array('get'     => 'ArticleCategory:getArticleCategoryById',
-                                                 'delete'  => 'ArticleCategory:deleteArticleCategoryById'),
-    '/api/articleCategories/update/:id' => array('post'    => 'ArticleCategory:updateArticleCategory'),
+    '/api/article-categories'            => array('get'     => 'ArticleCategory:getArticleCategories',
+                                                  'post'    => 'ArticleCategory:insertArticleCategory'),
+    '/api/article-categories/:id'        => array('get'     => 'ArticleCategory:getArticleCategoryById',
+                                                  'put'     => 'ArticleCategory:updateArticleCategory',
+                                                  'delete'  => 'ArticleCategory:deleteArticleCategoryById'),
 
 
     // pages

@@ -27,7 +27,7 @@
                 <dt>Category</dt>
                 <dd>
                     <select ng-model="vm.article.category" required>
-                        <option ng-repeat="category in allArticleCategories" value="{{category}}" ng-selected="vm.article.category.id === category.id">
+                        <option ng-repeat="category in vm.articleCategories" value="{{category}}" ng-selected="vm.article.category.id === category.id">
                             {{category.name}}
                         </option>
                     </select>
