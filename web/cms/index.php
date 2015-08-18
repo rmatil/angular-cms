@@ -81,6 +81,7 @@
     <script src="components/api/genericApiService.js"></script>
     <script src="components/article/articleService.js"></script>
     <script src="components/page/pageService.js"></script>
+    <script src="components/language/languageService.js"></script>
 
     <!-- directives -->
     <script src="components/navigation/navigation.js"></script>

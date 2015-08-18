@@ -35,7 +35,7 @@
                 <dt>Language</dt>
                 <dd>
                     <select ng-model="vm.article.language" required>
-                        <option ng-repeat="language in allLanguages" value="{{language}}" ng-selected="vm.article.language.id === language.id">
+                        <option ng-repeat="language in vm.languages" value="{{language}}" ng-selected="vm.article.language.id === language.id">
                             {{language.name}}
                         </option>
                     </select>

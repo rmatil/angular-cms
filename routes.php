@@ -81,8 +81,8 @@ $app->addRoutes(array(
     '/api/languages'                   => array('get'     => 'Language:getLanguages',
                                                 'post'    => 'Language:insertLanguage'),
     '/api/languages/:id'               => array('get'     => 'Language:getLanguageById',
+                                                'put'     => 'Language:updateLanguage',
                                                 'delete'  => 'Language:deleteLanguageById'),
-    '/api/languages/update/:id'        => array('post'    => 'Language:updateLanguages'),
 
     // users
     '/api/users'                        => array('get'    => 'User:getUsers',
