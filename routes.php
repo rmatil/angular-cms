@@ -30,26 +30,26 @@ $app->addRoutes(array(
                                                  'delete'  => 'Article:deleteArticleById'),
 
     // articleCategories
-    '/api/article-categories'            => array('get'     => 'ArticleCategory:getArticleCategories',
-                                                  'post'    => 'ArticleCategory:insertArticleCategory'),
-    '/api/article-categories/:id'        => array('get'     => 'ArticleCategory:getArticleCategoryById',
-                                                  'put'     => 'ArticleCategory:updateArticleCategory',
-                                                  'delete'  => 'ArticleCategory:deleteArticleCategoryById'),
+    '/api/article-categories'           => array('get'     => 'ArticleCategory:getArticleCategories',
+                                                 'post'    => 'ArticleCategory:insertArticleCategory'),
+    '/api/article-categories/:id'       => array('get'     => 'ArticleCategory:getArticleCategoryById',
+                                                 'put'     => 'ArticleCategory:updateArticleCategory',
+                                                 'delete'  => 'ArticleCategory:deleteArticleCategoryById'),
 
 
     // pages
     '/api/pages'                        => array('get'    => 'Page:getPages',
                                                  'post'   => 'Page:insertPage'),
     '/api/pages/:id'                    => array('get'    => 'Page:getPageById',
+                                                 'put'    => 'Page:updatePage',
                                                  'delete' => 'Page:deletePageById'),
-    '/api/pages/update/:id'             => array('post'   => 'Page:updatePage'),
 
     // pageCategories
-    '/api/pageCategories'               => array('get'    => 'PageCategory:getPageCategories',
-                                                 'post'   => 'PageCategory:insertPageCategory'),
-    '/api/pageCategories/:id'           => array('get'    => 'PageCategory:getPageCategoryById',
-                                                 'delete' => 'PageCategory:deletePageCategoryById'),
-    '/api/pageCategories/update/:id'    => array('post'   => 'PageCategory:updatePageCategory'),
+    '/api/page-categories'               => array('get'    => 'PageCategory:getPageCategories',
+                                                  'post'   => 'PageCategory:insertPageCategory'),
+    '/api/page-categories/:id'           => array('get'    => 'PageCategory:getPageCategoryById',
+                                                  'put'    => 'PageCategory:updatePageCategory',
+                                                  'delete' => 'PageCategory:deletePageCategoryById'),
 
     // events
     '/api/events'                      => array('get'     => 'Event:getEvents',
