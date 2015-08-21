@@ -6,7 +6,7 @@
 <form ng-submit="vm.saveArticle()" novalidate>
     <article>
         <h1>
-            <i class="fa fa-file-text-o"></i> {{ menuName }}
+            <i class="fa fa-file-text-o"></i> <page-name></page-name>
         </h1>
         <input type="text" ng-model="vm.article.title" value="{{ vm.article.title }}" id="article-title" placeholder="Titel" article-url-name tabindex="1">
         <textarea ckeditor ng-model="vm.article.content" id="body-editor" value="{{ vm.article.content }}" tabindex="2">{{ article.content }}</textarea>

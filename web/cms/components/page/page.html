@@ -6,7 +6,7 @@
 <form ng-submit="vm.savePage()" novalidate>
     <article>
         <h1>
-            <i class="fa fa-file-text-o"></i> {{ menuName }}
+            <i class="fa fa-file-text-o"></i> <page-name></page-name>
         </h1>
         <input type="text" ng-model="vm.page.title" value="{{ vm.page.title }}" id="page-title" placeholder="Titel" ng-attr-url-name="{{vm.page}}" tabindex="1">
 
