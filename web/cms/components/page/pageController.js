@@ -115,7 +115,7 @@ function PageAddController(PageService, LanguageService, PageCategoryService, Ar
     activate();
 
     function activate() {
-        $scope.backgroundColorClass = NavigationService.getBackgroundColorClass()
+        $scope.backgroundColorClass = NavigationService.getBackgroundColorClass($location.path());
         PageService.getEmptyPage()
             .then(function (data) {
                 vm.page = data;
