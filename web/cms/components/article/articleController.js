@@ -65,7 +65,7 @@ function ArticleDetailController(ArticleService, LanguageService, ArticleCategor
     }
 }
 
-function ArticleAddController(ArticleService) {
+function ArticleAddController(ArticleService, LanguageService, ArticleCategoryService) {
     var vm = this;
 
     vm.article = {};
@@ -78,6 +78,16 @@ function ArticleAddController(ArticleService) {
             .then(function (data) {
                 vm.article = data;
                 return vm.article;
+            });
+        LanguageService.getLanguages()
+            .then(function (data) {
+                vm.languages = data;
+                return data;
+            });
+        ArticleCategoryService.getArticleCategories()
+            .then(function (data) {
+                vm.articleCategories = data;
+                return data;
             });
     }
 
@@ -99,6 +109,6 @@ function ArticleAddController(ArticleService) {
 
     ArticleController.$inject = ['ArticleService'];
     ArticleDetailController.$inject = ['ArticleService', 'LanguageService', 'ArticleCategoryService', '$routeParams'];
-    ArticleAddController.$inject = ['ArticleService'];
+    ArticleAddController.$inject = ['ArticleService', 'LanguageService', 'ArticleCategoryService'];
 
 }());
