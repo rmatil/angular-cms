@@ -8,8 +8,8 @@
         <h1>
             <i class="fa fa-file-text-o"></i> <page-name></page-name>
         </h1>
-        <input type="text" ng-model="vm.article.title" value="{{ vm.article.title }}" id="article-title" placeholder="Titel" article-url-name tabindex="1">
-        <textarea ckeditor ng-model="vm.article.content" id="body-editor" value="{{ vm.article.content }}" tabindex="2">{{ article.content }}</textarea>
+        <input type="text" ng-model="vm.article.title" value="{{ vm.article.title }}" id="article-title" placeholder="Titel" tabindex="1">
+        <textarea ckeditor ng-model="vm.article.content" id="body-editor" value="{{ vm.article.content }}" tabindex="2">{{ vm.article.content }}</textarea>
     </article>
 
     <aside>
@@ -42,9 +42,9 @@
                 </dd>
             </dl>
             <footer>
-                <button type="submit" ng-class="{{ backgroundColorClass }}" tabindex="5">Save</button>
+                <button type="submit" ng-class="backgroundColorClass" tabindex="5">Save</button>
                 <img class="img-center" src="img/loading.gif" height="18" width="18" alt="loading" ng-show="loading">
-                <button type="button" ng-show="!deleteMsg" class="right delete" delete-object delete-object-id="{{ vm.article.id }}" delete-object-path="{{ apiPath }}" tabindex="6">{{deleteMsg}}</button>
+                <button type="button" class="delete" tabindex="6">Delete</button>
             </footer>
         </section>
         <section>

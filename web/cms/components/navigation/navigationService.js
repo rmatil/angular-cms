@@ -167,6 +167,22 @@ function NavigationService() {
     };
 
     /**
+     * Returns the background color class for the given url
+     *
+     * @param currentUrl The url of which to get the background color class
+     * @returns {string} The class of the background color
+     */
+    this.getBackgroundColorClass = function (currentUrl) {
+        var subNav = that.getSubNavigation(currentUrl, false);
+
+        if (null !== subNav) {
+            return subNav.backgroundColorClass;
+        }
+
+        return '';
+    };
+
+    /**
      * Returns the sub-navigation array of a given parent route.
      *
      * @param currentUrl The url of which to get the submenues
@@ -194,6 +210,7 @@ function NavigationService() {
 
                     subNav.menuArray = entries;
                     subNav.topBorderClass = menuArray[routeElements[property]].topBorderClass;
+                    subNav.backgroundColorClass = menuArray[routeElements[property]].backgroundColorClass;
                     return subNav;
                 }
             }

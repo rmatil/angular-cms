@@ -16,7 +16,7 @@ function PageController(PageService) {
     }
 }
 
-function PageDetailController(PageService, LanguageService, PageCategoryService, ArticleService, ArrayService, $routeParams) {
+function PageDetailController(PageService, LanguageService, PageCategoryService, ArticleService, ArrayService, NavigationService, $routeParams, $scope, $location) {
     var vm = this,
         pageId = $routeParams.id;
 
@@ -44,6 +44,7 @@ function PageDetailController(PageService, LanguageService, PageCategoryService,
     };
 
     function activate(pageId) {
+        $scope.backgroundColorClass = NavigationService.getBackgroundColorClass($location.path());
         PageService.getPage(pageId)
             .then(function (data) {
                 vm.page = data;
@@ -103,7 +104,7 @@ function PageDetailController(PageService, LanguageService, PageCategoryService,
     }
 }
 
-function PageAddController(PageService, LanguageService, PageCategoryService, ArticleService, ArrayService, StringService, $scope) {
+function PageAddController(PageService, LanguageService, PageCategoryService, ArticleService, ArrayService, StringService, NavigationService, $scope, $location) {
     var vm = this,
         defaultTitle = 'new Page';
 
@@ -114,6 +115,7 @@ function PageAddController(PageService, LanguageService, PageCategoryService, Ar
     activate();
 
     function activate() {
+        $scope.backgroundColorClass = NavigationService.getBackgroundColorClass()
         PageService.getEmptyPage()
             .then(function (data) {
                 vm.page = data;
@@ -211,6 +213,6 @@ function PageAddController(PageService, LanguageService, PageCategoryService, Ar
         .controller('PageAddController', PageAddController);
 
     PageController.$inject = ['PageService'];
-    PageDetailController.$inject = ['PageService', 'LanguageService', 'PageCategoryService', 'ArticleService', 'ArrayService', '$routeParams'];
-    PageAddController.$inject = ['PageService', 'LanguageService', 'PageCategoryService', 'ArticleService', 'ArrayService', 'StringService', '$scope'];
+    PageDetailController.$inject = ['PageService', 'LanguageService', 'PageCategoryService', 'ArticleService', 'ArrayService', 'NavigationService', '$routeParams', '$scope', '$location'];
+    PageAddController.$inject = ['PageService', 'LanguageService', 'PageCategoryService', 'ArticleService', 'ArrayService', 'StringService', 'NavigationService', '$scope', '$location'];
 })();

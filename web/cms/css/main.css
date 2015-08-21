@@ -907,6 +907,19 @@ nav ul li.darkpink-border {
 
 /* Buttons */
 
+button.delete {
+    color: #000;
+    border: 2px solid #000;
+    background: #ffffff;
+}
+
+button.delete:hover,
+button.delete:active {
+    color: #fff;
+    background: #d8000c;
+    border: 2px solid #d8000c;
+}
+
 button.lightred {
     background: #fff;
     color: #e7494a;
