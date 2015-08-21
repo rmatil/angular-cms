@@ -103,7 +103,7 @@ function PageDetailController(PageService, LanguageService, PageCategoryService,
     }
 }
 
-function PageAddController(PageService, LanguageService, PageCategoryService, ArticleService, ArrayService, $scope) {
+function PageAddController(PageService, LanguageService, PageCategoryService, ArticleService, ArrayService, StringService, $scope) {
     var vm = this,
         defaultTitle = 'new Page';
 
@@ -155,7 +155,7 @@ function PageAddController(PageService, LanguageService, PageCategoryService, Ar
             return;
         }
 
-        vm.page.url_name = buildUrlName(currentVal);
+        vm.page.url_name = StringService.buildUrlString(currentVal);
     });
 
     vm.savePage = function () {
@@ -200,14 +200,6 @@ function PageAddController(PageService, LanguageService, PageCategoryService, Ar
             vm.articles.push(removed[0]);
         }
     }
-
-    var buildUrlName = function (val) {
-        if (!val) {
-            return '';
-        }
-
-        return val.replace(/[\x7f-\xff]/g, '').replace(/[ \t\r\n\v\f]/g, '-').toLowerCase();
-    };
 }
 
 
@@ -220,5 +212,5 @@ function PageAddController(PageService, LanguageService, PageCategoryService, Ar
 
     PageController.$inject = ['PageService'];
     PageDetailController.$inject = ['PageService', 'LanguageService', 'PageCategoryService', 'ArticleService', 'ArrayService', '$routeParams'];
-    PageAddController.$inject = ['PageService', 'LanguageService', 'PageCategoryService', 'ArticleService', 'ArrayService', '$scope'];
+    PageAddController.$inject = ['PageService', 'LanguageService', 'PageCategoryService', 'ArticleService', 'ArrayService', 'StringService', '$scope'];
 })();

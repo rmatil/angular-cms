@@ -65,8 +65,9 @@ function ArticleDetailController(ArticleService, LanguageService, ArticleCategor
     }
 }
 
-function ArticleAddController(ArticleService, LanguageService, ArticleCategoryService) {
-    var vm = this;
+function ArticleAddController(ArticleService, LanguageService, ArticleCategoryService, StringService, $scope) {
+    var vm = this,
+        defaultTitle = 'new Article';
 
     vm.article = {};
     vm.article.content = ''; // init this to solve a problem with ckEditor
@@ -77,17 +78,26 @@ function ArticleAddController(ArticleService, LanguageService, ArticleCategorySe
         ArticleService.getEmptyArticle()
             .then(function (data) {
                 vm.article = data;
+                vm.article.title = defaultTitle;
+
+                LanguageService.getLanguages()
+                    .then(function (data) {
+                        vm.languages = data;
+                        // assign first language as default
+                        if (vm.languages.length > 0) {
+                            vm.article.language = vm.languages[0];
+                        }
+                    });
+                ArticleCategoryService.getArticleCategories()
+                    .then(function (data) {
+                        vm.articleCategories = data;
+                        // assign first page category as default
+                        if (vm.articleCategories.length > 0) {
+                            vm.article.category = vm.articleCategories[0];
+                        }
+                    });
+
                 return vm.article;
-            });
-        LanguageService.getLanguages()
-            .then(function (data) {
-                vm.languages = data;
-                return data;
-            });
-        ArticleCategoryService.getArticleCategories()
-            .then(function (data) {
-                vm.articleCategories = data;
-                return data;
             });
     }
 
@@ -98,6 +108,17 @@ function ArticleAddController(ArticleService, LanguageService, ArticleCategorySe
     function createArticle() {
         ArticleService.postArticle(vm.article);
     }
+
+    $scope.$watch(function() {
+        return vm.article.title;
+    }, function (currentVal, newVal) {
+        if (undefined === currentVal ||
+            '' === currentVal) {
+            return;
+        }
+
+        vm.article.url_name = StringService.buildUrlString(currentVal);
+    });
 }
 
 (function () {
@@ -109,6 +130,6 @@ function ArticleAddController(ArticleService, LanguageService, ArticleCategorySe
 
     ArticleController.$inject = ['ArticleService'];
     ArticleDetailController.$inject = ['ArticleService', 'LanguageService', 'ArticleCategoryService', '$routeParams'];
-    ArticleAddController.$inject = ['ArticleService', 'LanguageService', 'ArticleCategoryService'];
+    ArticleAddController.$inject = ['ArticleService', 'LanguageService', 'ArticleCategoryService', 'StringService', '$scope'];
 
 }());
