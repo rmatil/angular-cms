@@ -45,15 +45,7 @@
             <td>{{page.category.name}}</td>
             <td>{{page.language.name}}</td>
             <td>{{page.author.user_name}}</td>
-            <td>{{page.last_edit_date | date:"dd.MM.yyyy 'Uhr @' HH:mm"}}</td>
-            <td><span class="right cursor-pointer delete" delete-object delete-object-id="{{ page.id }}" delete-object-path="{{ apiPath }}" tabindex="7">{{ deleteMsg }}</span></td>
-        </tr>
-        <tr ng-repeat="page in vm.pages | filter:pageFilter | orderBy:predicate:reverse">
-            <td><a ng-href="pages/page/{{page.id}}">{{page.title}}</a></td>
-            <td>{{page.category.name}}</td>
-            <td>{{page.language.name}}</td>
-            <td>{{page.author.user_name}}</td>
-            <td>{{page.last_edit_date | date:"dd.MM.yyyy 'Uhr @' HH:mm"}}</td>
+            <td>{{page.last_edit_date | date:"dd.MM.yyyy '@' HH:mm"}}</td>
             <td><span class="right cursor-pointer delete" delete-object delete-object-id="{{ page.id }}" delete-object-path="{{ apiPath }}" tabindex="7">{{ deleteMsg }}</span></td>
         </tr>
         </tbody>

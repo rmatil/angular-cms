@@ -83,6 +83,8 @@
     <script src="components/page/pageService.js"></script>
     <script src="components/language/languageService.js"></script>
     <script src="components/article-category/articleCategoryService.js"></script>
+    <script src="components/page-category/pageCategoryService.js"></script>
+    <script src="components/util/arrayService.js"></script>
 
     <!-- directives -->
     <script src="components/navigation/navigation.js"></script>

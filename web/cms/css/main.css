@@ -306,6 +306,13 @@ td {
     padding: 0.9em 0 0.9em 0.5em;
 }
 
+.table {
+    display: table;
+}
+
+.table-cell {
+    display: table-cell;
+}
 
 
 
@@ -337,7 +344,25 @@ td {
     margin: 0 0 0 1.4em;
 }
 
+.width-100 {
+    width: 100%;
+}
 
+.width-40 {
+    width: 40%;
+}
+
+.width-10 {
+    width: 10%;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
 
 
 /*
@@ -602,6 +627,22 @@ td {
 /* ==========================================================================
    Color definitions
    ========================================================================== */
+
+.lighred-color {
+    color: #e7494a;
+}
+
+.darkred-color {
+    color: #c22727;
+}
+
+.lightgreen-color {
+    color: #2ecc71;
+}
+
+.darkgreen-color {
+    color: #27ae60;
+}
 
 .lightred-right-border {
     border-right: 2px solid #e7494a;
