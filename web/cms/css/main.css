@@ -356,6 +356,10 @@ td {
     width: 10%;
 }
 
+.width-30 {
+    width: 30%;
+}
+
 .text-center {
     text-align: center;
 }
@@ -449,7 +453,6 @@ td {
 
 .dashboard-box {
     background: #f8f8f8;
-    padding-left: 10px;
     display: inline-table;
 }
 
@@ -464,7 +467,7 @@ td {
 .dashboard-body-box {
     background: #fff;
     padding: 5px 10px;
-    margin: 10px 10px 10px 0;
+    margin: 0 0 10px 0;
     overflow: hidden;
     border: 1px solid #e5e5e5;
     line-height: 24px;

@@ -85,6 +85,27 @@ function NavigationService() {
                     "inMenu": false
                 }
             ]
+        },
+        "events": {
+            "backgroundColorClass": "darkpink",
+            "topBorderClass": "lightpink-top-border",
+            "menuArray": [
+                {
+                    "name": "Event Dashboard",
+                    "link": "events\/list",
+                    "inMenu": true
+                },
+                {
+                    "name": "Add Event",
+                    "link": "events\/add",
+                    "inMenu": true
+                },
+                {
+                    "name": "Add Location",
+                    "link": "locations\/add",
+                    "inMenu": true
+                }
+            ]
         }
         //"files": {
         //    "backgroundColorClass": "darkpurple",

@@ -67,6 +67,12 @@
                     controllerAs: 'vm'
                 });
 
+                $routeProvider.when('/events/list', {
+                    templateUrl: 'components/event-dashboard/event-dashboard',
+                    controller: 'EventDashboardController',
+                    controllerAs: 'vm'
+                });
+
                 // use HTML5 history API
                 $locationProvider.html5Mode(true);
 

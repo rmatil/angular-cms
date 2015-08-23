@@ -71,6 +71,7 @@
     <script src="bower_components/angular-local-storage/dist/angular-local-storage.min.js"></script>
     <script src="bower_components/moment/min/moment.min.js"></script>
     <script src="bower_components/angular-momentjs/angular-momentjs.min.js"></script>
+    <script src="bower_components/raphael/raphael-min.js"></script>
 
     <!-- app -->
 
@@ -84,17 +85,22 @@
     <script src="components/language/languageService.js"></script>
     <script src="components/article-category/articleCategoryService.js"></script>
     <script src="components/page-category/pageCategoryService.js"></script>
+    <script src="components/location/locationService.js"></script>
+    <script src="components/event/eventService.js"></script>
     <script src="components/util/arrayService.js"></script>
     <script src="components/util/stringService.js"></script>
+    <script src="components/logger/loggerService.js"></script>
 
     <!-- directives -->
     <script src="components/navigation/navigation.js"></script>
     <script src="components/status-bar/statusBar.js"></script>
+    <script src="components/event-dashboard/eventGraphDirective.js"></script>
 
     <!-- controllers -->
     <script src="components/article/articleController.js"></script>
     <script src="components/page/pageController.js"></script>
     <script src="components/dashboard/dashboardController.js"></script>
+    <script src="components/event-dashboard/eventDashboardController.js"></script>
 
     <!-- run app -->
     <script src="components/app.js"></script>
