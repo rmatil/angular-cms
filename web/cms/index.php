@@ -87,6 +87,7 @@
     <script src="components/page-category/pageCategoryService.js"></script>
     <script src="components/location/locationService.js"></script>
     <script src="components/event/eventService.js"></script>
+    <script src="components/event-dashboard/eventGraphService.js"></script>
     <script src="components/util/arrayService.js"></script>
     <script src="components/util/stringService.js"></script>
     <script src="components/logger/loggerService.js"></script>
