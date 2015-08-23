@@ -123,7 +123,7 @@ function ArticleAddController(ArticleService, LanguageService, ArticleCategorySe
     });
 }
 
-(function () {
+(function (angular) {
     angular
         .module('cms.controllers')
         .controller('ArticleController', ArticleController)
@@ -134,4 +134,4 @@ function ArticleAddController(ArticleService, LanguageService, ArticleCategorySe
     ArticleDetailController.$inject = ['ArticleService', 'LanguageService', 'ArticleCategoryService', 'NavigationService', '$routeParams', '$scope', '$location'];
     ArticleAddController.$inject = ['ArticleService', 'LanguageService', 'ArticleCategoryService', 'StringService', 'NavigationService', '$scope', '$location'];
 
-}());
+}(angular));
