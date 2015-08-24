@@ -15,7 +15,7 @@
                 <tbody>
                 <tr style="text-align: center">
                     <td style="width: 33%"><h2>{{ vm.beforeEvents.length }}</h2><p>past events</p></td>
-                    <td style="width: 33%"><h2>{{ vm.nextEvent.date | date:"dd.MM.yyyy"}}</h2><p>next event</p></td>
+                    <td style="width: 33%"><h2>{{ vm.nextEvent.date | amDateFormat:"DD.MM.YYYY @ HH:mm" }}</h2><p>next event</p></td>
                     <td style="width: 33%"><h2>{{ vm.afterEvents.length }}</h2><p>upcoming events</p></td>
                 </tr>
                 </tbody>
@@ -37,9 +37,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="entry in vm.events | orderBy:'title'">
-                        <td>{{ entry.name }}</td>
-                        <td>{{ entry.start_date }}</td>
+                    <tr ng-repeat="entry in vm.events | orderBy:'start_date'">
+                        <td><a ng-href="events/event/{{entry.id}}">{{ entry.name }}</a></td>
+                        <td>{{ entry.start_date | date:"dd.MM.yyyy '@' HH:mm" }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -55,7 +55,7 @@
                 </thead>
                 <tbody>
                     <tr ng-repeat="location in vm.locations | orderBy: title">
-                        <td>{{ location.name }}</td>
+                        <td><a ng-href="locations/location/{{location.id}}">{{ location.name }}</a></td>
                         <td>{{ location.address }}</td>
                     </tr>
                 </tbody>

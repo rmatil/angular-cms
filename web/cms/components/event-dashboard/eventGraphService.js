@@ -103,16 +103,10 @@ function EventGraphService (LoggerService) {
                 );
             }; // events after next event
 
-        events.forEach(function (elm) {
-            if (elm.date.isAfter(now) && false === nextEvent) {
-                // this is the upcoming event
-                nextEvent = elm;
-            } else if (elm.date.isAfter(now) && false !== nextEvent) {
-                eventsAfter.push(elm);
-            } else {
-                eventsBefore.push(elm);
-            }
-        });
+        var classifiedEvents = that.getClassifiedEvents(events);
+        nextEvent = classifiedEvents.nextEvent;
+        eventsBefore = classifiedEvents.eventsBefore;
+        eventsAfter = classifiedEvents.eventsAfter;
 
         // classify events and remove all which are more than the half of the month before the next event
         eventsBefore = eventsBefore.filter(function (elm) {
@@ -151,6 +145,16 @@ function EventGraphService (LoggerService) {
             eventObjects = [],
             paper = Raphael(container, containerWidth, containerHeight);
 
+
+        eventObjects = that.buildEventObjects(events);
+
+        that.drawLine(0, containerWidth, circleYPos, circleYPos, lineAttrs, paper);
+        that.drawEvents(0, containerWidth, circleYPos, circleRadius, activeCircleRadius, paper, eventObjects, circleAttrs, activeCircleAttrs);
+    };
+
+    this.buildEventObjects = function (events) {
+        var eventObjects = [];
+
         events.forEach( function (elm) {
             if (!('start_date' in elm)) {
                 throw {
@@ -165,10 +169,36 @@ function EventGraphService (LoggerService) {
             eventObjects.push(ev);
         });
 
+        return eventObjects;
+    };
 
-        that.drawLine(0, containerWidth, circleYPos, circleYPos, lineAttrs, paper);
-        that.drawEvents(0, containerWidth, circleYPos, circleRadius, activeCircleRadius, paper, eventObjects, circleAttrs, activeCircleAttrs);
-    }
+    /**
+     * Returns an object with the classified events in it.
+     *
+     * @param events An array of event objects with their dates as moment.js-date
+     * @returns {{eventsBefore: Array, nextEvent: boolean, eventsAfter: Array}}
+     */
+    this.getClassifiedEvents = function (events) {
+        var classifiedEvents = {
+                "eventsBefore": [],
+                "nextEvent": false,
+                "eventsAfter": []
+            },
+            now = moment();
+
+        events.forEach(function (elm) {
+            if (elm.date.isAfter(now) && false === classifiedEvents.nextEvent) {
+                // this is the upcoming event
+                classifiedEvents.nextEvent = elm;
+            } else if (elm.date.isAfter(now) && false !== classifiedEvents.nextEvent) {
+                classifiedEvents.eventsAfter.push(elm);
+            } else {
+                classifiedEvents.eventsBefore.push(elm);
+            }
+        });
+
+        return classifiedEvents;
+    };
 }
 
 (function (angular) {
