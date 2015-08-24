@@ -1,23 +1,44 @@
 'use strict';
 
 function LoggerService () {
-    this.logLevel = 'log';
+    var that = this;
+
+    this.levels = {
+        "debug": 0,
+        "info": 1,
+        "warn": 2,
+        "error": 3
+    };
+
+    this.logLevel = '0';
 
     this.debug = function (obj) {
-        console.debug(obj);
+        if (this.levels.debug >= this.logLevel) {
+            console.debug(obj);
+        }
     };
 
     this.info = function (obj) {
-        console.log(obj);
+        if (this.levels.info >= this.logLevel) {
+            console.log(obj);
+        }
     };
 
     this.warn = function (obj) {
-        console.warn(obj);
+        if (this.levels.warn >= this.logLevel) {
+            console.warn(obj);
+        }
     };
 
     this.error = function (obj) {
-        console.error(obj);
-    }
+        if (this.levels.error >= this.logLevel) {
+            console.error(obj);
+        }
+    };
+
+    this.setLogLevel = function (level) {
+        that.logLevel = level;
+    };
 }
 
 (function(angular) {
