@@ -14,9 +14,9 @@
             <table>
                 <tbody>
                 <tr style="text-align: center">
-                    <td style="width: 33%"><h2>5</h2><p>past events</p></td>
-                    <td style="width: 33%"><h2>14.08.2015</h2><p>next event</p></td>
-                    <td style="width: 33%"><h2>13</h2><p>upcoming events</p></td>
+                    <td style="width: 33%"><h2>{{ vm.beforeEvents.length }}</h2><p>past events</p></td>
+                    <td style="width: 33%"><h2>{{ vm.nextEvent.date | date:"dd.MM.yyyy"}}</h2><p>next event</p></td>
+                    <td style="width: 33%"><h2>{{ vm.afterEvents.length }}</h2><p>upcoming events</p></td>
                 </tr>
                 </tbody>
             </table>

@@ -6,6 +6,10 @@ function EventDashboardController (EventService, LocationService) {
     vm.events = [];
     vm.locations = [];
 
+    vm.beforeEvents = [];
+    vm.nextEvent = [];
+    vm.afterEvents = [];
+
     activate();
 
     function activate() {
