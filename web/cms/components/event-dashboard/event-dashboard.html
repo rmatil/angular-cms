@@ -37,7 +37,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="entry in vm.events | orderBy:'start_date'">
+                    <tr ng-repeat="entry in vm.events | orderBy:'start_date' | filter:searchText">
                         <td><a ng-href="events/event/{{entry.id}}">{{ entry.name }}</a></td>
                         <td>{{ entry.start_date | date:"dd.MM.yyyy '@' HH:mm" }}</td>
                     </tr>
@@ -54,7 +54,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="location in vm.locations | orderBy: title">
+                    <tr ng-repeat="location in vm.locations | orderBy: title | filter:searchText">
                         <td><a ng-href="locations/location/{{location.id}}">{{ location.name }}</a></td>
                         <td>{{ location.address }}</td>
                     </tr>
@@ -68,6 +68,6 @@
 
 <aside>
     <section>
-        <input type="search" ng-model="eventFilter" placeholder="Search"/>
+        <input type="search" ng-model="searchText" placeholder="Search"/>
     </section>
 </aside>
