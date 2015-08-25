@@ -8,18 +8,12 @@
         <h1>
             <i class="fa fa-map-marker"></i> <page-name></page-name>
         </h1>
-        <input type="text" ng-model="vm.location.description" value="{{location.name}}" id="description" placeholder="Description">
-        <input type="text" ng-model="vm.location.address" id="address" tabindex="3" geocode>
+        <input type="text" ng-model="vm.location.name" value="{{ vm.location.name }}" id="location-name" placeholder="Location Name" required>
+        <fieldset>
+            <input type="text" ng-model="vm.location.description" value="{{ vm.location.description }}" id="location-description" placeholder="Location Description" required>
+            <input type="text" ng-model="vm.location.address" id="location-address">
+        </fieldset>
         <div id="map-canvas"></div>
-
-        <p ng-show="noResultsFound || addressIsLoading">
-            <span style="height: 20px">&nbsp;</span>
-            <span ng-show="noResultsFound">{{errorMsg}}</span>
-            <span ng-show="addressIsLoading">
-                <img class="img-center" src="img/loading.gif" height="20" width="20" alt="loading" ng-show="addressIsLoading">
-                {{ mapMessage }}
-            </span>
-        </p>
     </article>
 
     <aside>

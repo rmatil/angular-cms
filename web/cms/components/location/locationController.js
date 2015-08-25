@@ -18,8 +18,12 @@ function LocationDetailController (LocationService, MapService, $routeParams, $s
             });
     }
 
+    vm.saveLocation = function () {
+        saveLocation();
+    };
+
     function saveLocation() {
-        // TODO: save location
+        LocationService.putLocation(vm.location);
     }
 
     $scope.$watch('vm.location.address', function () {

@@ -74,8 +74,8 @@ $app->addRoutes(array(
     '/api/locations'                   => array('get'     => 'Location:getLocations',
                                                 'post'    => 'Location:insertLocation'),
     '/api/locations/:id'               => array('get'     => 'Location:getLocationById',
+                                                'put'     => 'Location:updateLocation',
                                                 'delete'  => 'Location:deleteLocationById'),
-    '/api/locations/update/:id'        => array('post'    => 'Location:updateLocation'),
     
     // languages
     '/api/languages'                   => array('get'     => 'Language:getLanguages',
