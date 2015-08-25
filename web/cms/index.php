@@ -33,6 +33,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="bower_components/angular-pickadate/src/angular-pickadate.css" />
     <link rel="stylesheet" href="bower_components/ng-ckeditor/ng-ckeditor.css" />
+    <link rel="stylesheet" href="bower_components/rome/dist/rome.min.css" />
 </head>
 <body>
     <!--[if lt IE 8]>
@@ -72,6 +73,7 @@
     <script src="bower_components/moment/min/moment.min.js"></script>
     <script src="bower_components/angular-momentjs/angular-momentjs.min.js"></script>
     <script src="bower_components/raphael/raphael-min.js"></script>
+    <script src="bower_components/rome/dist/rome.standalone.min.js"></script>
 
     <!-- app -->
 
@@ -91,6 +93,7 @@
     <script src="components/util/arrayService.js"></script>
     <script src="components/util/stringService.js"></script>
     <script src="components/logger/loggerService.js"></script>
+    <script src="components/media/fileService.js"></script>
 
     <!-- directives -->
     <script src="components/navigation/navigation.js"></script>
@@ -102,6 +105,7 @@
     <script src="components/page/pageController.js"></script>
     <script src="components/dashboard/dashboardController.js"></script>
     <script src="components/event-dashboard/eventDashboardController.js"></script>
+    <script src="components/event/eventController.js"></script>
 
     <!-- run app -->
     <script src="components/app.js"></script>

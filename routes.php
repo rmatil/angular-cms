@@ -45,18 +45,18 @@ $app->addRoutes(array(
                                                  'delete' => 'Page:deletePageById'),
 
     // pageCategories
-    '/api/page-categories'               => array('get'    => 'PageCategory:getPageCategories',
-                                                  'post'   => 'PageCategory:insertPageCategory'),
-    '/api/page-categories/:id'           => array('get'    => 'PageCategory:getPageCategoryById',
-                                                  'put'    => 'PageCategory:updatePageCategory',
-                                                  'delete' => 'PageCategory:deletePageCategoryById'),
+    '/api/page-categories'              => array('get'    => 'PageCategory:getPageCategories',
+                                                 'post'   => 'PageCategory:insertPageCategory'),
+    '/api/page-categories/:id'          => array('get'    => 'PageCategory:getPageCategoryById',
+                                                 'put'    => 'PageCategory:updatePageCategory',
+                                                 'delete' => 'PageCategory:deletePageCategoryById'),
 
     // events
-    '/api/events'                      => array('get'     => 'Event:getEvents',
-                                                'post'    => 'Event:insertEvent'),
-    '/api/events/:id'                  => array('get'     => 'Event:getEventById',
-                                                'delete'  => 'Event:deleteEventById'),
-    '/api/events/update/:id'           => array('post'    => 'Event:updateEvent'),
+    '/api/events'                       => array('get'     => 'Event:getEvents',
+                                                 'post'    => 'Event:insertEvent'),
+    '/api/events/:id'                   => array('get'     => 'Event:getEventById',
+                                                 'put'     => 'Event:updateEvent',
+                                                 'delete'  => 'Event:deleteEventById'),
 
     // events
     '/api/repeatOptions'               => array('get'     => 'RepeatOption:getRepeatOptions',

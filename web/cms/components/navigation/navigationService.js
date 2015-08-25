@@ -101,6 +101,11 @@ function NavigationService() {
                     "inMenu": true
                 },
                 {
+                    "name": "Edit Event",
+                    "link": "events\/event\/:id",
+                    "inMenu": false
+                },
+                {
                     "name": "Add Location",
                     "link": "locations\/add",
                     "inMenu": true

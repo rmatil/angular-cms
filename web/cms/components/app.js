@@ -73,6 +73,18 @@
                     controllerAs: 'vm'
                 });
 
+                $routeProvider.when('/events/event/:id', {
+                    templateUrl: 'components/event/event.html',
+                    controller: 'EventDetailController',
+                    controllerAs: 'vm'
+                });
+
+                $routeProvider.when('/events/add', {
+                    templateUrl: 'components/event/event.html',
+                    controller: 'EventAddController',
+                    controllerAs: 'vm'
+                });
+
                 // use HTML5 history API
                 $locationProvider.html5Mode(true);
 

@@ -38,6 +38,7 @@
     "AngularJS-Toaster": "0.4.7",
     "ckeditor": "4.3",
     "ng-ckeditor": "~0.2.1",
-    "angular-momentjs": "~0.1.9"
+    "angular-momentjs": "~0.1.9",
+    "rome": "~2.1.22"
   }
 }
