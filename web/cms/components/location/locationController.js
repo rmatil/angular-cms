@@ -57,8 +57,59 @@ function LocationDetailController (LocationService, MapService, $routeParams, $s
 
 }
 
-function LocationAddController (LocationService) {
+function LocationAddController (LocationService, MapService, $scope, $timeout) {
+    var vm = this,
+        reloadMapPromise;
 
+    vm.location = {};
+
+    activate();
+
+    function activate() {
+        LocationService.getEmptyLocation()
+            .then(function (data) {
+                vm.location = data;
+
+                MapService.initMap('map-canvas', 50.0662735, -5.714346400000068, "Land's end");
+            });
+    }
+
+    vm.saveLocation = function () {
+        saveLocation();
+    };
+
+    function saveLocation() {
+        LocationService.postLocation(vm.location);
+    }
+
+    $scope.$watch('vm.location.address', function () {
+        var inputDiff = MapService.calcInputSpeedDiff();
+        if (0 === inputDiff) {
+            return;
+        }
+
+        if (reloadMapPromise) {
+            // cancel timeout to reload map
+            $timeout.cancel(reloadMapPromise);
+        }
+
+        if (800 < inputDiff) {
+            MapService.setMapToAddress(vm.location.address)
+                .then(function (ret) {
+                    vm.location.latitude = ret.lat;
+                    vm.location.longitude = ret.lng;
+                });
+            return;
+        }
+
+        reloadMapPromise = $timeout(function () {
+            MapService.setMapToAddress(vm.location.address)
+                .then(function (ret) {
+                    vm.location.latitude = ret.lat;
+                    vm.location.longitude = ret.lng;
+                });
+        }, 800);
+    });
 }
 
 (function (angular) {
@@ -68,5 +119,5 @@ function LocationAddController (LocationService) {
         .controller('LocationDetailController', LocationDetailController);
 
         LocationDetailController.$inject = ['LocationService', 'MapService', '$routeParams', '$scope', '$timeout'];
-        LocationAddController.$inject = ['LocationService'];
+        LocationAddController.$inject = ['LocationService', 'MapService', '$scope', '$timeout'];
 }(angular));

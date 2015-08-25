@@ -7,7 +7,7 @@ function MapService ($q) {
         marker, // google maps Marker object
         map, // map instance
         mapOptions ={
-            zoom: 16,
+            zoom: 12,
             mapTypeId: 'roadmap',
             panControl: false,
             zoomControl: true,
