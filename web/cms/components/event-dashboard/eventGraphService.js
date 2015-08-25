@@ -208,4 +208,4 @@ function EventGraphService (LoggerService) {
 
     EventGraphService.$inject = ['LoggerService'];
 
-}(angular));
+})(angular);

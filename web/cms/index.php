@@ -56,7 +56,7 @@
     <script>window.jQuery || document.write('<script src="bower_components/jquery/dist/jquery.min.js"><\/script>')</script>
 
     <!-- libraries -->
-<!--    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>-->
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
 
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-animate/angular-animate.min.js" ></script>
@@ -94,6 +94,7 @@
     <script src="components/util/stringService.js"></script>
     <script src="components/logger/loggerService.js"></script>
     <script src="components/media/fileService.js"></script>
+    <script src="components/location/mapService.js"></script>
 
     <!-- directives -->
     <script src="components/navigation/navigation.js"></script>
@@ -106,6 +107,7 @@
     <script src="components/dashboard/dashboardController.js"></script>
     <script src="components/event-dashboard/eventDashboardController.js"></script>
     <script src="components/event/eventController.js"></script>
+    <script src="components/location/locationController.js"></script>
 
     <!-- run app -->
     <script src="components/app.js"></script>

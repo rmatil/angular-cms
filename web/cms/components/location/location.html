@@ -1,0 +1,52 @@
+<!-- status bar -->
+<status-bar></status-bar>
+<!-- content navigation -->
+<content-nav ></content-nav>
+
+<form ng-submit="vm.saveLocation()" novalidate>
+    <article>
+        <h1>
+            <i class="fa fa-map-marker"></i> <page-name></page-name>
+        </h1>
+        <input type="text" ng-model="vm.location.description" value="{{location.name}}" id="description" placeholder="Description">
+        <input type="text" ng-model="vm.location.address" id="address" tabindex="3" geocode>
+        <div id="map-canvas"></div>
+
+        <p ng-show="noResultsFound || addressIsLoading">
+            <span style="height: 20px">&nbsp;</span>
+            <span ng-show="noResultsFound">{{errorMsg}}</span>
+            <span ng-show="addressIsLoading">
+                <img class="img-center" src="img/loading.gif" height="20" width="20" alt="loading" ng-show="addressIsLoading">
+                {{ mapMessage }}
+            </span>
+        </p>
+    </article>
+
+    <aside>
+        <section>
+            <header class="{{ backgroundColorClass }}">
+                <h1>Information</h1>
+            </header>
+            <dl>
+                <dt>Author</dt>
+                <dd>{{ vm.location.author.user_name }}</dd>
+                <dt>Last edited</dt>
+                <dd>{{ vm.location.last_edit_date | date:"dd.MM.yyyy' @' HH:mm" }}</dd>
+            </dl>
+            <footer>
+                <button type="submit" ng-class="backgroundColorClass" tabindex="5">Save</button>
+                <img class="img-center" src="img/loading.gif" height="18" width="18" alt="loading" ng-show="loading">
+                <button type="button" class="delete" tabindex="6">Delete</button>
+            </footer>
+        </section>
+
+        <section>
+            <header class="{{ backgroundColorClass }}">
+                <h1>Debug Information</h1>
+            </header>
+			<pre>
+				{{ vm.location | json }}
+			</pre>
+        </section>
+    </aside>
+</form>

@@ -85,6 +85,18 @@
                     controllerAs: 'vm'
                 });
 
+                $routeProvider.when('/locations/location/:id', {
+                    templateUrl: 'components/location/location.html',
+                    controller: 'LocationDetailController',
+                    controllerAs: 'vm'
+                });
+
+                $routeProvider.when('/locations/add', {
+                    templateUrl: 'components/location/location.html',
+                    controller: 'LocationAddController',
+                    controllerAs: 'vm'
+                });
+
                 // use HTML5 history API
                 $locationProvider.html5Mode(true);
 

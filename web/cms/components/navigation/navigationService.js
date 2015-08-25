@@ -109,6 +109,42 @@ function NavigationService() {
                     "name": "Add Location",
                     "link": "locations\/add",
                     "inMenu": true
+                },
+                {
+                    "name": "Edit Location",
+                    "link": "locations\/location\/:id",
+                    "inMenu": false
+                }
+            ]
+        },
+        "locations": {
+            "backgroundColorClass": "darkpink",
+            "topBorderClass": "lightpink-top-border",
+            "menuArray": [
+                {
+                    "name": "Event Dashboard",
+                    "link": "events\/list",
+                    "inMenu": true
+                },
+                {
+                    "name": "Add Event",
+                    "link": "events\/add",
+                    "inMenu": true
+                },
+                {
+                    "name": "Edit Event",
+                    "link": "events\/event\/:id",
+                    "inMenu": false
+                },
+                {
+                    "name": "Add Location",
+                    "link": "locations\/add",
+                    "inMenu": true
+                },
+                {
+                    "name": "Edit Location",
+                    "link": "locations\/location\/:id",
+                    "inMenu": false
                 }
             ]
         }

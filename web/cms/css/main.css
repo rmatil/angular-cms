@@ -314,7 +314,9 @@ td {
     display: table-cell;
 }
 
-
+#map-canvas {
+    height: 500px;
+}
 
 
 
