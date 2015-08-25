@@ -31,7 +31,6 @@
     <link rel="stylesheet" href="bower_components/AngularJS-Toaster/toaster.css" />
     <link rel="stylesheet" href="css/toaster.css" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="bower_components/angular-pickadate/src/angular-pickadate.css" />
     <link rel="stylesheet" href="bower_components/ng-ckeditor/ng-ckeditor.css" />
     <link rel="stylesheet" href="bower_components/rome/dist/rome.min.css" />
 </head>
@@ -58,14 +57,14 @@
     <!-- libraries -->
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
 
+
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-animate/angular-animate.min.js" ></script>
     <script src="bower_components/angular-route/angular-route.min.js"></script>
     <script src="bower_components/angular-cookies/angular-cookies.min.js"></script>
 
-    <script src="bower_components/ng-file-upload/angular-file-upload-shim.min.js"></script>
-    <script src="bower_components/ng-file-upload/angular-file-upload.min.js"></script>
-    <script src="bower_components/angular-pickadate/src/angular-pickadate.js"></script>
+    <script src="bower_components/ng-file-upload/ng-file-upload.min.js"></script>
+    <script src="bower_components/ng-file-upload/ng-file-upload-shim.min.js"></script>
     <script src="bower_components/ckeditor/ckeditor.js"></script>
     <script src="bower_components/ng-ckeditor/ng-ckeditor.min.js"></script>
     <script src="bower_components/AngularJS-Toaster/toaster.js"></script>
@@ -108,6 +107,7 @@
     <script src="components/event-dashboard/eventDashboardController.js"></script>
     <script src="components/event/eventController.js"></script>
     <script src="components/location/locationController.js"></script>
+    <script src="components/media/mediaController.js"></script>
 
     <!-- run app -->
     <script src="components/app.js"></script>

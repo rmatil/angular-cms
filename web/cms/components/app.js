@@ -5,6 +5,7 @@
         .module('cms', [
             'ngRoute',
             'ngCookies',
+            'ngFileUpload',
             'toaster',
             'LocalStorageModule',
             //'cms.filters',
@@ -12,10 +13,8 @@
             //'cms.genServices',
             'cms.directives',
             'cms.controllers',
-            'angularFileUpload',
-            'pickadate',
             'ngCkeditor',
-            'angular-momentjs'
+            'angular-momentjs',
         ])
         .config([
             '$routeProvider',
@@ -94,6 +93,24 @@
                 $routeProvider.when('/locations/add', {
                     templateUrl: 'components/location/location.html',
                     controller: 'LocationAddController',
+                    controllerAs: 'vm'
+                });
+
+                $routeProvider.when('/files/list', {
+                    templateUrl: 'components/media/media.html',
+                    controller: 'MediaController',
+                    controllerAs: 'vm'
+                });
+
+                $routeProvider.when('/files/add', {
+                    templateUrl: 'components/media/add-media.html',
+                    controller: 'MediaAddController',
+                    controllerAs: 'vm'
+                });
+
+                $routeProvider.when('/files/file/:id', {
+                    templateUrl: 'components/media/media-detail.html',
+                    controller: 'MediaDetailController',
                     controllerAs: 'vm'
                 });
 

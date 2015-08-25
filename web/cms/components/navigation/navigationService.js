@@ -147,21 +147,28 @@ function NavigationService() {
                     "inMenu": false
                 }
             ]
+        },
+        "files": {
+            "backgroundColorClass": "darkpurple",
+            "topBorderClass": "lightpurple-top-border",
+            "menuArray": [
+                {
+                    "name": "Overview",
+                    "link": "files\/list",
+                    "inMenu": true
+                },
+                {
+                    "name": "Add File",
+                    "link": "files\/add",
+                    "inMenu": true
+                },
+                {
+                    "name": "View File",
+                    "link": "files\/file\/:id",
+                    "inMenu": false
+                }
+            ]
         }
-        //"files": {
-        //    "backgroundColorClass": "darkpurple",
-        //    "topBorderClass": "lightpurple-top-border",
-        //    "menuArray": [
-        //        {
-        //            "name": "Übersicht",
-        //            "link": "#\/files"
-        //        },
-        //        {
-        //            "name": "Upload",
-        //            "link": "#\/add-file"
-        //        }
-        //    ]
-        //},
         //"events": {
         //    "backgroundColorClass": "darkpink",
         //    "topBorderClass": "lightpink-top-border",

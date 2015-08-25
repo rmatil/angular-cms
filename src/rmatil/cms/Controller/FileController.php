@@ -4,6 +4,7 @@ namespace rmatil\cms\Controller;
 
 use DateTime;
 use Doctrine\DBAL\DBALException;
+use InvalidArgumentException;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Entities\File;

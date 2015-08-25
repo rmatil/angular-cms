@@ -34,7 +34,7 @@
     "angular-local-storage": "~0.1.5",
     "moment": "2.8.4",
     "angular-pickadate": "https://github.com/restorando/angular-pickadate.git",
-    "ng-file-upload": "1.2.5",
+    "ng-file-upload": "~7.0.12",
     "AngularJS-Toaster": "0.4.7",
     "ckeditor": "4.3",
     "ng-ckeditor": "~0.2.1",
