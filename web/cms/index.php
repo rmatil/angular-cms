@@ -102,6 +102,7 @@
     <script src="components/navigation/navigation.js"></script>
     <script src="components/status-bar/statusBar.js"></script>
     <script src="components/event-dashboard/eventGraphDirective.js"></script>
+    <script src="components/delete/deleteDirective.js"></script>
 
     <!-- controllers -->
     <script src="components/article/articleController.js"></script>

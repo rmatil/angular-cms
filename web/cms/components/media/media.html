@@ -33,7 +33,7 @@
             <td>{{ file.extension }}</td>
             <td>{{ file.size }}</td>
             <td>{{ file.dimensions }}</td>
-            <td><span class="right cursor-pointer delete" >Remove</span></td>
+            <td><delete-object objectType="files" objectId="{{ file.id }}"></delete-object></td>
         </tr>
     </table>
 </article>

@@ -42,6 +42,9 @@
             <dt>Uploaded at</dt>
             <dd>{{ vm.file.creation_date | date:"dd.MM.yyyy' @' HH:mm"}}</dd>
         </dl>
+        <footer>
+            <delete-object objectType="files" objectId="{{ vm.file.id }}"></delete-object>
+        </footer>
     </section>
 
     <section>

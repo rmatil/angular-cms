@@ -175,7 +175,7 @@ function NavigationService() {
             "menuArray": [
                 {
                     "name": "Overview",
-                    "link": "users",
+                    "link": "users\/list",
                     "inMenu": true
                 },
                 {
