@@ -64,19 +64,11 @@
                 <dd>{{ vm.page.url_name }}</dd>
                 <dt>Category</dt>
                 <dd>
-                    <select ng-model="vm.page.category" required>
-                        <option ng-repeat="category in vm.pageCategories" value="{{category}}" ng-selected="vm.page.category.id === category.id">
-                            {{ category.name }}
-                        </option>
-                    </select>
+                    <select ng-model="vm.page.category" ng-options="category.name for category in vm.pageCategories track by category.id" required></select>
                 </dd>
                 <dt>Language</dt>
                 <dd>
-                    <select ng-model="vm.page.language" required>
-                        <option ng-repeat="language in vm.languages" value="{{language}}" ng-selected="vm.page.language.id === language.id">
-                            {{language.name}}
-                        </option>
-                    </select>
+                    <select ng-model="vm.page.language" ng-options="language.name for language in vm.languages track by language.id" required></select>
                 </dd>
                 <dt>Publish</dt>
                 <dd>

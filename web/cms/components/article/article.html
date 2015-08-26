@@ -26,19 +26,11 @@
                 <dd>{{ vm.article.url_name }}</dd>
                 <dt>Category</dt>
                 <dd>
-                    <select ng-model="vm.article.category" required>
-                        <option ng-repeat="category in vm.articleCategories" value="{{category}}" ng-selected="vm.article.category.id === category.id">
-                            {{category.name}}
-                        </option>
-                    </select>
+                    <select ng-model="vm.article.category" ng-options="category.name for category in vm.articleCategories track by category.id" required></select>
                 </dd>
                 <dt>Language</dt>
                 <dd>
-                    <select ng-model="vm.article.language" required>
-                        <option ng-repeat="language in vm.languages" value="{{language}}" ng-selected="vm.article.language.id === language.id">
-                            {{language.name}}
-                        </option>
-                    </select>
+                    <select ng-model="vm.article.language" ng-options="language.name for language in vm.languages track by language.id" required></select>
                 </dd>
             </dl>
             <footer>
