@@ -1,6 +1,6 @@
 'use strict';
 
-function SettingController(SettingService) {
+function SettingController(SettingService, NavigationService, $location) {
     var vm = this;
 
     vm.settings = [];
@@ -8,6 +8,7 @@ function SettingController(SettingService) {
     activate();
 
     function activate() {
+        vm.backgroundColorClass = NavigationService.getBackgroundColorClass($location.path());
         SettingService.getSettings()
             .then(function (data) {
                 vm.settings = data;
@@ -21,6 +22,6 @@ function SettingController(SettingService) {
         .module('cms.controllers')
         .controller('SettingController', SettingController);
 
-    SettingController.$inject = ['SettingService'];
+    SettingController.$inject = ['SettingService', 'NavigationService', '$location'];
 
 })(angular);

@@ -16,7 +16,7 @@ function UserController (UserService) {
 
 }
 
-function UserDetailController (UserService, UserGroupService, $routeParams) {
+function UserDetailController (UserService, UserGroupService, NavigationService, $location, $routeParams) {
     var vm = this,
         userId = $routeParams.id;
 
@@ -30,6 +30,7 @@ function UserDetailController (UserService, UserGroupService, $routeParams) {
     };
 
     function activate() {
+        vm.backgroundColorClass = NavigationService.getBackgroundColorClass($location.path());
         UserService.getUser(userId)
             .then(function (data) {
                 vm.user = data;
@@ -47,7 +48,7 @@ function UserDetailController (UserService, UserGroupService, $routeParams) {
 
 }
 
-function UserAddController (UserService, UserGroupService) {
+function UserAddController (UserService, UserGroupService, NavigationService, $location) {
     var vm = this;
 
     vm.user = {};
@@ -60,6 +61,7 @@ function UserAddController (UserService, UserGroupService) {
     activate();
 
     function activate () {
+        vm.backgroundColorClass = NavigationService.getBackgroundColorClass($location.path());
         UserService.getEmptyUser()
             .then(function (data) {
                 vm.user = data;
@@ -85,7 +87,7 @@ function UserAddController (UserService, UserGroupService) {
         .controller('UserAddController', UserAddController);
 
     UserController.$inject = ['UserService'];
-    UserDetailController.$inject = ['UserService', 'UserGroupService', '$routeParams'];
-    UserAddController.$inject = ['UserService', 'UserGroupService'];
+    UserDetailController.$inject = ['UserService', 'UserGroupService', 'NavigationService', '$location', '$routeParams'];
+    UserAddController.$inject = ['UserService', 'UserGroupService', 'NavigationService', '$location'];
 
 })(angular);

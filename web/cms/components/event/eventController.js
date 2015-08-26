@@ -1,6 +1,6 @@
 'use strict';
 
-function EventDetailController (EventService, LocationService, FileService, $routeParams) {
+function EventDetailController (EventService, LocationService, FileService, NavigationService, $location, $routeParams) {
     var vm = this,
         eventId = $routeParams.id,
         startDate,
@@ -13,8 +13,8 @@ function EventDetailController (EventService, LocationService, FileService, $rou
 
     activate();
 
-
     function activate () {
+        vm.backgroundColorClass = NavigationService.getBackgroundColorClass($location.path());
         EventService.getEvent(eventId)
             .then(function (data) {
                 vm.event = data;
@@ -62,7 +62,7 @@ function EventDetailController (EventService, LocationService, FileService, $rou
 
 }
 
-function EventAddController (EventService, LocationService, FileService) {
+function EventAddController (EventService, LocationService, FileService, NavigationService, $location) {
     var vm = this,
         startDate,
         endDate;
@@ -76,6 +76,7 @@ function EventAddController (EventService, LocationService, FileService) {
 
 
     function activate () {
+        vm.backgroundColorClass = NavigationService.getBackgroundColorClass($location.path());
         EventService.getEmptyEvent()
             .then(function (data) {
                 vm.event = data;
@@ -128,8 +129,8 @@ function EventAddController (EventService, LocationService, FileService) {
         .controller('EventAddController', EventAddController);
 
 
-    EventDetailController.$inject = ['EventService', 'LocationService', 'FileService', '$routeParams'];
-    EventAddController.$inject = ['EventService', 'LocationService', 'FileService'];
+    EventDetailController.$inject = ['EventService', 'LocationService', 'FileService', 'NavigationService', '$location', '$routeParams'];
+    EventAddController.$inject = ['EventService', 'LocationService', 'FileService', 'NavigationService', '$location',];
 
 
 }(angular));

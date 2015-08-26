@@ -14,7 +14,7 @@
 
     <aside>
         <section>
-            <header class="{{ backgroundColorClass }}">
+            <header class="{{ vm.backgroundColorClass }}">
                 <h1>Information</h1>
             </header>
             <dl>
@@ -36,13 +36,13 @@
                 </dd>
             </dl>
             <footer>
-                <button type="submit" ng-class="backgroundColorClass" tabindex="7">Save</button>
+                <button type="submit" ng-class="vm.backgroundColorClass" tabindex="7">Save</button>
                 <delete-object objectType="events" objectId="{{ vm.event.id }}"></delete-object>
             </footer>
         </section>
 
         <section>
-            <header class="{{ backgroundColorClass }}">
+            <header class="{{ vm.backgroundColorClass }}">
                 <h1>Debug Information</h1>
             </header>
             <pre>

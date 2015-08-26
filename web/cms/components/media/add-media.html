@@ -25,12 +25,12 @@
 
 <aside>
     <section>
-        <header class="{{ backgroundColorClass }}">
+        <header class="{{ vm.backgroundColorClass }}">
             <h1>Information</h1>
         </header>
         <dl>
             <dt>Select Files</dt>
-            <dd><button ngf-select ngf-change="vm.upload($files)" ngf-multiple="true">Select Files</button></dd>
+            <dd><button ngf-select ngf-change="vm.upload($files)" ngf-multiple="true" class="{{ vm.backgroundColorClass }}">Select Files</button></dd>
         </dl>
         </section>
 </aside>

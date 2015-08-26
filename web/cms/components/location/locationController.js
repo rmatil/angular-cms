@@ -1,6 +1,6 @@
 'use strict';
 
-function LocationDetailController (LocationService, MapService, $routeParams, $scope, $timeout) {
+function LocationDetailController (LocationService, MapService, NavigationService, $location, $routeParams, $scope, $timeout) {
     var vm = this,
         locationId = $routeParams.id,
         reloadMapPromise;
@@ -10,6 +10,7 @@ function LocationDetailController (LocationService, MapService, $routeParams, $s
     activate();
 
     function activate() {
+        vm.backgroundColorClass = NavigationService.getBackgroundColorClass($location.path());
         LocationService.getLocation(locationId)
             .then(function (data) {
                 vm.location = data;
@@ -57,7 +58,7 @@ function LocationDetailController (LocationService, MapService, $routeParams, $s
 
 }
 
-function LocationAddController (LocationService, MapService, $scope, $timeout) {
+function LocationAddController (LocationService, MapService, NavigationService, $location, $scope, $timeout) {
     var vm = this,
         reloadMapPromise;
 
@@ -66,6 +67,7 @@ function LocationAddController (LocationService, MapService, $scope, $timeout) {
     activate();
 
     function activate() {
+        vm.backgroundColorClass = NavigationService.getBackgroundColorClass($location.path());
         LocationService.getEmptyLocation()
             .then(function (data) {
                 vm.location = data;
@@ -118,6 +120,6 @@ function LocationAddController (LocationService, MapService, $scope, $timeout) {
         .controller('LocationAddController', LocationAddController)
         .controller('LocationDetailController', LocationDetailController);
 
-        LocationDetailController.$inject = ['LocationService', 'MapService', '$routeParams', '$scope', '$timeout'];
-        LocationAddController.$inject = ['LocationService', 'MapService', '$scope', '$timeout'];
+        LocationDetailController.$inject = ['LocationService', 'MapService', 'NavigationService', '$location', '$routeParams', '$scope', '$timeout'];
+        LocationAddController.$inject = ['LocationService', 'MapService', 'NavigationService', '$location', '$scope', '$timeout'];
 }(angular));

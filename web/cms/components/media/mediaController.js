@@ -16,13 +16,15 @@ function MediaController(FileService) {
 
 }
 
-function MediaAddController(FileService, Upload, $scope) {
+function MediaAddController(FileService, Upload, NavigationService, $location, $scope) {
     var vm = this;
 
     // holds all selected files (from drop zone or select button)
     vm.files = [];
     vm.fileDescription = '';
     vm.percent = [];
+
+    activate();
 
     $scope.$watch('vm.files', function () {
         vm.upload(vm.files);
@@ -31,6 +33,10 @@ function MediaAddController(FileService, Upload, $scope) {
     vm.upload = function (files) {
         uploadFiles(files);
     };
+
+    function activate () {
+        vm.backgroundColorClass = NavigationService.getBackgroundColorClass($location.path());
+    }
 
     function uploadFiles(files) {
         if (files && files.length) {
@@ -57,7 +63,7 @@ function MediaAddController(FileService, Upload, $scope) {
     }
 }
 
-function MediaDetailController(FileService, $routeParams) {
+function MediaDetailController(FileService, NavigationService, $location, $routeParams) {
     var vm = this,
         fileId = $routeParams.id;
 
@@ -66,6 +72,7 @@ function MediaDetailController(FileService, $routeParams) {
     activate();
 
     function activate() {
+        vm.backgroundColorClass = NavigationService.getBackgroundColorClass($location.path());
         FileService.getFile(fileId)
             .then(function (data) {
                 vm.file = data;
@@ -81,8 +88,8 @@ function MediaDetailController(FileService, $routeParams) {
         .controller('MediaDetailController', MediaDetailController);
 
     MediaController.$inject = ['FileService'];
-    MediaAddController.$inject = ['FileService', 'Upload', '$scope'];
-    MediaDetailController.$inject = ['FileService', '$routeParams'];
+    MediaAddController.$inject = ['FileService', 'Upload', 'NavigationService', '$location', '$scope'];
+    MediaDetailController.$inject = ['FileService', 'NavigationService', '$location', '$routeParams'];
 
 })(angular);
 
