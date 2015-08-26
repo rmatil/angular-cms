@@ -125,7 +125,7 @@ function EventAddController (EventService, LocationService, FileService, Navigat
 (function(angular) {
     angular
         .module('cms.controllers')
-        .controller('EventController', EventDetailController)
+        .controller('EventDetailController', EventDetailController)
         .controller('EventAddController', EventAddController);
 
 
@@ -133,4 +133,4 @@ function EventAddController (EventService, LocationService, FileService, Navigat
     EventAddController.$inject = ['EventService', 'LocationService', 'FileService', 'NavigationService', '$location',];
 
 
-}(angular));
+})(angular);
