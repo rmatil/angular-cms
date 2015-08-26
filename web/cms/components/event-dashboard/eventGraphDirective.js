@@ -31,7 +31,7 @@ function EventGraphDirective (EventService, EventGraphService, LoggerService) {
                 });
 
             // redraw whole graph on resize of element or window
-            window.addEventListener('resize', function () {
+            var fn = function () {
                 // remove graph first
                 var cont = document.getElementById(containerId);
                 while (cont.firstChild) {
@@ -39,7 +39,12 @@ function EventGraphDirective (EventService, EventGraphService, LoggerService) {
                 }
 
                 EventGraphService.drawGraph(containerId, events, circleAttrs, activeCircleAttrs, lineAttrs);
-            }, true);
+            };
+            window.addEventListener('resize', fn, true);
+
+            $elm.on('$destroy', function () {
+                window.removeEventListener('resize', fn);
+            });
 
         },
         scope: true,
