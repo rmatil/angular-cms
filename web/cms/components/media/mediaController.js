@@ -10,7 +10,28 @@ function MediaController(FileService) {
     function activate() {
         FileService.getFiles()
             .then(function (data) {
+                // we do have to make some filtering for the thumbnail
+                // @see http://stackoverflow.com/questions/16507040/angular-filter-works-but-causes-10-digest-iterations-reached
+
+                for (var i=0; i<data.length; i++) {
+                    if (data.hasOwnProperty(i)) {
+
+                        if (data[i].link.match('(.jpg|.png|.jpeg|.gif|.bmp)')) {
+                            data[i]._preview = '<img src="' + data[i].thumbnail_link + '" width="40">';
+                        } else if (data[i].link.match('.pdf')) {
+                            data[i]._preview = '<i class="fa fa-file-pdf-o"></i>';
+                        } else if (data[i].link.match('(.mp3|.m4a|.aac)')) {
+                            data[i]._preview = '<i class="fa fa-file-audio-o"></i>';
+                        } else if (data[i].link.match('(.mp4|.mpeg)')) {
+                            data[i]._preview = '<i class="fa fa-file-video-o></i>';
+                        } else if (data[i].link.match('(.zip|.tar)')) {
+                            data[i]._preview = '<i class="fa fa-file-archive-o"></i>';
+                        }
+                    }
+                }
+
                 vm.files = data;
+
             });
     }
 

@@ -21,13 +21,7 @@
         </thead>
         <tr ng-repeat="file in vm.files | filter:fileFilter | orderBy:predicate:reverse">
             <td>
-                <a ng-href="{{ file.link }}" target="_blank">
-                    <img ng-src="{{ file.thumbnail_link }}" ng-if="file.link.match('(.jpg|.png|.jpeg|.gif|.bmp)') !== null" width="40">
-                    <i ng-if="file.link.match('.pdf') !== null" class="fa fa-file-pdf-o"></i>
-                    <i ng-if="file.link.match('(.mp3|.m4a|.aac)')" class="fa fa-file-audio-o"></i>
-                    <i ng-if="file.link.match('(.mp4|.mpeg)')" class="fa fa-file-video-o"></i>
-                    <i ng-if="file.link.match('(.zip|.tar)')" class="fa fa-file-archive-o"></i>
-                </a>
+                <a ng-href="{{ file.link }}" target="_blank" ng-bind-html="file._preview"></a>
             </td>
             <td><a ng-href="files/file/{{ file.id }}" target="_self">{{ file.name }}</a></td>
             <td>{{ file.extension }}</td>
