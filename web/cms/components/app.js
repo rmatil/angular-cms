@@ -132,6 +132,12 @@
                     controllerAs: 'vm'
                 });
 
+                $routeProvider.when('/settings/list', {
+                    templateUrl: 'components/setting/setting.html',
+                    controller: 'SettingController',
+                    controllerAs: 'vm'
+                });
+
                 // use HTML5 history API
                 $locationProvider.html5Mode(true);
 

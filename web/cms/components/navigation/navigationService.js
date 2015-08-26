@@ -189,25 +189,18 @@ function NavigationService() {
                     "inMenu": false
                 }
             ]
+        },
+        "settings": {
+            "backgroundColorClass": "darkgreen",
+            "topBorderClass": "lightgreen-top-border",
+            "menuArray": [
+                {
+                    "name": "Overview",
+                    "link": "settings\/list",
+                    "inMenu": true
+                }
+            ]
         }
-        //"settings": {
-        //    "backgroundColorClass": "darkgreen",
-        //    "topBorderClass": "lightgreen-top-border",
-        //    "menuArray": [
-        //        {
-        //            "name": "Übersicht",
-        //            "link": "#\/settings"
-        //        },
-        //        {
-        //            "name": "System Logging",
-        //            "link": "#\/settings\/system-logging"
-        //        },
-        //        {
-        //            "name": "Datenbank Logging",
-        //            "link": "#\/settings\/database-logging"
-        //        }
-        //    ]
-        //}
     };
 
     /**
