@@ -114,6 +114,24 @@
                     controllerAs: 'vm'
                 });
 
+                $routeProvider.when('/users/list', {
+                    templateUrl: 'components/user/users.html',
+                    controller: 'UserController',
+                    controllerAs: 'vm'
+                });
+
+                $routeProvider.when('/users/add', {
+                    templateUrl: 'components/user/user.html',
+                    controller: 'UserAddController',
+                    controllerAs: 'vm'
+                });
+
+                $routeProvider.when('/users/user/:id', {
+                    templateUrl: 'components/user/user.html',
+                    controller: 'UserDetailController',
+                    controllerAs: 'vm'
+                });
+
                 // use HTML5 history API
                 $locationProvider.html5Mode(true);
 

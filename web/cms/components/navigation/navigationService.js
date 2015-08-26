@@ -168,39 +168,28 @@ function NavigationService() {
                     "inMenu": false
                 }
             ]
+        },
+        "users": {
+            "backgroundColorClass": "darkblue",
+            "topBorderClass": "lightblue-top-border",
+            "menuArray": [
+                {
+                    "name": "Overview",
+                    "link": "users",
+                    "inMenu": true
+                },
+                {
+                    "name": "Add user",
+                    "link": "users\/add",
+                    "inMenu": true
+                },
+                {
+                    "name": "Edit user",
+                    "link": "users\/user\/:id",
+                    "inMenu": false
+                }
+            ]
         }
-        //"events": {
-        //    "backgroundColorClass": "darkpink",
-        //    "topBorderClass": "lightpink-top-border",
-        //    "menuArray": [
-        //        {
-        //            "name": "Übersicht",
-        //            "link": "#\/events"
-        //        },
-        //        {
-        //            "name": "Event hinzufügen",
-        //            "link": "#\/add-event"
-        //        },
-        //        {
-        //            "name": "Veranstaltungsort hinzufügen",
-        //            "link": "#\/add-location"
-        //        }
-        //    ]
-        //},
-        //"users": {
-        //    "backgroundColorClass": "darkblue",
-        //    "topBorderClass": "lightblue-top-border",
-        //    "menuArray": [
-        //        {
-        //            "name": "Übersicht",
-        //            "link": "#\/users"
-        //        },
-        //        {
-        //            "name": "Benutzer hinzufügen",
-        //            "link": "#\/add-user"
-        //        }
-        //    ]
-        //},
         //"settings": {
         //    "backgroundColorClass": "darkgreen",
         //    "topBorderClass": "lightgreen-top-border",

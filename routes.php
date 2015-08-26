@@ -88,15 +88,15 @@ $app->addRoutes(array(
     '/api/users'                        => array('get'    => 'User:getUsers',
                                                  'post'   => 'User:insertUser'),
     '/api/users/:id'                    => array('get'    => 'User:getUserById',
+                                                 'put'    => 'User:updateUser',
                                                  'delete' => 'User:deleteUserById'),
-    '/api/users/update/:id'             => array('post'   => 'User:updateUser'),
 
     // usergroup
     '/api/usergroups'                   => array('get'    => 'UserGroup:getUserGroups',
                                                  'post'   => 'UserGroup:insertUserGroup'),
     '/api/usergroups/:id'               => array('get'    => 'UserGroup:getUserGroupById',
+                                                 'put'    => 'UserGroup:updateUserGroup',
                                                  'delete' => 'UserGroup:deleteUserGroupById'),
-    '/api/usergroups/update/:id'        => array('post'   => 'UserGroup:updateUserGroup'),
 
     // registration
     '/api/registration/:token'          => array('post'   => 'Registration:completeRegistration'),

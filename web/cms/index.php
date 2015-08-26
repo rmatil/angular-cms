@@ -94,6 +94,8 @@
     <script src="components/logger/loggerService.js"></script>
     <script src="components/media/fileService.js"></script>
     <script src="components/location/mapService.js"></script>
+    <script src="components/user/userService.js"></script>
+    <script src="components/user-group/userGroupService.js"></script>
 
     <!-- directives -->
     <script src="components/navigation/navigation.js"></script>
@@ -108,6 +110,7 @@
     <script src="components/event/eventController.js"></script>
     <script src="components/location/locationController.js"></script>
     <script src="components/media/mediaController.js"></script>
+    <script src="components/user/userController.js"></script>
 
     <!-- run app -->
     <script src="components/app.js"></script>
