@@ -30,6 +30,11 @@
                     controller: 'DashboardController'
                 });
 
+                $routeProvider.when('/dashboard', {
+                    templateUrl: 'components/dashboard/dashboard.html',
+                    controller: 'DashboardController'
+                });
+
                 $routeProvider.when('/articles/list', {
                     templateUrl: 'components/article/articles.html',
                     controller: 'ArticleController',

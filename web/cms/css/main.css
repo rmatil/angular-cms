@@ -388,8 +388,11 @@ td {
    ========================================================================== */
 
 .nav-active {
-    margin: 5em 0;
+    margin: 3em 0;
     text-align: center;
+    height: 4em;
+    line-height: 4em;
+    overflow: hidden;
 }
 
 .nav-icon {

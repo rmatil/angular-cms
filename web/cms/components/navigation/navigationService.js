@@ -10,7 +10,8 @@ function NavigationService() {
             "menuArray": [
                 {
                     "name": "Dashboard",
-                    "link": "\/cms\/"
+                    "link": "\/dashboard", // must start with slashes for active menu point selection
+                    "inMenu": true
                 }
             ]
         },
@@ -153,7 +154,7 @@ function NavigationService() {
             "topBorderClass": "lightpurple-top-border",
             "menuArray": [
                 {
-                    "name": "Overview",
+                    "name": "Media Overview",
                     "link": "files\/list",
                     "inMenu": true
                 },
@@ -174,7 +175,7 @@ function NavigationService() {
             "topBorderClass": "lightblue-top-border",
             "menuArray": [
                 {
-                    "name": "Overview",
+                    "name": "User Overview",
                     "link": "users\/list",
                     "inMenu": true
                 },
@@ -195,7 +196,7 @@ function NavigationService() {
             "topBorderClass": "lightgreen-top-border",
             "menuArray": [
                 {
-                    "name": "Overview",
+                    "name": "Setting Overview",
                     "link": "settings\/list",
                     "inMenu": true
                 }
