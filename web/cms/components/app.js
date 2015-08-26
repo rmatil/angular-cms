@@ -4,17 +4,13 @@
     angular
         .module('cms', [
             'ngRoute',
-            'ngCookies',
             'ngFileUpload',
-            'toaster',
-            'LocalStorageModule',
-            //'cms.filters',
             'cms.services',
-            //'cms.genServices',
             'cms.directives',
             'cms.controllers',
             'ngCkeditor',
             'angular-momentjs',
+            'ngSanitize'
         ])
         .config([
             '$routeProvider',

@@ -27,18 +27,17 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "1.2.27",
-    "angular-animate": "1.2.27",
-    "angular-route": "1.2.27",
-    "angular-cookies": "1.2.27",
-    "angular-local-storage": "~0.1.5",
+    "angular": "1.4.4",
+    "angular-route": "1.4.4",
+    "angular-sanitize": "1.4.4",
+    "modernizr": "2.8.3",
     "moment": "2.8.4",
-    "angular-pickadate": "https://github.com/restorando/angular-pickadate.git",
     "ng-file-upload": "~7.0.12",
-    "AngularJS-Toaster": "0.4.7",
-    "ckeditor": "4.3",
-    "ng-ckeditor": "~0.2.1",
     "angular-momentjs": "~0.1.9",
-    "rome": "~2.1.22"
+    "rome": "~2.1.22",
+    "raphael": "~2.1.4",
+    "jquery": "~2.1.4",
+    "ckeditor": "4.3",
+    "ng-ckeditor": "~0.2.1"
   }
 }
