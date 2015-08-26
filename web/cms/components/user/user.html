@@ -13,32 +13,32 @@
             <h2>User Properties</h2>
             <dl>
                 <dt><label for="user-name">Username</label></dt>
-                <dd><input id="user-name" type="text" ng-model="vm.user.user_name" value="{{ vm.user.name }}" placeholder="Username" tabindex="1"></dd>
+                <dd><input id="user-name" type="text" ng-model="vm.user.user_name" value="{{ vm.user.name }}" tabindex="1" required></dd>
                 <dt><label for="first-name">First name</label></dt>
-                <dd><input id="first-name" type="text" ng-model="vm.user.first_name" value="{{ vm.user.first_name }}" placeholder="First Name"></dd>
+                <dd><input id="first-name" type="text" ng-model="vm.user.first_name" value="{{ vm.user.first_name }}" tabindex="2" required></dd>
                 <dt><label for="last-name">Last name</label></dt>
-                <dd><input id="last-name" type="text" ng-model="vm.user.last_name" value="{{ vm.user.last_name }}" placeholder="Last Name"></dd>
+                <dd><input id="last-name" type="text" ng-model="vm.user.last_name" value="{{ vm.user.last_name }}" tabindex="3" required></dd>
                 <dt><label for="email">Email</label></dt>
-                <dd><input id="email" type="email" ng-model="vm.user.email" value="{{ vm.user.email }}"></dd>
+                <dd><input id="email" type="email" ng-model="vm.user.email" value="{{ vm.user.email }}" tabindex="4" required></dd>
                 <dt><label for="phone-number">Phone Number</label></dt>
-                <dd><input id="phone-number" type="tel" ng-model="vm.user.phone_number" value="{{ vm.user.phone_number}}"></dd>
+                <dd><input id="phone-number" type="tel" ng-model="vm.user.phone_number" value="{{ vm.user.phone_number}}" tabindex="5"></dd>
                 <dt><label for="mobile-number">Mobile Number</label></dt>
-                <dd><input id="mobile-number" type="tel" ng-model="vm.user.mobile_number" value="{{ vm.user.mobile_number}}"></dd>
+                <dd><input id="mobile-number" type="tel" ng-model="vm.user.mobile_number" value="{{ vm.user.mobile_number}}" tabindex="6"></dd>
                 <dt><label for="address">Address</label></dt>
-                <dd><input id="address" type="text" ng-model="vm.user.address" value="{{ vm.user.address }}"></dd>
+                <dd><input id="address" type="text" ng-model="vm.user.address" value="{{ vm.user.address }}" tabindex="7"></dd>
                 <dt><label for="zip-code">Zip Code</label></dt>
-                <dd><input id="zip-code" type="text" ng-model="vm.user.zip_code" value="{{ vm.user.zip_code }}"></dd>
+                <dd><input id="zip-code" type="text" ng-model="vm.user.zip_code" value="{{ vm.user.zip_code }}" tabindex="8"></dd>
                 <dt><label for="place">Venue</label></dt>
-                <dd><input id="place" type="text" ng-model="vm.user.place" value="{{ vm.user.place }}"></dd>
+                <dd><input id="place" type="text" ng-model="vm.user.place" value="{{ vm.user.place }}" tabindex="9"></dd>
             </dl>
         </fieldset>
         <fieldset>
             <h2>Change Credentials</h2>
             <dl>
                 <dt><label for="new-password">Password</label></dt>
-                <dd><input id="new-password" type="text" ng-model="vm.user.plain_password" value="{{ vm.user.plain_password}}"></dd>
+                <dd><input id="new-password" type="text" ng-model="vm.user.plain_password" value="{{ vm.user.plain_password}}" tabindex="10"></dd>
                 <dt><label for="apply-password">Update Password</label></dt>
-                <dd><input id="apply-password" type="checkbox"></dd>
+                <dd><input id="apply-password" type="checkbox" tabindex="11"></dd>
             </dl>
         </fieldset>
 
@@ -55,17 +55,16 @@
                 <dt>Last login</dt>
                 <dd>{{ vm.user.last_login_date | date:"dd.MM.yyyy' @' HH:mm" }}</dd>
                 <dt>Role</dt>
-                <dd><select ng-model="vm.user.user_group" ng-options="userGroup.name for userGroup in vm.userGroups track by userGroup.id" required></select></dd>
+                <dd><select ng-model="vm.user.user_group" ng-options="userGroup.name for userGroup in vm.userGroups track by userGroup.id" tabindex="11" required></select></dd>
                 <dt>Lock</dt>
-                <dd><input type="checkbox" ng-model="vm.user.is_locked"></dd>
+                <dd><input type="checkbox" ng-model="vm.user.is_locked" tabindex="12"></dd>
                 <dt>Email Validated</dt>
                 <dd><input type="checkbox" ng-model="vm.user.has_email_validated" disabled></dd>
             </dl>
 
             <footer>
-                <button type="submit" ng-class="backgroundColorClass" tabindex="5">Save</button>
-                <img class="img-center" src="img/loading.gif" height="18" width="18" alt="loading" ng-show="loading">
-                <button type="button" class="delete" tabindex="6">Delete</button>
+                <button type="submit" ng-class="backgroundColorClass" tabindex="13">Save</button>
+                <delete-object objectType="users" objectId="{{ vm.user.id }}"></delete-object>
             </footer>
         </section>
 

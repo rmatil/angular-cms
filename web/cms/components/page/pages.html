@@ -5,48 +5,46 @@
 
 <article>
     <h1>
-        <i class="fa fa-file-text-o"></i> <page-name></page-name> &nbsp; <img class="img-center" src="../../img/loading.gif" height="20" width="20" alt="loading" ng-show="loading">
+        <i class="fa fa-file-text-o"></i> <page-name></page-name>
     </h1>
 
     <table>
         <thead>
         <tr>
             <th>
-                    <span ng-click="predicate = 'title'; reverse=!reverse">
-                        <i class="fa fa-sort"></i> Title
-                    </span>
+                <span ng-click="predicate = 'title'; reverse=!reverse">
+                    <i class="fa fa-sort"></i> Title
+                </span>
             </th>
             <th>
-                    <span ng-click="predicate = 'category.name'; reverse=!reverse">
-                        <i class="fa fa-sort"></i> Category
-                    </span>
+                <span ng-click="predicate = 'category.name'; reverse=!reverse">
+                    <i class="fa fa-sort"></i> Category
+                </span>
             </th>
             <th>
-                    <span ng-click="predicate = 'language.name'; reverse=!reverse">
-                        <i class="fa fa-sort"></i> Language
-                    </span>
+                <span ng-click="predicate = 'language.name'; reverse=!reverse">
+                    <i class="fa fa-sort"></i> Language
+                </span>
             </th>
             <th>
-                    <span ng-click="predicate = 'author.user_name'; reverse=!reverse">
-                        <i class="fa fa-sort"></i> Author
-                    </span>
+                <span ng-click="predicate = 'author.user_name'; reverse=!reverse">
+                    <i class="fa fa-sort"></i> Author
+                </span>
             </th>
             <th>
-                    <span ng-click="predicate = 'last_edit_date'; reverse=!reverse">
-                        <i class="fa fa-sort"></i> Last edited
-                    </span>
+                <span ng-click="predicate = 'last_edit_date'; reverse=!reverse">
+                    <i class="fa fa-sort"></i> Last edited
+                </span>
             </th>
-            <th></th>
         </tr>
         </thead>
         <tbody>
         <tr ng-repeat="page in vm.pages | filter:pageFilter | orderBy:predicate:reverse">
             <td><a ng-href="pages/page/{{page.id}}">{{page.title}}</a></td>
-            <td>{{page.category.name}}</td>
-            <td>{{page.language.name}}</td>
-            <td>{{page.author.user_name}}</td>
-            <td>{{page.last_edit_date | date:"dd.MM.yyyy '@' HH:mm"}}</td>
-            <td><span class="right cursor-pointer delete" delete-object delete-object-id="{{ page.id }}" delete-object-path="{{ apiPath }}" tabindex="7">{{ deleteMsg }}</span></td>
+            <td>{{ page.category.name }}</td>
+            <td>{{ page.language.name }}</td>
+            <td>{{ page.author.user_name }}</td>
+            <td>{{ page.last_edit_date | date:"dd.MM.yyyy '@' HH:mm"}}</td>
         </tr>
         </tbody>
     </table>
@@ -54,6 +52,6 @@
 
 <aside>
     <section>
-        <input type="search" ng-model="pageFilter" placeholder="Search"/>
+        <input type="search" ng-model="pageFilter" placeholder="Search">
     </section>
 </aside>

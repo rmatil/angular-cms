@@ -19,7 +19,7 @@ function ArticleController(ArticleService) {
     }
 }
 
-function ArticleDetailController(ArticleService, LanguageService, ArticleCategoryService, NavigationService, $routeParams, $scope, $location) {
+function ArticleDetailController(ArticleService, LanguageService, ArticleCategoryService, StringService, NavigationService, $routeParams, $scope, $location) {
     var vm = this,
         articleId = $routeParams.id;
 
@@ -64,6 +64,15 @@ function ArticleDetailController(ArticleService, LanguageService, ArticleCategor
     function deleteArticle() {
         ArticleService.deleteArticle(vm.article.id);
     }
+
+    $scope.$watch('vm.article.title', function (currentVal, newVal) {
+        if (undefined === currentVal ||
+            '' === currentVal) {
+            return;
+        }
+
+        vm.article.url_name = StringService.buildUrlString(currentVal);
+    });
 }
 
 function ArticleAddController(ArticleService, LanguageService, ArticleCategoryService, StringService, NavigationService, $scope, $location) {
@@ -111,9 +120,7 @@ function ArticleAddController(ArticleService, LanguageService, ArticleCategorySe
         ArticleService.postArticle(vm.article);
     }
 
-    $scope.$watch(function() {
-        return vm.article.title;
-    }, function (currentVal, newVal) {
+    $scope.$watch('vm.article.title', function (currentVal, newVal) {
         if (undefined === currentVal ||
             '' === currentVal) {
             return;
@@ -131,7 +138,7 @@ function ArticleAddController(ArticleService, LanguageService, ArticleCategorySe
         .controller('ArticleAddController', ArticleAddController);
 
     ArticleController.$inject = ['ArticleService'];
-    ArticleDetailController.$inject = ['ArticleService', 'LanguageService', 'ArticleCategoryService', 'NavigationService', '$routeParams', '$scope', '$location'];
+    ArticleDetailController.$inject = ['ArticleService', 'LanguageService', 'ArticleCategoryService', 'StringService', 'NavigationService', '$routeParams', '$scope', '$location'];
     ArticleAddController.$inject = ['ArticleService', 'LanguageService', 'ArticleCategoryService', 'StringService', 'NavigationService', '$scope', '$location'];
 
 }(angular));

@@ -8,10 +8,10 @@
         <h1>
             <i class="fa fa-map-marker"></i> <page-name></page-name>
         </h1>
-        <input type="text" ng-model="vm.location.name" value="{{ vm.location.name }}" id="location-name" placeholder="Location Name" required>
+        <input type="text" ng-model="vm.location.name" value="{{ vm.location.name }}" placeholder="Location Name" tabindex="1" required>
         <fieldset>
-            <input type="text" ng-model="vm.location.description" value="{{ vm.location.description }}" id="location-description" placeholder="Location Description" required>
-            <input type="text" ng-model="vm.location.address" id="location-address">
+            <input type="text" ng-model="vm.location.description" value="{{ vm.location.description }}" placeholder="Location Description" tabindex="2" required>
+            <input type="text" ng-model="vm.location.address" id="location-address" placeholder="Location Address" tabindex="3">
         </fieldset>
         <div id="map-canvas"></div>
     </article>
@@ -25,11 +25,10 @@
                 <dt>Author</dt>
                 <dd>{{ vm.location.author.user_name }}</dd>
                 <dt>Last edited</dt>
-                <dd>{{ vm.location.last_edit_date | date:"dd.MM.yyyy' @' HH:mm" }}</dd>
+                <dd>{{ vm.location.last_edit_date | date:"dd.MM.yyyy '@' HH:mm" }}</dd>
             </dl>
             <footer>
-                <button type="submit" ng-class="backgroundColorClass" tabindex="5">Save</button>
-                <img class="img-center" src="img/loading.gif" height="18" width="18" alt="loading" ng-show="loading">
+                <button type="submit" ng-class="backgroundColorClass" tabindex="4">Save</button>
                 <delete-object objectType="locations" objectId="{{ vm.location.id }}"></delete-object>
             </footer>
         </section>

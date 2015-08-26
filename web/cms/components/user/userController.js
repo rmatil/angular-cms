@@ -63,6 +63,7 @@ function UserAddController (UserService, UserGroupService) {
         UserService.getEmptyUser()
             .then(function (data) {
                 vm.user = data;
+                vm.user.registration_date = moment().format('YYYY-MM-DDTHH:mm:ssZZ');
 
                 UserGroupService.getUserGroups()
                     .then(function (data) {

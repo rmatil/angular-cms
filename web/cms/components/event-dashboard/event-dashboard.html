@@ -5,19 +5,18 @@
 
 <article>
     <h1>
-        <i class="fa fa-calendar"></i> <page-name></page-name> &nbsp; <img class="img-center" src="../../img/loading.gif" height="20" width="20" alt="loading" ng-show="loading">
+        <i class="fa fa-calendar"></i> <page-name></page-name>
     </h1>
 
     <div class="width-100 dashboard-box">
         <div class="dashboard-body-box">
-            <p>Stats about this month</p>
             <table>
                 <tbody>
-                <tr style="text-align: center">
-                    <td style="width: 33%"><h2>{{ vm.beforeEvents.length }}</h2><p>past events</p></td>
-                    <td style="width: 33%"><h2>{{ vm.nextEvent.date | amDateFormat:"DD.MM.YYYY @ HH:mm" }}</h2><p>next event</p></td>
-                    <td style="width: 33%"><h2>{{ vm.afterEvents.length }}</h2><p>upcoming events</p></td>
-                </tr>
+                    <tr class="text-center">
+                        <td class="width-33"><h2>{{ vm.beforeEvents.length }}</h2><p>past events</p></td>
+                        <td class="width-33"><h2>{{ vm.nextEvent.date | amDateFormat:"DD.MM.YYYY @ HH:mm" }}</h2><p>next event</p></td>
+                        <td class="width-33"><h2>{{ vm.afterEvents.length }}</h2><p>upcoming events</p></td>
+                    </tr>
                 </tbody>
             </table>
 
@@ -63,11 +62,10 @@
         </div>
     </div>
 
-
 </article>
 
 <aside>
     <section>
-        <input type="search" ng-model="searchText" placeholder="Search"/>
+        <input type="search" ng-model="searchText" placeholder="Search">
     </section>
 </aside>

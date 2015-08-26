@@ -16,7 +16,7 @@ function PageController(PageService) {
     }
 }
 
-function PageDetailController(PageService, LanguageService, PageCategoryService, ArticleService, ArrayService, NavigationService, $routeParams, $scope, $location) {
+function PageDetailController(PageService, LanguageService, PageCategoryService, ArticleService, ArrayService, StringService, NavigationService, $routeParams, $scope, $location) {
     var vm = this,
         pageId = $routeParams.id;
 
@@ -102,6 +102,15 @@ function PageDetailController(PageService, LanguageService, PageCategoryService,
             vm.articles.push(removed[0]);
         }
     }
+
+    $scope.$watch('vm.page.title', function (currentVal, newVal) {
+        if (undefined === currentVal ||
+            '' === currentVal) {
+            return;
+        }
+
+        vm.page.url_name = StringService.buildUrlString(currentVal);
+    });
 }
 
 function PageAddController(PageService, LanguageService, PageCategoryService, ArticleService, ArrayService, StringService, NavigationService, $scope, $location) {
@@ -149,9 +158,7 @@ function PageAddController(PageService, LanguageService, PageCategoryService, Ar
             });
     }
 
-    $scope.$watch(function() {
-        return vm.page.title;
-    }, function (currentVal, newVal) {
+    $scope.$watch('vm.page.title', function (currentVal, newVal) {
         if (undefined === currentVal ||
             '' === currentVal) {
             return;
@@ -213,6 +220,6 @@ function PageAddController(PageService, LanguageService, PageCategoryService, Ar
         .controller('PageAddController', PageAddController);
 
     PageController.$inject = ['PageService'];
-    PageDetailController.$inject = ['PageService', 'LanguageService', 'PageCategoryService', 'ArticleService', 'ArrayService', 'NavigationService', '$routeParams', '$scope', '$location'];
+    PageDetailController.$inject = ['PageService', 'LanguageService', 'PageCategoryService', 'ArticleService', 'ArrayService', 'StringService', 'NavigationService', '$routeParams', '$scope', '$location'];
     PageAddController.$inject = ['PageService', 'LanguageService', 'PageCategoryService', 'ArticleService', 'ArrayService', 'StringService', 'NavigationService', '$scope', '$location'];
 })();

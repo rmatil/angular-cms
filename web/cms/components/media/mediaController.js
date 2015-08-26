@@ -22,6 +22,7 @@ function MediaAddController(FileService, Upload, $scope) {
     // holds all selected files (from drop zone or select button)
     vm.files = [];
     vm.fileDescription = '';
+    vm.percent = [];
 
     $scope.$watch('vm.files', function () {
         vm.upload(vm.files);
@@ -46,6 +47,7 @@ function MediaAddController(FileService, Upload, $scope) {
                     }).progress(function (evt) {
                         var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
                         console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
+                        vm.percent[evt.config.file.name] = progressPercentage;
                     }).success(function (data, status, headers, config) {
                         console.log('file: ' + config.file.name + ', Response: ' + JSON.stringify(data))
                     });

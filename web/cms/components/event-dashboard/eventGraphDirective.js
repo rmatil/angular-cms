@@ -43,7 +43,7 @@ function EventGraphDirective (EventService, EventGraphService, LoggerService) {
 
         },
         scope: true,
-        templateUrl: "components/event-dashboard/event-graph.html"
+        template: '<div id="event-graph-container" class="width-100"></div>'
     };
 }
 

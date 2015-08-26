@@ -10,6 +10,9 @@
 
     <input type="text" ng-model="vm.fileDescription" value="{{ vm.fileDescription }}" id="file-description" placeholder="File Description" required>
 
+    <div class="progress-bar all-rounded">
+        <div ng-repeat="file in vm.files" class="progress-bar-percentage all-rounded" style="width: 0%"><span>{{ vm.percent[file.name] }}% {{file.name}}</span></div>
+    </div>
 
     <div ngf-drop ngf-select ng-model="vm.files" class="drop-box"
          ngf-drag-over-class="dragover" ngf-multiple="true" ngf-allow-dir="true"
@@ -26,12 +29,8 @@
             <h1>Information</h1>
         </header>
         <dl>
-            <dt>That</dt>
-            <dd>This</dd>
+            <dt>Select Files</dt>
+            <dd><button ngf-select ngf-change="vm.upload($files)" ngf-multiple="true">Select Files</button></dd>
         </dl>
-        <button ngf-select ngf-change="vm.upload($files)" ngf-multiple="true">Select Files</button>
-        <div class="progress-bar all-rounded">
-            <div class="progress-bar-percentage all-rounded" style="width: 0%"><span>{{ percent }} %</span></div>
-        </div>
         </section>
 </aside>

@@ -418,6 +418,10 @@ td {
     width: 30%;
 }
 
+.width-33 {
+    width: 33%;
+}
+
 .text-center {
     text-align: center;
 }
@@ -425,7 +429,6 @@ td {
 .cursor-pointer {
     cursor: pointer;
 }
-
 
 /*
  * Hide visually and from screen readers:
@@ -695,6 +698,10 @@ td {
 
 .darkred-color {
     color: #c22727;
+}
+
+input.ng-invalid {
+    border: 1px dashed #e7494a;
 }
 
 .lightgreen-color {

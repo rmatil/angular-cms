@@ -5,7 +5,7 @@
 
 <article>
     <h1>
-        <i class="fa fa-picture-o"></i> <page-name></page-name> &nbsp; <img class="img-center" src="../../img/loading.gif" height="20" width="20" alt="loading" ng-show="loading">
+        <i class="fa fa-picture-o"></i> <page-name></page-name>
     </h1>
 
     <dl>
@@ -40,7 +40,7 @@
             <dt>Author</dt>
             <dd>{{ vm.file.author.user_name }}</dd>
             <dt>Uploaded at</dt>
-            <dd>{{ vm.file.creation_date | date:"dd.MM.yyyy' @' HH:mm"}}</dd>
+            <dd>{{ vm.file.creation_date | date:"dd.MM.yyyy '@' HH:mm"}}</dd>
         </dl>
         <footer>
             <delete-object objectType="files" objectId="{{ vm.file.id }}"></delete-object>

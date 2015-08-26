@@ -5,7 +5,7 @@
 
 <article>
     <h1>
-        <i class="fa fa-file-text-o"></i> <page-name></page-name> &nbsp; <img class="img-center" src="../../img/loading.gif" height="20" width="20" alt="loading" ng-show="loading">
+        <i class="fa fa-file-text-o"></i> <page-name></page-name>
     </h1>
 
     <table>
@@ -36,17 +36,15 @@
                         <i class="fa fa-sort"></i> Last edited
                     </span>
                 </th>
-                <th></th>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="article in vm.articles | filter:articleFilter | orderBy:predicate:reverse">
-                <td><a ng-href="articles/article/{{article.id}}">{{article.title}}</a></td>
-                <td>{{article.category.name}}</td>
-                <td>{{article.language.name}}</td>
-                <td>{{article.author.user_name}}</td>
-                <td>{{article.last_edit_date | date:"dd.MM.yyyy '@' HH:mm"}}</td>
-                <td><span class="right cursor-pointer delete" delete-object delete-object-id="{{ article.id }}" delete-object-path="{{ apiPath }}" tabindex="7">{{ deleteMsg }}</span></td>
+                <td><a ng-href="articles/article/{{ article.id }}">{{ article.title }}</a></td>
+                <td>{{ article.category.name }}</td>
+                <td>{{ article.language.name }}</td>
+                <td>{{ article.author.user_name }}</td>
+                <td>{{ article.last_edit_date | date:"dd.MM.yyyy '@' HH:mm" }}</td>
             </tr>
         </tbody>
     </table>
@@ -54,6 +52,6 @@
 
 <aside>
     <section>
-        <input type="search" ng-model="articleFilter" placeholder="Search"/>
+        <input type="search" ng-model="articleFilter" placeholder="Search">
     </section>
 </aside>
