@@ -9,5 +9,7 @@ mail:
     SMTPAuth: true
     Host:
     Username:
-    Password: 
+    Password:
     Port: 587
+template:
+    path: default

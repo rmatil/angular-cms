@@ -24,4 +24,7 @@ class ConfigurationNames {
     const ADMIN_USERNAME = 'username';
     const ADMIN_PASSWORD = 'password';
     const ADMIN_EMAIL = 'email';
+
+    const TEMPLATE = 'template';
+    const TEMPLATE_PATH = 'path';
 }
