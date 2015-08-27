@@ -26,10 +26,6 @@
     <link rel="stylesheet" href="css/main.css">
     <script src="bower_components/modernizr/modernizr.js"></script>
 
-
-
-    <link rel="stylesheet" href="bower_components/AngularJS-Toaster/toaster.css" />
-    <link rel="stylesheet" href="css/toaster.css" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="bower_components/ng-ckeditor/ng-ckeditor.css" />
     <link rel="stylesheet" href="bower_components/rome/dist/rome.min.css" />
@@ -59,16 +55,13 @@
 
 
     <script src="bower_components/angular/angular.js"></script>
-    <script src="bower_components/angular-animate/angular-animate.min.js" ></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="bower_components/angular-route/angular-route.min.js"></script>
-    <script src="bower_components/angular-cookies/angular-cookies.min.js"></script>
 
     <script src="bower_components/ng-file-upload/ng-file-upload.min.js"></script>
     <script src="bower_components/ng-file-upload/ng-file-upload-shim.min.js"></script>
     <script src="bower_components/ckeditor/ckeditor.js"></script>
     <script src="bower_components/ng-ckeditor/ng-ckeditor.min.js"></script>
-    <script src="bower_components/AngularJS-Toaster/toaster.js"></script>
-    <script src="bower_components/angular-local-storage/dist/angular-local-storage.min.js"></script>
     <script src="bower_components/moment/min/moment.min.js"></script>
     <script src="bower_components/angular-momentjs/angular-momentjs.min.js"></script>
     <script src="bower_components/raphael/raphael-min.js"></script>
