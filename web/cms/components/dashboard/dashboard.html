@@ -1,0 +1,54 @@
+<!-- status bar -->
+<status-bar></status-bar>
+<!-- content navigation -->
+<content-nav></content-nav>
+
+<article>
+    <h1><i class="icon-box fa fa-tachometer"></i> Dashboard </h1>
+    <div class="db-box">
+        <div class="dashboard-box dashboard-box-30">
+            <h2>Direktlinks</h2>
+            <div class="dashboard-body-box lightred-left-border">
+                <div class="left"><a ng-href="articles/add">Create new article</a></div>
+                <div class="right"><a ng-href="articles/add"><i class="fa fa-plus-circle"></i></a></div>
+                <div class="clear"></div>
+            </div>
+            <div class="dashboard-body-box lightred-left-border">
+                <div class="left"><a ng-href="pages/add">Create new page</a></div>
+                <div class="right"><a ng-href="pages/add"><i class="fa fa-plus-circle"></i></a></div>
+                <div class="clear"></div>
+            </div>
+            <div class="dashboard-body-box lightpink-left-border">
+                <div class="left"><a ng-href="events/add">Create new event</a></div>
+                <div class="right"><a ng-href="events/add"><i class="fa fa-plus-circle"></i></a></div>
+                <div class="clear"></div>
+            </div>
+            <div class="dashboard-body-box lightpurple-left-border">
+                <div class="left"><a ng-href="files/add">Upload new file</a></div>
+                <div class="right"><a ng-href="files/add"><i class="fa fa-plus-circle"></i></a></div>
+                <div class="clear"></div>
+            </div>
+            <div class="dashboard-body-box lightblue-left-border">
+                <div class="left"><a ng-href="users/add">Create new user</a></div>
+                <div class="right"><a ng-href="users/add"><i class="fa fa-plus-circle"></i></a></div>
+                <div class="clear"></div>
+            </div>
+            <br />
+            <h2>Seitenvorschau</h2>
+            <div class="dashboard-body-box lightyellow-left-border">
+                <div class="left"><a ng-href="../">Preview site</a></div>
+                <div class="right"><a ng-href="../"></a></div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div class="dashboard-box dashboard-box-30">
+            <h2><i class="fa fa-calendar"></i> nächste Veranstaltungen</h2>
+            <div class="dashboard-body-box lightpink-left-border" ng-repeat="event in statistics.last_events">
+                <div class="left"><a ng-href="events/{{ event.id}}">{{ event.name }}</a> um {{ event.start_date | date:"HH:mm 'Uhr am' dd.MM.yyyy" }}</div>
+                <div class="right"></div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</article>

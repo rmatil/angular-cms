@@ -1,0 +1,100 @@
+<!-- status bar -->
+<status-bar></status-bar>
+<!-- content navigation -->
+<content-nav ></content-nav>
+
+<form name="pageForm" ng-submit="vm.savePage()" novalidate>
+    <article>
+        <h1>
+            <i class="fa fa-file-text-o"></i> <page-name></page-name>
+        </h1>
+        <input type="text" ng-model="vm.page.title" value="{{ vm.page.title }}" placeholder="Title" tabindex="1" required>
+
+        <p class="width-100 text-center">Select articles to add to this page</p>
+        <div class="table width-100">
+            <div class="table-cell width-40">
+                <table>
+                    <thead>
+                        <tr>
+                        <th>added articles</th>
+                        <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="article in vm.page.articles | orderBy:'title'" ng-click="vm.removeArticleFromPage(article.id)" class="cursor-pointer">
+                            <td><a href="articles/article/{{article.id}}">{{article.title}}</a></td>
+                            <td><i class="darkred-color fa fa-minus-circle"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-cell width-10 text-center">
+                <i class="fa fa-exchange"></i>
+            </div>
+            <div class="table-cell width-40">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>available articles</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="article in vm.articles | orderBy:'title'" ng-click="vm.addArticleToPage(article.id)" class="cursor-pointer">
+                            <td><a href="articles/article/{{article.id}}">{{article.title}}</a></td>
+                            <td><i class="darkgreen-color fa fa-plus-circle"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </article>
+
+    <aside>
+        <section>
+            <header class="{{ backgroundColorClass }}">
+                <h1>Information</h1>
+            </header>
+            <dl>
+                <dt>Author</dt>
+                <dd>{{ vm.page.author.user_name }}</dd>
+                <dt>Last edited</dt>
+                <dd>{{ vm.page.last_edit_date | date:"dd.MM.yyyy '@' HH:mm" }}</dd>
+                <dt>URL</dt>
+                <dd>{{ vm.page.url_name }}</dd>
+                <dt>Category</dt>
+                <dd>
+                    <select ng-model="vm.page.category" ng-options="category.name for category in vm.pageCategories track by category.id" tabindex="2" required></select>
+                </dd>
+                <dt>Language</dt>
+                <dd>
+                    <select ng-model="vm.page.language" ng-options="language.name for language in vm.languages track by language.id" tabindex="3" required></select>
+                </dd>
+                <dt>Publish</dt>
+                <dd>
+                    <input type="checkbox" ng-model="vm.page.is_public" name="is_public" tabindex="4">
+                </dd>
+                <dt>Generate Submenu</dt>
+                <dd>
+                    <input type="checkbox" ng-model="vm.page.has_subnavigation" name="has_subnavigation" tabindex="5">
+                </dd>
+            </dl>
+            <footer>
+                <button type="submit" class="darkred" tabindex="6">Save</button>
+                <delete-object objectType="pages" objectId="{{ vm.page.id }}"></delete-object>
+            </footer>
+        </section>
+        <section>
+            <header class="{{ backgroundColorClass }}">
+                <h1>Debug Information</h1>
+            </header>
+            <pre>
+                <code>
+                    {{ vm.page | json }}
+                </code>
+            </pre>
+        </section>
+    </aside>
+</form>
+
+

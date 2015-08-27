@@ -1,0 +1,51 @@
+<!-- status bar -->
+<status-bar></status-bar>
+<!-- content navigation -->
+<content-nav></content-nav>
+
+<form name="articleForm" ng-submit="vm.saveArticle()" novalidate>
+    <article>
+        <h1>
+            <i class="fa fa-file-text-o"></i> <page-name></page-name>
+        </h1>
+        <input type="text" ng-model="vm.article.title" value="{{ vm.article.title }}" placeholder="Title" tabindex="1" required>
+        <textarea ckeditor ng-model="vm.article.content" value="{{ vm.article.content }}" tabindex="2">{{ vm.article.content }}</textarea>
+    </article>
+
+    <aside>
+        <section>
+            <header class="{{ backgroundColorClass }}">
+                <h1>Information</h1>
+            </header>
+            <dl>
+                <dt>Author</dt>
+                <dd>{{ vm.article.author.first_name}}</dd>
+                <dt>Last edited</dt>
+                <dd>{{ vm.article.last_edit_date | date:"dd.MM.yyyy '@' HH:mm" }}</dd>
+                <dt>URL</dt>
+                <dd>{{ vm.article.url_name }}</dd>
+                <dt>Category</dt>
+                <dd>
+                    <select ng-model="vm.article.category" ng-options="category.name for category in vm.articleCategories track by category.id" tabindex="3" required></select>
+                </dd>
+                <dt>Language</dt>
+                <dd>
+                    <select ng-model="vm.article.language" ng-options="language.name for language in vm.languages track by language.id" tabindex="4" required></select>
+                </dd>
+            </dl>
+            <footer>
+                <button type="submit" ng-class="backgroundColorClass" tabindex="5">Save</button>
+                <delete-object objectType="articles" objectId="{{ vm.article.id }}"></delete-object>
+            </footer>
+        </section>
+        <section>
+            <header class="{{ backgroundColorClass }}">
+                <h1>Debug Information</h1>
+            </header>
+            <pre>
+                <code>{{ vm.article | json }}</code>
+            </pre>
+        </section>
+
+    </aside>
+</form>

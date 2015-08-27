@@ -1,0 +1,47 @@
+<h1 class="left"><i class="fa fa-picture-o"></i> Medien &nbsp; <img class="img-center" src="img/loading.gif" height="20" width="20" alt="loading" ng-show="loadingFiles"></h1>
+<!--
+http://stackoverflow.com/questions/17672614/angularjs-filter-not-working
+filter can not handle objects, only arrays
+-->
+<span class="right">
+	<input ng-model="fileFilter" class="search-input" placeholder="Dateien durchsuchen">
+</span>
+<div class="clear"></div>
+
+<div class="left">
+	<div class="dashboard-body-box lightpurple-left-border" ng-show="files.length < 1">
+		<a ng-href="add-file" href="add-file"><i class="fa fa-plus-circle"></i> Neue Datei hinzufügen</a> 
+	</div>
+</div>
+<div class="clear"></div>
+
+<table class="enumerate">
+	<tr class="table-header">
+		<th></th>
+		<th><a href="" ng-click="predicate = 'name'; reverse=!reverse"><i class="fa fa-sort"></i> Name</a></a></th>
+		<th><a href="" ng-click="predicate = 'extension'; reverse=!reverse"><i class="fa fa-sort"></i> Typ</a></a></th>
+		<th><a href="" ng-click="predicate = 'size'; reverse=!reverse"><i class="fa fa-sort"></i> Grösse</a></a></th>
+		<th><a href="" ng-click="predicate = 'dimensions'; reverse=!reverse"><i class="fa fa-sort"></i> Dimensionen</a></a></th>
+		<th><a href="" ng-click="predicate = 'category.name'; reverse=!reverse"><i class="fa fa-sort"></i> Kategorie</a></a></th>
+		<th><a href="" ng-click="predicate = 'creation_date'; reverse=!reverse"><i class="fa fa-sort"></i> Hochgeladen am</a></a></th>
+		<th></th>
+	</tr>
+	<tr ng-repeat="file in files | filter:fileFilter | orderBy:predicate:reverse">
+		<td>
+			<a ng-href="{{file.link}}" target="_self">
+				<img ng-src="{{file.thumbnail_link}}" ng-if="file.link.match('(.jpg|.png|.jpeg|.gif|.bmp)') !== null" width="40">
+				<i ng-if="file.link.match('.pdf') !== null" class="fa fa-file-pdf-o"></i>
+				<i ng-if="file.link.match('(.mp3|.m4a|.aac)')" class="fa fa-file-audio-o"></i>
+				<i ng-if="file.link.match('(.mp4|.mpeg)')" class="fa fa-file-video-o"></i>
+				<i ng-if="file.link.match('(.zip|.tar)')" class="fa fa-file-archive-o"></i>
+			</a>
+		</td>
+		<td><a ng-href="{{file.link}}" target="_self">{{file.name}}</a></td>
+		<td>{{file.extension}}</td>
+		<td>{{file.size}}</td>
+		<td>{{file.dimensions}}</td>
+		<td>{{file.category.name}} </td>
+		<td>{{file.creation_date | date:"HH:mm 'Uhr am' dd.MM.yyyy"}}</td>
+		<td><span class="right cursor-pointer delete" delete-object delete-object-id="{{ file.id }}" delete-object-path="{{ apiPath }}" tabindex="7">{{deleteMsg}}</span></td>
+	</tr>
+</table>

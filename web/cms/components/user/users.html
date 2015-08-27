@@ -1,0 +1,39 @@
+<!-- status bar -->
+<status-bar></status-bar>
+<!-- content navigation -->
+<content-nav ></content-nav>
+
+<article>
+    <h1>
+        <i class="fa fa-file-text-o"></i> <page-name></page-name>
+    </h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th ng-click="predicate = 'user_name'; reverse=!reverse"><i class="fa fa-sort"></i> Username</th>
+            <th ng-click="predicate = 'first_name'; reverse=!reverse"><i class="fa fa-sort"></i> Firstname</th>
+            <th ng-click="predicate = 'last_name'; reverse=!reverse"><i class="fa fa-sort"></i> Lastname</th>
+            <th ng-click="predicate = 'user_group.name'; reverse=!reverse"><i class="fa fa-sort"></i> User Group</th>
+            <th>Validated email</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="user in vm.users | filter:userFilter | orderBy:predicate:reverse">
+            <td><a ng-href="users/user/{{user.id}}">{{user.user_name}}</a></td>
+            <td>{{ user.first_name }}</td>
+            <td>{{ user.last_name }}</td>
+            <td>{{ user.user_group.name }}</td>
+            <td>{{ user.has_email_validated }}</td>
+            <td><delete-object objectType="users" objectId="{{ user.id }}"></delete-object></td>
+        </tr>
+        </tbody>
+    </table>
+</article>
+
+<aside>
+    <section>
+        <input type="search" ng-model="userFilter" placeholder="Search"/>
+    </section>
+</aside>

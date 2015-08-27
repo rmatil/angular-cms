@@ -1,0 +1,1138 @@
+/*! HTML5 Boilerplate v5.2.0 | MIT License | https://html5boilerplate.com/ */
+
+/*
+ * What follows is the result of much research on cross-browser styling.
+ * Credit left inline and big thanks to Nicolas Gallagher, Jonathan Neal,
+ * Kroc Camen, and the H5BP dev community and team.
+ */
+
+/* ==========================================================================
+   Base styles: opinionated defaults
+   ========================================================================== */
+
+html {
+    color: #222;
+    font-size: 1em;
+    line-height: 1.4;
+}
+
+/*
+ * Remove text-shadow in selection highlight:
+ * https://twitter.com/miketaylr/status/12228805301
+ *
+ * These selection rule sets have to be separate.
+ * Customize the background color to match your design.
+ */
+
+::-moz-selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+::selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+/*
+ * A better looking default horizontal rule
+ */
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}
+
+/*
+ * Remove the gap between audio, canvas, iframes,
+ * images, videos and the bottom of their containers:
+ * https://github.com/h5bp/html5-boilerplate/issues/440
+ */
+
+audio,
+canvas,
+iframe,
+img,
+svg,
+video {
+    vertical-align: middle;
+}
+
+/*
+ * Remove default fieldset styles.
+ */
+
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+/*
+ * Allow only vertical resizing of textareas.
+ */
+
+textarea {
+    resize: vertical;
+}
+
+/* ==========================================================================
+   Browser Upgrade Prompt
+   ========================================================================== */
+
+.browserupgrade {
+    margin: 0.2em 0;
+    background: #ccc;
+    color: #000;
+    padding: 0.2em 0;
+}
+
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+body {
+    color: #8c8c8c;
+    background: #f8f8f8;
+    font-size: 14px;
+}
+
+a {
+    color: #8c8c8c;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 200;
+}
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 13em;
+    background: #222222;
+}
+
+nav a {
+    text-decoration: none;
+    display: block;
+}
+
+nav ul {
+    padding: 0;
+}
+
+nav ul li {
+    display: block;
+    height: 2em;
+    padding: 0.4em 0.8em;
+    margin: 0.4em 0;
+    line-height: 2em;
+}
+
+nav ul li,
+nav ul li a {
+    color: #8c8c8c;;
+}
+
+nav ul li:hover,
+nav ul li a:hover {
+    color: #ffffff;
+}
+
+main {
+    margin: 0 0 0 13em;
+    padding: 0 0 1em 0;
+}
+
+.content-nav {
+    position: fixed;
+    right: 0;
+    left: 13em;
+    top: 3em;
+    height: 4em;
+    line-height: 4em;
+    margin: 0;
+    background: #ffffff;
+    border-top: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
+    z-index: 10;
+}
+
+ul.content-nav li {
+    display: inline-block;
+    margin: 0 0.5em;
+    padding: 0 0.5em;
+}
+
+ul.content-nav li a {
+    text-decoration: none;
+}
+
+.status-bar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 13em;
+    margin: 0;
+    padding: 0 2em;
+    height: 3em;
+    line-height: 3em;
+    z-index: 10;
+    text-align: right;
+    color: #000000;
+    background: #f8f8f8;
+}
+
+ul.status-bar li {
+    display: inline-block;
+    padding: 0 0.5em;
+}
+
+ul.status-bar li i {
+    padding: 0 0.2em 0 0;
+}
+
+
+article {
+    position: relative;
+    top: 10em;
+    margin: 0 0 0 3.5em;
+    float: left;
+    clear: left;
+    width: 65%;
+}
+
+article input:first-of-type {
+    margin: 0 0 1em 0;
+}
+
+article dl {
+    margin: 0;
+    background: #ffffff;
+    width: 100%;
+}
+
+article dl dt {
+    padding: 5px 10px;
+    float: left;
+    clear:left;
+    min-width: 10%;
+    text-align: right;
+}
+
+article dl dd {
+    padding: 5px 10px;
+    color: #222222;
+    float: left;
+    width: 40%;
+}
+
+aside {
+    position: relative;
+    top: 10em;
+    margin: 5.5em 0 0 3.5em;
+    float: left;
+    width: 25%;
+}
+
+aside header {
+    padding: 0 0.8em;
+    color: #8c8c8c;
+}
+
+aside h1 {
+    font-size: 1.3em;
+    padding: 0.5em 0;
+    margin: 0;
+}
+
+aside section {
+    margin: 0 0 1em 0;
+}
+
+aside dl {
+    margin: 0;
+    padding: 0.8em;
+    background: #ffffff;
+}
+
+aside dl dt {
+    display: block;
+    float: left;
+    clear: left;
+}
+
+aside dl dd {
+    display: block;
+    text-align: right;
+    color: #222222;
+}
+
+aside footer {
+    padding: 0.8em;
+    background: #ffffff;
+    border-top: 1px solid #e5e5e5;
+}
+
+input {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    padding: 0.2em 0;
+}
+
+input[type=text],
+input[type=password],
+input[type=email],
+input[type=date],
+input[type=time],
+input[type=search] {
+    text-indent: 0;
+    -webkit-font-smoothing: antialiased;
+    display: inline-block;
+    padding: 0.9em;
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+    box-sizing: border-box;
+}
+
+input:focus {
+    outline: 0;
+}
+
+table {
+    width: 100%;
+}
+
+thead {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+}
+
+th {
+    padding: 0.9em 0 0.9em 0.5em;
+    text-align: left;
+}
+
+td {
+    padding: 0.9em 0 0.9em 0.5em;
+}
+
+.table {
+    display: table;
+}
+
+.table-cell {
+    display: table-cell;
+}
+
+#map-canvas {
+    height: 500px;
+}
+
+
+/* ==========================================================================
+   Progress Bar
+   ========================================================================== */
+
+.progress-bar {
+    margin: 10px 0;
+    width: 100%;
+    background: #e5e5e5;
+    position: relative;
+    height: 20px;
+}
+
+.progress-bar-percentage {
+    background-color: #DFF2BF;
+    color: #4F8A10;
+    border: 1px solid #4F8A10;
+    padding: 5px 0;
+    text-align: center;
+    line-height: 10px;
+    height: 8px;
+}
+
+.progress-bar-percentage span {
+    display: inline-block;
+    position: absolute;
+    width: 100%;
+    left: 0;
+}
+
+.drop-box {
+    background: #ffffff;
+    border: 2px dashed #dddddd;
+    width: 100%;
+    height: 250px;
+    text-align: center;
+    padding-top: 25px;
+    cursor: pointer;
+}
+
+
+
+
+
+/* ==========================================================================
+   Helper classes
+   ========================================================================== */
+
+.nav-active {
+    margin: 3em 0;
+    text-align: center;
+    height: 4em;
+    line-height: 4em;
+    overflow: hidden;
+}
+
+.nav-icon {
+    display: inline;
+    margin: 0 0 0 0.5em;
+}
+
+.nav-text {
+    display: inline;
+    margin: 0 0 0 1.4em;
+}
+
+.width-100 {
+    width: 100%;
+}
+
+.width-40 {
+    width: 40%;
+}
+
+.width-10 {
+    width: 10%;
+}
+
+.width-30 {
+    width: 30%;
+}
+
+.width-33 {
+    width: 33%;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/*
+ * Hide visually and from screen readers:
+ */
+
+.hidden {
+    display: none !important;
+}
+
+/*
+ * Hide only visually, but have it available for screen readers:
+ * http://snook.ca/archives/html_and_css/hiding-content-for-accessibility
+ */
+
+.visuallyhidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+/*
+ * Extends the .visuallyhidden class to allow the element
+ * to be focusable when navigated to via the keyboard:
+ * https://www.drupal.org/node/897638
+ */
+
+.visuallyhidden.focusable:active,
+.visuallyhidden.focusable:focus {
+    clip: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    position: static;
+    width: auto;
+}
+
+/*
+ * Hide visually and from screen readers, but maintain layout
+ */
+
+.invisible {
+    visibility: hidden;
+}
+
+/*
+ * Clearfix: contain floats
+ *
+ * For modern browsers
+ * 1. The space content is one way to avoid an Opera bug when the
+ *    `contenteditable` attribute is included anywhere else in the document.
+ *    Otherwise it causes space to appear at the top and bottom of elements
+ *    that receive the `clearfix` class.
+ * 2. The use of `table` rather than `block` is only necessary if using
+ *    `:before` to contain the top-margins of child elements.
+ */
+
+.clearfix:before,
+.clearfix:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+.right {
+    float: right;
+}
+
+.left {
+    float: left;
+}
+
+/* ==========================================================================
+   Dashboard Boxes
+   ========================================================================== */
+
+.dashboard-box {
+    background: #f8f8f8;
+    display: inline-table;
+}
+
+.dashboard-box-30 {
+    width: 30em;
+}
+
+.dashboard-box-50 {
+    width: 50em;
+}
+
+.dashboard-body-box {
+    background: #fff;
+    padding: 5px 10px;
+    margin: 0 0 10px 0;
+    overflow: hidden;
+    border: 1px solid #e5e5e5;
+    line-height: 24px;
+}
+
+.dashboard-body-box a {
+    font-weight: 400;
+    text-decoration: none;
+}
+
+.dashboard-body-box a:hover {
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   Media Queries for phones
+   Note: declaration must occur after the overwritten styles
+   ========================================================================== */
+
+@media only screen and (max-width: 1000px) {
+
+    nav {
+        width: 4em;
+    }
+
+    main {
+        margin: 0 0 0 4em;
+    }
+
+    .content-nav {
+        left:4em;
+    }
+
+    .status-bar {
+        left: 4em;
+    }
+
+    .nav-active,
+    .nav-text {
+        visibility: hidden;
+    }
+    
+    .dashboard-box-30 {
+        width: 20em;
+    }
+    
+    .dashboard-box-50 {
+        width: 20em;
+    }
+
+}
+
+@media only screen and (max-width: 1200px) {
+    article {
+        width: 55%;
+        margin: 0;
+        padding: 0 3.5em;
+
+    }
+
+    aside {
+        margin: 5.5em 0 0 0;
+    }
+}
+
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /*Style adjustments for viewports that meet the condition*/
+}
+
+@media print,
+    (-webkit-min-device-pixel-ratio: 1.25),
+    (min-resolution: 1.25dppx),
+    (min-resolution: 120dpi) {
+        /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid the additional HTTP request:
+   http://www.phpied.com/delay-loading-your-print-css/
+   ========================================================================== */
+
+@media print {
+    *,
+    *:before,
+    *:after {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster:
+                                   http://www.sanbeiji.com/archives/953 */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links that are fragment identifiers,
+     * or use the `javascript:` pseudo protocol
+     */
+
+    a[href^="#"]:after,
+    a[href^="javascript:"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    /*
+     * Printing Tables:
+     * http://css-discuss.incutio.com/wiki/Printing_Tables
+     */
+
+    thead {
+        display: table-header-group;
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+
+/* ==========================================================================
+   Color definitions
+   ========================================================================== */
+
+.lighred-color {
+    color: #e7494a;
+}
+
+.darkred-color {
+    color: #c22727;
+}
+
+input.ng-invalid {
+    border: 1px dashed #e7494a;
+}
+
+.lightgreen-color {
+    color: #2ecc71;
+}
+
+.darkgreen-color {
+    color: #27ae60;
+}
+
+.lightred-right-border {
+    border-right: 2px solid #e7494a;
+}
+
+.darkred-right-border {
+    border-right: 2px solid  #c22727;
+}
+
+.lightblue-right-border {
+    border-right: 2px solid  #3498db;
+}
+
+.darkblue-right-border {
+    border-right: 2px solid  #2980b9;
+}
+
+.lightpurple-right-border {
+    border-right: 2px solid #9b59b6;
+}
+
+.darkpurple-right-border  {
+    border-right: 2px solid #8e44ad;
+}
+
+.lightyellow-right-border  {
+    border-right: 2px solid  #efcf4d;
+}
+
+.darkyellow-right-border{
+    border-right: 2px solid  #f2ac3e;
+}
+
+.lightgreen-right-border {
+    border-right: 2px solid  #2ecc71;
+}
+
+.darkgreen-right-border  {
+    border-right: 2px solid  #27ae60;
+}
+
+.darkpink-right-border {
+    border-right: 2px solid #c227ae;
+}
+
+.lightpink-right-border {
+    border-right: 2px solid #ee51da;
+}
+
+/* left */
+.lightred-left-border {
+    border-left: 2px solid #e7494a;
+}
+
+.darkred-left-border {
+    border-left: 2px solid  #c22727;
+}
+
+.lightblue-left-border {
+    border-left: 2px solid  #3498db;
+}
+
+.darkblue-left-border {
+    border-left: 2px solid  #2980b9;
+}
+
+.lightpurple-left-border {
+    border-left: 2px solid #9b59b6;
+}
+
+.darkpurple-left-border  {
+    border-left: 2px solid #8e44ad;
+}
+
+.lightyellow-left-border  {
+    border-left: 2px solid  #efcf4d;
+}
+
+.darkyellow-left-border{
+    border-left: 2px solid  #f2ac3e;
+}
+
+.lightgreen-left-border {
+    border-left: 2px solid  #2ecc71;
+}
+
+.darkgreen-left-border  {
+    border-left: 2px solid  #27ae60;
+}
+
+.darkpink-left-border {
+    border-left: 2px solid #c227ae;
+}
+
+.lightpink-left-border {
+    border-left: 2px solid #ee51da;
+}
+
+/* 3px top-borders */
+.lightred-top-border {
+    border-top: 3px solid #e7494a;
+}
+
+.darkred-top-border {
+    border-top: 3px solid  #c22727;
+}
+
+.lightblue-top-border {
+    border-top: 3px solid  #3498db;
+}
+
+.darkblue-top-border {
+    border-top: 3px solid  #2980b9;
+}
+
+.lightpurple-top-border {
+    border-top: 3px solid #9b59b6;
+}
+
+.darkpurple-top-border  {
+    border-top: 3px solid #8e44ad;
+}
+
+.lightyellow-top-border  {
+    border-top: 3px solid  #efcf4d;
+}
+
+.darkyellow-top-border{
+    border-top: 3px solid  #f2ac3e;
+}
+
+.lightgreen-top-border {
+    border-top: 3px solid  #2ecc71;
+}
+
+.darkgreen-top-border  {
+    border-top: 3px solid  #27ae60;
+}
+
+.darkpink-top-border {
+    border-top: 3px solid #c227ae;
+}
+
+.lightpink-top-border {
+    border-top: 3px solid #ee51da;
+}
+
+
+/* 3px left-borders for navigation */
+nav ul li.darkred-border {
+    border-left: 3px solid #c22727;
+}
+
+nav ul li.lightyellow-border {
+    border-left: 3px solid #efcf4d;
+}
+
+nav ul li.darkblue-border {
+    border-left: 3px solid #2980b9;
+}
+
+nav ul li.darkpurple-border {
+    border-left: 3px solid #8e44ad;
+}
+
+nav ul li.darkyellow-border {
+    border-left: 3px solid #f2ac3e;
+}
+
+nav ul li.darkgreen-border {
+    border-left: 3px solid #27ae60;
+}
+
+nav ul li.darkpink-border {
+    border-left: 3px solid #c227ae;
+}
+
+/* background-colors incl. padding. also used navigation hover */
+.lightred, nav ul li.lightred-border:hover {
+    background-color: #e7494a;
+    color: #ffffff;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.darkred, nav ul li.darkred-border:hover  {
+    background-color: #c22727;
+    color: #ffffff;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.lightblue, nav ul li.lightblue-border:hover {
+    background-color: #3498db;
+    color: #ffffff;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.darkblue, nav ul li.darkblue-border:hover  {
+    background-color: #2980b9;
+    color: #ffffff;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.lightpurple, nav ul li.lightpurple-border:hover  {
+    background-color: #9b59b6;
+    color: #ffffff;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.darkpurple, nav ul li.darkpurple-border:hover  {
+    background-color: #8e44ad;
+    color: #ffffff;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.lightyellow, nav ul li.lightyellow-border:hover  {
+    background-color: #efcf4d;
+    color: #ffffff;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.darkyellow, nav ul li.darkyellow-border:hover  {
+    background-color: #f2ac3e;
+    color: #ffffff;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.lightgreen, nav ul li.lightgreen-border:hover  {
+    background-color: #2ecc71;
+    color: #ffffff;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.darkgreen, nav ul li.darkgreen-border:hover  {
+    background-color: #27ae60;
+    color: #ffffff;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.lightpink, nav ul li.lightpink-border:hover {
+    background-color: #ee51da;
+    color: #ffffff;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.darkpink, nav ul li.darkpink-border:hover {
+    background-color: #c227ae;
+    color: #ffffff;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+/* Buttons */
+
+button.delete {
+    color: #000;
+    border: 2px solid #000;
+    background: #ffffff;
+}
+
+button.delete:hover,
+button.delete:active {
+    color: #fff;
+    background: #d8000c;
+    border: 2px solid #d8000c;
+}
+
+button.lightred {
+    background: #fff;
+    color: #e7494a;
+    border: 2px solid #e7494a;
+}
+
+button.lightred:hover,
+button.lightred:active {
+    color: #fff;;
+    background: #e7494a;
+}
+
+button.darkred {
+    background: #fff;
+    color: #c22727;
+    border: 2px solid  #c22727;
+}
+
+button.darkred:hover,
+button.darkred:active {
+    color: #fff;
+    background: #c22727;
+}
+
+button.lightblue {
+    background: #fff;
+    color: #3498db;
+    border: 2px solid #3498db;
+}
+
+button.lightblue:hover,
+button.lightblue:active {
+    color: #fff;
+    background: #3498db;
+}
+
+button.darkblue {
+    background: #fff;
+    color: #2980b9;
+    border: 2px solid  #2980b9;
+}
+
+button.darkblue:hover,
+button.darkblue:active {
+    color: #fff;
+    background: #2980b9;
+}
+
+button.lightpurple {
+    background: #fff;
+    color: #9b59b6;
+    border: 2px solid #9b59b6;
+}
+
+button.lightpurple:hover,
+button.lightpurple:active {
+    color: #fff;
+    background: #9b59b6;
+}
+
+button.darkpurple  {
+    background: #fff;
+    color: #8e44ad;
+    border: 2px solid #8e44ad;
+}
+
+button.darkpurple:hover,
+button.darkpurple.active {
+    color: #fff;
+    background: #8e44ad;
+}
+
+button.lightyellow  {
+    background: #fff;
+    color: #efcf4d;
+    border: 2px solid  #efcf4d;
+}
+
+button.lightyellow:hover,
+button.lightyellow:active {
+    color: #fff;
+    background: #efcf4d;
+}
+
+button.darkyellow {
+    background: #fff;
+    color: #f2ac3e;
+    border: 2px solid  #f2ac3e;
+}
+
+button.darkyellow:hover,
+button.darkyellow:active {
+    color: #fff;
+    background: #f2ac3e;
+}
+
+button.lightgreen {
+    background: #fff;
+    color: #2ecc71;
+    border: 2px solid  #2ecc71;
+}
+
+button.lightgreen:hover,
+button.lightgreen:active {
+    color: #fff;
+    background: #2ecc71;
+}
+
+button.darkgreen {
+    background: #fff;
+    color: #27ae60;
+    border: 2px solid  #27ae60;
+}
+
+button.darkgreen:hover,
+button.darkgreen.active {
+    color: #fff;
+    background: #27ae60;
+}
+
+button.darkpink {
+    background: #fff;
+    color: #c227ae;
+    border: 2px solid #c227ae;
+}
+
+button.darkpink:hover,
+button.darkpink:active {
+    background: #c227ae;
+    color: #fff;
+}
+
+button.lightpink {
+    background: #fff;
+    color: #ee51da;
+    border: 2px solid #ee51da;
+}
+
+button.lightpink:hover,
+button.lightpink:active {
+    color: #fff;
+    background: #ee51da;
+}
+
+

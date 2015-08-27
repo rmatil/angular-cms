@@ -1,0 +1,148 @@
+
+.toast-title {
+  font-weight: 500 !important;
+  font-size: 15px;
+}
+
+.toast-message {
+  font-size: 13px;
+  text-align: center !important;
+}
+
+.toast-close-button {
+  font-weight: 500 !important;
+}
+
+#toast-container > div {
+  padding: 10px 15px 10px 10px !important;
+  width: 150px !important;
+  -moz-box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  opacity: 0.9 !important;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=90) !important;
+  filter: alpha(opacity=90) !important;
+}
+
+#toast-container > :hover {
+  -moz-box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+}
+
+#toast-container > div::after {
+  /*font-family: FontAwesome;
+  content: "\f057";
+  position: absolute;
+  top: 8px;
+  right: 8px;*/
+}
+
+/**
+ * Overwrite defaults from submodule
+ */
+#toast-container > .toast-info {
+  background-image: none !important;
+}
+#toast-container > .toast-wait {
+  background-image: none !important;
+}
+#toast-container > .toast-error {
+  background-image: none !important;
+}
+#toast-container > .toast-success {
+  background-image: none !important;
+}
+#toast-container > .toast-warning {
+  background-image: none !important;
+}
+
+#toast-container.toast-top-full-width > div,
+#toast-container.toast-bottom-full-width > div {
+  width: 50% !important;
+  margin: 35px auto !important;
+}
+.toast {
+  background-color: #f5df8a !important;
+  color: #000 !important;
+}
+.toast-success {
+  background-color: #f5df8a !important;
+  color: #000 !important;
+}
+.toast-error {
+  background-color: #f5df8a !important;
+  color: #000 !important;
+}
+.toast-info {
+  background-color: #f5df8a !important;
+  color: #000 !important;
+}
+.toast-wait {
+  background-color: #f5df8a !important;
+  color: #000 !important;
+}
+.toast-warning {
+  background-color: #f5df8a !important;
+  color: #000 !important;
+}
+
+/*Responsive Design*/
+@media all and (max-width: 240px) {
+  #toast-container > div {
+    padding: 8px 8px 8px 50px;
+    width: 11em;
+  }
+  #toast-container .toast-close-button {
+    right: -0.2em;
+    top: -0.2em;
+}
+  }
+@media all and (min-width: 241px) and (max-width: 480px) {
+  #toast-container  > div {
+    padding: 8px 8px 8px 50px;
+    width: 18em;
+  }
+  #toast-container .toast-close-button {
+    right: -0.2em;
+    top: -0.2em;
+  }
+}
+@media all and (min-width: 481px) and (max-width: 768px) {
+  #toast-container > div {
+    padding: 15px 15px 15px 50px;
+    width: 25em;
+  }
+}
+
+ /*
+  * AngularJS-Toaster
+  * Version 0.3
+ */
+#toast-container > div.ng-enter {
+    -webkit-transition: 500ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    -moz-transition: 500ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    -ms-transition: 500ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    -o-transition: 500ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    transition: 500ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+}
+
+#toast-container > div.ng-leave
+{ 
+    -webkit-transition: 200ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    -moz-transition: 200ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    -ms-transition: 200ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    -o-transition: 200ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    transition: 200ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+} 
+
+#toast-container > div.ng-enter.ng-enter-active, 
+#toast-container > div.ng-leave {
+    opacity: 0.8 !important;
+}
+
+#toast-container > div.ng-leave.ng-leave-active,
+#toast-container > div.ng-enter {
+    opacity: 0 !important;
+}
