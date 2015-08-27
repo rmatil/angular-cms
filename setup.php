@@ -34,7 +34,7 @@ define('HTTP_ROOT', $protocol.$_SERVER['HTTP_HOST']);
 define('LOCAL_ROOT', __DIR__);
 define('HTTP_MEDIA_DIR', HTTP_ROOT.'/media');
 define('LOCAL_MEDIA_DIR', LOCAL_ROOT.'/web/media');
-define('CONFIG_FILE', LOCAL_ROOT.'/config/yaml/parameters.yml');
+define('CONFIG_FILE', LOCAL_ROOT.'/config/parameters.yml');
 define('SRC_FOLDER', LOCAL_ROOT.'/src');
 
 // set locale to german
@@ -55,7 +55,7 @@ $app              = new Slim(array(
                                 'controller.class_suffix'    => 'Controller',
                                 'controller.method_suffix'   => 'Action',
                                 'controller.template_suffix' => 'php',
-                                'log.writer'                 => $logWriter, // enable this forl log writing to file
+                                'log.writer'                 => $logWriter, // enable this for log writing to file
                                 'templates.path'             => LOCAL_ROOT.'/web/slim-templates',
                             ));
 
