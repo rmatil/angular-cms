@@ -12,8 +12,7 @@ $app->add(new SecurityMiddleware(array('api')));
 
 // See https://github.com/fortrabbit/slimcontroller/issues/23 for overloading methods
 $app->addRoutes(array(
-    '/'                                 => 'Homepage:index',
-    '/cms'                              => 'Index:index',
+    '/'                                 => 'Index:index',
     '/install'                          => 'Install:install',
     '/install/do-install'               => 'Install:doInstall',
 

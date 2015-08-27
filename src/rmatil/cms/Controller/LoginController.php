@@ -34,7 +34,7 @@ class LoginController extends SlimController {
             $_SESSION['user_last_name'] = $user->getLastName();
             $_SESSION['user_last_login_date'] = $user->getLastLoginDate();
             $_SESSION['user_is_logged_in'] = true;
-            $this->app->redirect('/cms');
+            $this->app->redirect('/');
         }
 
         $this->app->response->setStatus(HttpStatusCodes::FORBIDDEN);
