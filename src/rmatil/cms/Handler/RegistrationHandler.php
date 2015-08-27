@@ -93,8 +93,7 @@ class RegistrationHandler {
      * Available mailerSettings are documented on https://github.com/PHPMailer/PHPMailer
      */
     protected function initMailer() {
-        $fileHandler = HandlerSingleton::getFileHandler(HTTP_MEDIA_DIR, LOCAL_MEDIA_DIR);
-        $config = $fileHandler->getConfigFileContents(CONFIG_FILE);
+        $config = ConfigurationHandler::readConfiguration(CONFIG_FILE);
         $mailerSettings = $config[ConfigurationNames::MAIL_PREFIX];
         if (empty($mailerSettings)) {
             // Set PHPMailer to use the sendmail transport

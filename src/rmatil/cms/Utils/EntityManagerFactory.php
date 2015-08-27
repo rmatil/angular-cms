@@ -4,6 +4,7 @@ namespace rmatil\cms\Utils;
 
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
+use rmatil\cms\Handler\ConfigurationHandler;
 use rmatil\cms\Handler\HandlerSingleton;
 use rmatil\cms\Constants\ConfigurationNames;
 
@@ -13,9 +14,8 @@ use rmatil\cms\Constants\ConfigurationNames;
  */
 abstract class EntityManagerFactory {
 
-    public static function createEntityManager($httpMediaDir, $localMediaDir, $configFilePath, $sourceFolder,  $devMode) {
-        $fileHandler = HandlerSingleton::getFileHandler($httpMediaDir, $localMediaDir);
-        $config = $fileHandler->getConfigFileContents($configFilePath);
+    public static function createEntityManager($configFilePath, $sourceFolder,  $devMode) {
+        $config = ConfigurationHandler::readConfiguration($configFilePath);
         
         return EntityManager::create($config[ConfigurationNames::DATABASE_PREFIX], self::getConfiguration($sourceFolder, $devMode));
     }

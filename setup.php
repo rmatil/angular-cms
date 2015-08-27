@@ -16,7 +16,7 @@ use rmatil\cms\Utils\EntityManagerFactory;
  *     - HTTP_MEDIA_DIR: url to media directory
  *     - HTTP_LOCAL_DIR: path to local media directory
  *
- * Sets local to ch_DE
+ * Sets locale to ch_DE
  *
  * Logs for this application are setup in the folder LOCAL_ROOT/log/cms.log
  *
@@ -40,7 +40,7 @@ define('SRC_FOLDER', LOCAL_ROOT.'/src');
 // set locale to german
 $newLocale = setlocale(LC_TIME, 'de_CH.UTF-8', 'de_CH');
 
-// prevent PHP from sending conficting cache expiration headers with the HTTP response
+// prevent PHP from sending conflicting cache expiration headers with the HTTP response
 session_cache_limiter(false);
 session_start();
 
@@ -65,7 +65,7 @@ $app->container->singleton('serializer', function () {
 });
 
 // reinit because only here the constants are available
-$entityManager = EntityManagerFactory::createEntityManager(HTTP_MEDIA_DIR, LOCAL_MEDIA_DIR, CONFIG_FILE, SRC_FOLDER, $devMode);
+$entityManager = EntityManagerFactory::createEntityManager(CONFIG_FILE, SRC_FOLDER, $devMode);
 
 HandlerSingleton::setEntityManager($entityManager);
 $thumbnailHandler = HandlerSingleton::getThumbnailHandler();
