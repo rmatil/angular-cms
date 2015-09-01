@@ -43,7 +43,7 @@ class Page {
      *
      * @Type("rmatil\cms\Entities\PageCategory")
      * 
-     * @var rmatil\cms\Entities\PageCategory
+     * @var \rmatil\cms\Entities\PageCategory
      */
     protected $category;
 
@@ -54,7 +54,7 @@ class Page {
      *
      * @Type("rmatil\cms\Entities\User")
      * 
-     * @var rmatil\cms\Entities\User
+     * @var \rmatil\cms\Entities\User
      */
     protected $author;
 
@@ -65,7 +65,7 @@ class Page {
      *
      * @Type("rmatil\cms\Entities\Language")
      * 
-     * @var rmatil\cms\Entities\Language
+     * @var \rmatil\cms\Entities\Language
      */
     protected $language;
 
@@ -87,7 +87,7 @@ class Page {
      *
      * @Type("rmatil\cms\Entities\Page")
      * 
-     * @var rmatil\cms\Entities\Page
+     * @var \rmatil\cms\Entities\Page
      */
     protected $parent;
 
@@ -122,7 +122,7 @@ class Page {
      *
      * @Type("rmatil\cms\Entities\User")
      * 
-     * @var rmatil\cms\Entities\User
+     * @var \rmatil\cms\Entities\User
      */
     protected $isLockedBy;
 
@@ -159,8 +159,22 @@ class Page {
      */
     protected $creationDate;
 
+    /**
+     * All user groups which are allowed to access this page
+     *
+     * @ORM\ManyToMany(targetEntity="UserGroup", inversedBy="pages")
+     * @ORM\JoinTable(name="usergroup_pages")
+     *
+     * @Type("ArrayCollection<rmatil\cms\Entities\UserGroup>")
+     *
+     * @var ArrayCollection[rmatil\cms\Entities\UserGroup]
+     */
+    protected $allowedUserGroups;
+
+
     public function __construct() {
         $this->articles = new ArrayCollection();
+        $this->allowedUserGroups = new ArrayCollection();
     }
 
     /**
@@ -398,6 +412,24 @@ class Page {
     }
 
     /**
+     * Gets all user groups which are allowed to access this page
+     *
+     * @return ArrayCollection
+     */
+    public function getAllowedUserGroups() {
+        return $this->allowedUserGroups;
+    }
+
+    /**
+     * Sets all user groups which are allowed to access this page
+     *
+     * @param ArrayCollection $allowedUserGroups
+     */
+    public function setAllowedUserGroups($allowedUserGroups) {
+        $this->allowedUserGroups = $allowedUserGroups;
+    }
+
+    /**
      * Updates this object with the values of the given page
      * 
      * @param  Page   $page The page with the values to use
@@ -416,6 +448,7 @@ class Page {
         $this->setUrlName($page->getUrlName());
         $this->setIsLockedBy($page->getIsLockedBy());
         $this->setLastEditDate($page->getLastEditDate());
+        $this->setAllowedUserGroups($page->getAllowedUserGroups());
     }
 }
 
