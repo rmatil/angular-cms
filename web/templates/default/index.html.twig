@@ -1,0 +1,33 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>Default Index Template</title>
+    <meta name="description" content="Default Index Template">
+    <meta name="author" content="rmatil">
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+<body>
+
+<h1>Current Path</h1>
+<pre>Type: {{ type }}</pre>
+<pre>Identifier: {{ identifier }}</pre>
+<pre>{{ path }}</pre>
+
+
+<h1>Pages</h1>
+<ul>
+{% for page in pages %}
+    <li><a href="/pages/{{ page.urlName }}">{{ page.title }}</a></li>
+{% endfor %}
+</ul>
+
+{{ dump(segments) }}
+
+</body>
+</html>
