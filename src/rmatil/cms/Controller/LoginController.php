@@ -4,6 +4,8 @@ namespace rmatil\cms\Controller;
 
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Entities\User;
+use rmatil\cms\Login\PasswordHandler;
 use rmatil\cms\Utils\PasswordUtils;
 use SlimController\SlimController;
 
@@ -22,12 +24,12 @@ class LoginController extends SlimController {
 
         $user = $userRepository->findOneBy(array('userName' => $username));
 
-        if (null === $user) {
+        if ( ! ($user instanceof User)) {
             $this->app->render('login-form.php', array('error' => 'password or username is wrong'));
             return;
         }
 
-        if (PasswordUtils::isEqual($password, $user->getPasswordHash())) {
+        if (PasswordHandler::isEqual($password, $user->getPasswordHash())) {
             $_SESSION['user_id'] = $user->getId();
             $_SESSION['user_user_name'] = $user->getUserName();
             $_SESSION['user_first_name'] = $user->getFirstName();
