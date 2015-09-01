@@ -50,17 +50,24 @@ $logWriter        = new LogWriter(fopen(__DIR__.'/log/cms.log', 'a'));
 
 $config = \rmatil\cms\Handler\ConfigurationHandler::readConfiguration(CONFIG_FILE);
 
-$app              = new Slim(array(
-                                'debug'                      => true, // enable slim exception handler
-                                'log.level'                  => \Slim\Log::DEBUG,
-                                'log.enabled'                => true, // enable logging
-                                'controller.class_prefix'    => 'rmatil\cms\Controller',
-                                'controller.class_suffix'    => 'Controller',
-                                'controller.method_suffix'   => 'Action',
-                                'controller.template_suffix' => 'php',
-                                'log.writer'                 => $logWriter, // enable this for log writing to file
-                                'templates.path'             => LOCAL_ROOT.'/web/templates/'.$config[\rmatil\cms\Constants\ConfigurationNames::TEMPLATE][\rmatil\cms\Constants\ConfigurationNames::TEMPLATE_PATH],
-                            ));
+$app = new Slim(array(
+    'debug'                      => true, // enable slim exception handler
+    'log.level'                  => \Slim\Log::DEBUG,
+    'log.enabled'                => true, // enable logging
+    'controller.class_prefix'    => 'rmatil\cms\Controller',
+    'controller.class_suffix'    => 'Controller',
+    'controller.method_suffix'   => 'Action',
+    'controller.template_suffix' => 'php',
+    'log.writer'                 => $logWriter, // enable this for log writing to file
+    'templates.path'             => LOCAL_ROOT.'/web/templates/'.$config[\rmatil\cms\Constants\ConfigurationNames::TEMPLATE][\rmatil\cms\Constants\ConfigurationNames::TEMPLATE_PATH],
+    'view'                       => new \Slim\Views\Twig()
+));
+
+$view = $app->view();
+$view->parserOptions = array(
+    'debug' => true,
+    'cache' => dirname(__FILE__) . '/cache'
+);
 
 // Add JMS Serializer to app
 $app->container->singleton('serializer', function () {
