@@ -35,7 +35,7 @@ define('HTTP_ROOT', $protocol.$_SERVER['HTTP_HOST']);
 define('LOCAL_ROOT', __DIR__);
 define('HTTP_MEDIA_DIR', HTTP_ROOT.'/media');
 define('LOCAL_MEDIA_DIR', LOCAL_ROOT.'/web/media');
-define('CONFIG_FILE', LOCAL_ROOT.'/config/parameters.yml');
+define('CONFIG_FILE', LOCAL_ROOT.'/app/config/parameters.yml');
 define('SRC_FOLDER', LOCAL_ROOT.'/src');
 
 // set locale to german
@@ -46,7 +46,7 @@ session_cache_limiter(false);
 session_start();
 
 // enable this for log writing to file
-$logWriter        = new LogWriter(fopen(__DIR__.'/log/cms.log', 'a'));
+$logWriter        = new LogWriter(fopen(__DIR__ . '/app/log/cms.log', 'a'));
 
 $config = \rmatil\cms\Handler\ConfigurationHandler::readConfiguration(CONFIG_FILE);
 
@@ -59,14 +59,18 @@ $app = new Slim(array(
     'controller.method_suffix'   => 'Action',
     'controller.template_suffix' => 'php',
     'log.writer'                 => $logWriter, // enable this for log writing to file
-    'templates.path'             => LOCAL_ROOT.'/web/templates/'.$config[\rmatil\cms\Constants\ConfigurationNames::TEMPLATE][\rmatil\cms\Constants\ConfigurationNames::TEMPLATE_PATH],
+    'templates.path'             => LOCAL_ROOT . '/web/templates/' . $config[\rmatil\cms\Constants\ConfigurationNames::TEMPLATE][\rmatil\cms\Constants\ConfigurationNames::TEMPLATE_PATH],
     'view'                       => new \Slim\Views\Twig()
 ));
 
 $view = $app->view();
 $view->parserOptions = array(
     'debug' => true,
-    'cache' => dirname(__FILE__) . '/cache'
+    'cache' => __DIR__ . '/app/cache'
+);
+$view->parserExtensions = array(
+    new \Slim\Views\TwigExtension(),
+    new \Twig_Extension_Debug(),
 );
 
 // Add JMS Serializer to app

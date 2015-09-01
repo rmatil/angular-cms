@@ -13,4 +13,4 @@ AnnotationRegistry::registerAutoloadNamespace(
     'JMS\Serializer\Annotation', __DIR__.'/vendor/jms/serializer/src'
 );
 
-$entityManager = EntityManagerFactory::createEntityManager(__DIR__.'/config/parameters.yml', __DIR__.'/src', $devMode);
+$entityManager = EntityManagerFactory::createEntityManager(__DIR__.'/app/config/parameters.yml', __DIR__.'/src', $devMode);
