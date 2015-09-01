@@ -12,6 +12,8 @@ use rmatil\cms\Middleware\SecurityMiddleware;
 // See https://github.com/fortrabbit/slimcontroller/issues/23 for overloading methods
 $app->addRoutes(array(
     '/'                                 => 'Index:index',
+    '/:type/:identifier' => array('get' => 'Index:path'),
+
     '/install'                          => 'Install:install',
     '/install/do-install'               => 'Install:doInstall',
 
