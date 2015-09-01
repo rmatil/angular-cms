@@ -8,6 +8,7 @@ use rmatil\cms\Handler\FileHandler;
 use rmatil\cms\Handler\RegistrationHandler;
 use rmatil\cms\Handler\ThumbnailHandler;
 use PHPMailer;
+use rmatil\cms\Login\LoginHandler;
 
 /**
  * Provides access to all handlers used by this app.
@@ -21,6 +22,7 @@ abstract class HandlerSingleton {
     protected static $fileHandler;
     protected static $registrationHandler;
     protected static $thumbnailHandler;
+    protected static $loginHandler;
     
     public static function setEntityManager(EntityManager $em) {
         self::$em = $em;
@@ -30,6 +32,7 @@ abstract class HandlerSingleton {
         self::$fileHandler = null;
         self::$registrationHandler = null;
         self::$thumbnailHandler = null;
+        self::$loginHandler = null;
     }
     
     public static function getDatabaseHandler() {
@@ -62,5 +65,13 @@ abstract class HandlerSingleton {
         }
         
         return self::$thumbnailHandler;
+    }
+
+    public static function getLoginHandler(array $securedRoutes) {
+        if (null === self::$loginHandler) {
+            self::$loginHandler = new LoginHandler(self::$em, $securedRoutes);
+        }
+
+        return self::$loginHandler;
     }
 }

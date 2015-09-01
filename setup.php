@@ -1,5 +1,6 @@
 <?php
 
+use rmatil\cms\Middleware\BasicAuthMiddleware;
 use Slim\LogWriter;
 use SlimController\Slim;
 use JMS\Serializer\SerializerBuilder;
@@ -66,14 +67,12 @@ $app->container->singleton('serializer', function () {
     return SerializerBuilder::create()->build();
 });
 
-// reinit because only here the constants are available
-$entityManager = EntityManagerFactory::createEntityManager(CONFIG_FILE, SRC_FOLDER, $devMode);
-
 HandlerSingleton::setEntityManager($entityManager);
 $thumbnailHandler = HandlerSingleton::getThumbnailHandler();
 $fileHandler = HandlerSingleton::getFileHandler(HTTP_MEDIA_DIR, LOCAL_MEDIA_DIR);
 $registrationHandler = HandlerSingleton::getRegistrationHandler();
 $databaseHandler = HandlerSingleton::getDatabaseHandler();
+$loginHandler = HandlerSingleton::getLoginHandler(array('^\/api\/.*' => array('ROLE_SUPER_ADMIN')));
 
 // Add Doctrine Entity Manager to app
 $app->container->singleton('entityManager', function () use ($entityManager) {
@@ -97,6 +96,13 @@ $app->container->singleton('fileHandler', function () use ($fileHandler) {
 $app->container->singleton('registrationHandler', function() use ($registrationHandler) {
     return $registrationHandler;
 });
+
+$app->container->singleton('loginHandler', function () use ($loginHandler) {
+    return $loginHandler;
+});
+
+// Add Basic Auth Security
+$app->add(new BasicAuthMiddleware($entityManager, 'API Access'));
 
 include('routes.php');
 

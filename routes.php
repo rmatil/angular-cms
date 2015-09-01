@@ -1,5 +1,6 @@
 <?php
 
+use rmatil\cms\Middleware\BasicAuthMiddleware;
 use rmatil\cms\Middleware\SecurityMiddleware;
 
 /**
@@ -7,8 +8,6 @@ use rmatil\cms\Middleware\SecurityMiddleware;
  *
  * For application setup see file setup.php in the root folder of this project.
  */
-
-$app->add(new SecurityMiddleware(array('api')));
 
 // See https://github.com/fortrabbit/slimcontroller/issues/23 for overloading methods
 $app->addRoutes(array(
@@ -19,7 +18,7 @@ $app->addRoutes(array(
     // login
     '/login'                            => array('get'     => 'Login:loginView'),
     '/login/do-login'                   => array('post'    => 'Login:doLogin'),
-    '/login/do-logout'                  => array('get'     => 'Login:doLogout'),
+    '/logout'                           => array('get'     => 'Login:doLogout'),
 
     // articles
     '/api/articles'                     => array('get'     => 'Article:getArticles',

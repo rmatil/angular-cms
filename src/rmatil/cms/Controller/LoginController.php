@@ -42,11 +42,8 @@ class LoginController extends SlimController {
     }
 
     public function doLogoutAction() {
-        unset($_SESSION['user']);
-        unset($_SESSION['is_logged_in']);
-        session_destroy();
-        session_write_close();
+        $this->app->loginHandler->logout();
 
-        $this->app->redirect('/');
+        $this->redirect('/');
     }
 }
