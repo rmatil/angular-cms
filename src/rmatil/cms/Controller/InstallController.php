@@ -21,7 +21,7 @@ class InstallController extends SlimController {
             // installation is already done
             return $this->app->redirect('/login');
         }
-        $this->app->render('install-form.php');
+        $this->app->render('install-form.html.twig');
     }
 
     public function doInstallAction() {
@@ -75,7 +75,7 @@ class InstallController extends SlimController {
             $this->createAdminUser($config);
         } catch (Exception $e) {
             $this->app->databaseHandler->deleteDatabase();
-            return $this->app->render('install-form.php', array('errors' => array($e->getMessage(), $e->getTraceAsString())));
+            return $this->app->render('install-form.html.twig', array('errors' => array($e->getMessage(), $e->getTraceAsString())));
         }
         
         $this->app->redirect('/login');
