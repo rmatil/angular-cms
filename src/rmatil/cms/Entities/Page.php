@@ -171,6 +171,17 @@ class Page {
      */
     protected $allowedUserGroups;
 
+    /**
+     * Indicates whether this page should be used as the start page
+     *
+     * @ORM\Column(type="boolean")
+     *
+     * @Type("boolean")
+     *
+     * @var boolean
+     */
+    protected $isStartPage;
+
 
     public function __construct() {
         $this->articles = new ArrayCollection();
@@ -216,7 +227,7 @@ class Page {
     /**
      * Gets the The category to which the page belongs.
      *
-     * @return rmatil\cms\Entities\PageCategory
+     * @return \rmatil\cms\Entities\PageCategory
      */
     public function getCategory() {
         return $this->category;
@@ -225,7 +236,7 @@ class Page {
     /**
      * Sets the The category to which the page belongs.
      *
-     * @param rmatil\cms\Entities\PageCategory $category the category
+     * @param \rmatil\cms\Entities\PageCategory $category the category
      */
     public function setCategory(PageCategory $category = null) {
         $this->category = $category;
@@ -234,7 +245,7 @@ class Page {
     /**
      * Gets the The author of this page.
      *
-     * @return rmatil\cms\Entities\User
+     * @return \rmatil\cms\Entities\User
      */
     public function getAuthor() {
         return $this->author;
@@ -243,7 +254,7 @@ class Page {
     /**
      * Sets the The author of this page.
      *
-     * @param rmatil\cms\Entities\User $author the author
+     * @param \rmatil\cms\Entities\User $author the author
      */
     public function setAuthor(User $author = null) {
         $this->author = $author;
@@ -252,7 +263,7 @@ class Page {
     /**
      * Gets the The language of this page.
      *
-     * @return rmatil\cms\Entities\Language
+     * @return \rmatil\cms\Entities\Language
      */
     public function getLanguage() {
         return $this->language;
@@ -261,7 +272,7 @@ class Page {
     /**
      * Sets the The language of this page.
      *
-     * @param rmatil\cms\Entities\Language $language the language
+     * @param \rmatil\cms\Entities\Language $language the language
      */
     public function setLanguage(Language $language = null) {
         $this->language = $language;
@@ -288,7 +299,7 @@ class Page {
     /**
      * Gets the Parentpage of this page.
      *
-     * @return rmatil\cms\Entities\Page
+     * @return \rmatil\cms\Entities\Page
      */
     public function getParent() {
         return $this->parent;
@@ -297,7 +308,7 @@ class Page {
     /**
      * Sets the Parentpage of this page.
      *
-     * @param rmatil\cms\Entities\Page $parent the parent
+     * @param \rmatil\cms\Entities\Page $parent the parent
      */
     public function setParent(Page $parent = null) {
         $this->parent = $parent;
@@ -315,7 +326,7 @@ class Page {
     /**
      * Sets the An array of articles (bidirectional - inverse side).
      *
-     * @param Doctrine\Common\Collections\ArrayCollection $articles the articles
+     * @param \Doctrine\Common\Collections\ArrayCollection $articles the articles
      */
     public function setArticles(ArrayCollection $articles = null) {
         $this->articles = $articles;
@@ -342,7 +353,7 @@ class Page {
     /**
      * Gets the Indicates whether this page is locked for editing or not.
      *
-     * @return rmatil\cms\Entities\User
+     * @return \rmatil\cms\Entities\User
      */
     public function getIsLockedBy() {
         return $this->isLockedBy;
@@ -351,7 +362,7 @@ class Page {
     /**
      * Sets the Indicates whether this page is locked for editing or not.
      *
-     * @param rmatil\cms\Entities\User $isLockedBy the is locked
+     * @param \rmatil\cms\Entities\User $isLockedBy the is locked
      */
     public function setIsLockedBy(User $isLockedBy = null) {
         $this->isLockedBy = $isLockedBy;
@@ -430,6 +441,24 @@ class Page {
     }
 
     /**
+     * Gets the indicator whether this page is used as index page
+     *
+     * @return boolean
+     */
+    public function getIsStartPage() {
+        return $this->isStartPage;
+    }
+
+    /**
+     * Sets the indicator whether this page is used as index page
+     *
+     * @param boolean $isStartPage
+     */
+    public function setIsStartPage($isStartPage) {
+        $this->isStartPage = $isStartPage;
+    }
+
+    /**
      * Updates this object with the values of the given page
      * 
      * @param  Page   $page The page with the values to use
@@ -449,6 +478,7 @@ class Page {
         $this->setIsLockedBy($page->getIsLockedBy());
         $this->setLastEditDate($page->getLastEditDate());
         $this->setAllowedUserGroups($page->getAllowedUserGroups());
+        $this->setIsStartPage($page->getIsStartPage());
     }
 }
 

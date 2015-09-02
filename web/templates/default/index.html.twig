@@ -14,20 +14,12 @@
 </head>
 <body>
 
-<h1>Current Path</h1>
-<pre>Type: {{ type }}</pre>
-<pre>Identifier: {{ identifier }}</pre>
-<pre>{{ path }}</pre>
-
-
-<h1>Pages</h1>
+<h1>Articles</h1>
 <ul>
-{% for page in pages %}
-    <li><a href="/pages/{{ page.urlName }}">{{ page.title }}</a></li>
+{% for article in articles %}
+    <li><a href="/articles/{{ article.urlName }}">{{ article.title }}</a></li>
 {% endfor %}
 </ul>
-
-{{ dump(segments) }}
 
 </body>
 </html>

@@ -7,14 +7,27 @@ use rmatil\cms\Entities\Article;
 use rmatil\cms\Entities\Event;
 use rmatil\cms\Entities\Page;
 use rmatil\cms\Entities\User;
-use rmatil\cms\Exceptions\AccessDeniedException;
 use SlimController\SlimController;
 
 class IndexController extends SlimController {
 
     public function indexAction() {
-        // TODO: get all articles, which are marked as "shown on index"
-        echo "index";
+        /** @var \Doctrine\ORM\EntityManager $em */
+        $em = $this->app->entityManager;
+
+        $articles = $em->createQueryBuilder()
+                        ->select('a')
+                        ->from(EntityNames::ARTICLE, 'a')
+                        ->innerJoin('a.page', 'p')
+                        ->where('p.isStartPage = true')
+                        ->andWhere('a.isPublished = true')
+                        ->getQuery()
+                        ->getResult();
+
+        $this->app->render('index.html.twig', array(
+            'articles' => $articles
+        ));
+
     }
 
     public function pathAction($type, $identifier) {
@@ -30,15 +43,6 @@ class IndexController extends SlimController {
                 break;
             default:
                 $this->app->notFound();
-        }
-
-
-        // TODO: check if page or article is protected
-        $isProtected = false;
-        if ($isProtected) {
-            // TODO: check if user is logged in
-            // TODO: check if user has correct role
-            // TODO: redirect to login page if not
         }
     }
 
@@ -65,8 +69,7 @@ class IndexController extends SlimController {
         $em = $this->app->entityManager;
 
         $page = $em->getRepository(EntityNames::PAGE)->findOneBy(array(
-            'urlName' => $urlName,
-            'isPublished' => true
+            'urlName' => $urlName
         ));
 
         if ( ! ($page instanceof Page)) {
@@ -104,26 +107,25 @@ class IndexController extends SlimController {
 
             if ($allowedUserGroups->isEmpty()) {
                 // we allow access if no restriction is made
-                return true;
+                return;
             }
 
             if (PHP_SESSION_NONE === session_status()) {
                 session_start();
             }
 
-            if (isset($_SESSION['user_id'])) {
+            if (isset($_SESSION['user_is_logged_in']) && true === $_SESSION['user_is_logged_in'] && isset($_SESSION['user_id'])) {
                 $user = $this->app->entityManager->getRepository(EntityNames::USER)->findOneById($_SESSION['user_id']);
 
                 if ($user instanceof User) {
                     if ($allowedUserGroups->contains($user->getUserGroup())) {
-                        return true;
+                        return;
                     }
                 }
             }
         }
 
-
-        throw new AccessDeniedException('User may not see this page');
+        $this->app->redirect('/login');
     }
 
 }
