@@ -114,6 +114,14 @@ $app->container->singleton('loginHandler', function () use ($loginHandler) {
 
 // Add Basic Auth Security
 $app->add(new BasicAuthMiddleware($entityManager, 'API Access'));
+$corsOptions = array(
+    "origin" => "*",
+    "maxAge" => 1728000,
+    "allowCredentials" => true,
+    "allowMethods" => array("POST", "GET", "DELETE", "PUT", "OPTIONS")
+);
+$cors = new \CorsSlim\CorsSlim($corsOptions);
+$app->add($cors);
 
 include('routes.php');
 
