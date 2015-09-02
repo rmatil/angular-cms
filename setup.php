@@ -118,7 +118,8 @@ $corsOptions = array(
     "origin" => "*",
     "maxAge" => 1728000,
     "allowCredentials" => true,
-    "allowMethods" => array("POST", "GET", "DELETE", "PUT", "OPTIONS")
+    "allowHeaders" => array("X-PINGOTHER", "Authorization", "Content-Type"),
+    "allowMethods" => array("POST", "GET", "DELETE", "PUT", "OPTIONS", "HEAD")
 );
 $cors = new \CorsSlim\CorsSlim($corsOptions);
 $app->add($cors);
