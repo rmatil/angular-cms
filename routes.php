@@ -21,6 +21,8 @@ $app->addRoutes(array(
                                                  'post'    => 'Login:doLogin'),
     '/logout'                           => array('get'     => 'Login:doLogout'),
 
+    '/authenticate'                     => array('post'    => 'Authentication:authenticate'),
+
     // articles
     '/api/articles'                     => array('get'     => 'Article:getArticles',
                                                  'post'    => 'Article:insertArticle'),
