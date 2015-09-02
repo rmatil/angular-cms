@@ -48,7 +48,7 @@ class UserGroup {
     protected $role;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Article", mappedBy="userGroups")
+     * @ORM\ManyToMany(targetEntity="Article", mappedBy="allowedUserGroups")
      *
      * @Type("ArrayCollection<rmatil\cms\Entities\Article>")
      *
@@ -57,7 +57,7 @@ class UserGroup {
     protected $accessibleArticles;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Page", mappedBy="userGroups")
+     * @ORM\ManyToMany(targetEntity="Page", mappedBy="allowedUserGroups")
      *
      * @Type("ArrayCollection<rmatil\cms\Entities\Page>")
      *
@@ -66,7 +66,7 @@ class UserGroup {
     protected $accessiblePages;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Event", mappedBy="userGroups")
+     * @ORM\ManyToMany(targetEntity="Event", mappedBy="allowedUserGroups")
      *
      * @Type("ArrayCollection<rmatil\cms\Entities\Event>")
      *
@@ -155,6 +155,10 @@ class UserGroup {
         $this->accessibleArticles = $accessibleArticles;
     }
 
+    public function addAccessibleArticle(Article $article) {
+        $this->accessibleArticles->add($article);
+    }
+
     /**
      * @return ArrayCollection
      */
@@ -169,6 +173,10 @@ class UserGroup {
         $this->accessiblePages = $accessiblePages;
     }
 
+    public function addAccessiblePage(Page $page) {
+        $this->accessiblePages->add($page);
+    }
+
     /**
      * @return ArrayCollection
      */
@@ -181,6 +189,10 @@ class UserGroup {
      */
     public function setAccessibleEvents($accessibleEvents) {
         $this->accessibleEvents = $accessibleEvents;
+    }
+
+    public function addAccessibleEvent(Event $event) {
+        $this->accessibleEvents->add($event);
     }
 
     public function update(UserGroup $userGroup) {

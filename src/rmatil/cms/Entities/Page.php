@@ -162,7 +162,7 @@ class Page {
     /**
      * All user groups which are allowed to access this page
      *
-     * @ORM\ManyToMany(targetEntity="UserGroup", inversedBy="pages")
+     * @ORM\ManyToMany(targetEntity="UserGroup", inversedBy="accessiblePages")
      * @ORM\JoinTable(name="usergroup_pages")
      *
      * @Type("ArrayCollection<rmatil\cms\Entities\UserGroup>")
@@ -438,6 +438,11 @@ class Page {
      */
     public function setAllowedUserGroups($allowedUserGroups) {
         $this->allowedUserGroups = $allowedUserGroups;
+    }
+
+    public function addAllowedUserGroup(UserGroup $userGroup) {
+        $this->allowedUserGroups->add($userGroup);
+        $userGroup->addAccessiblePage($this);
     }
 
     /**

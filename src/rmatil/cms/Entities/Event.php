@@ -150,7 +150,7 @@ class Event {
     /**
      * All user groups which are allowed to access this event
      *
-     * @ORM\ManyToMany(targetEntity="UserGroup", inversedBy="events")
+     * @ORM\ManyToMany(targetEntity="UserGroup", inversedBy="accessibleEvents")
      * @ORM\JoinTable(name="usergroup_events")
      *
      * @Type("ArrayCollection<rmatil\cms\Entities\UserGroup>")
@@ -410,5 +410,10 @@ class Event {
      */
     public function setAllowedUserGroups($allowedUserGroups) {
         $this->allowedUserGroups = $allowedUserGroups;
+    }
+
+    public function addAllowedUserGroup(UserGroup $userGroup) {
+        $this->allowedUserGroups->add($userGroup);
+        $userGroup->addAccessibleEvent($this);
     }
 }

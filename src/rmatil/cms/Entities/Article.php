@@ -153,7 +153,7 @@ class Article {
     /**
      * All user groups which are allowed to access this article
      *
-     * @ORM\ManyToMany(targetEntity="UserGroup", inversedBy="articles")
+     * @ORM\ManyToMany(targetEntity="UserGroup", inversedBy="accessibleArticles")
      * @ORM\JoinTable(name="usergroup_articles")
      *
      * @Type("ArrayCollection<rmatil\cms\Entities\UserGroup>")
@@ -410,6 +410,11 @@ class Article {
      */
     public function setAllowedUserGroups($allowedUserGroups) {
         $this->allowedUserGroups = $allowedUserGroups;
+    }
+
+    public function addAllowedUserGroup(UserGroup $userGroup) {
+        $this->allowedUserGroups->add($userGroup);
+        $userGroup->addAccessibleArticle($this);
     }
 
     /**
