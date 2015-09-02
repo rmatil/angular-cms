@@ -132,7 +132,7 @@
 <body>
 
     <div class="login-form center">
-        <form action="/login/do-login" method="post">
+        <form action="/login" method="post">
             <ul class="text-center">
                 <li>
                     <input class="lightyellow-border" type="text" id="username" name="username" placeholder="Benutzername" />
@@ -144,13 +144,15 @@
                     <input class="lightred-border" type="submit" value="Login" />
                 </li>
             </ul>
+            {% if flash['login.forward'] is defined %}
+                <input type="hidden" name="forward" value="{{ flash['login.forward'] }}">
+            {% endif %}
         </form>
 
-        <?php
-            if (isset($error)) {
-                echo '<div class="error">'.$error.'</div>';
-            }
-        ?>
+        {% if flash['login.error'] is defined %}
+            <div class="error">{{ flash['login.error'] }}</div>
+        {% endif %}
+
     </div>
 </body>
 </html>

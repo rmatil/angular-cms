@@ -37,10 +37,16 @@ class BasicAuthMiddleware extends Middleware {
             session_start();
         }
 
-        if (array_key_exists('user_is_logged_in', $_SESSION) && true === $_SESSION['user_is_logged_in'] &&
-            $_SERVER['PHP_AUTH_USER'] === $_SESSION['user_user_name']) {
-            $this->next->call();
-            return;
+        if (array_key_exists('user_is_logged_in', $_SESSION) && true === $_SESSION['user_is_logged_in']) {
+            // check whether basic auth user matches current session user
+            if (isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER'] === $_SESSION['user_user_name']) {
+                $this->next->call();
+                return;
+            } else if ( ! isset($_SERVER['PHP_AUTH_USER'])) {
+                // no basic auth headers were set
+                $this->next->call();
+                return;
+            }
         }
 
 

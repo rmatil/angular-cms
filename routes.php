@@ -18,8 +18,8 @@ $app->addRoutes(array(
     '/install/do-install'               => 'Install:doInstall',
 
     // login
-    '/login'                            => array('get'     => 'Login:loginView'),
-    '/login/do-login'                   => array('post'    => 'Login:doLogin'),
+    '/login'                            => array('get'     => 'Login:doLogin',
+                                                 'post'    => 'Login:doLogin'),
     '/logout'                           => array('get'     => 'Login:doLogout'),
 
     // articles

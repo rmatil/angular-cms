@@ -7,40 +7,42 @@ use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Entities\User;
 use rmatil\cms\Login\PasswordHandler;
 use rmatil\cms\Utils\PasswordUtils;
+use RuntimeException;
 use SlimController\SlimController;
 
 class LoginController extends SlimController {
 
-    public function loginViewAction() {
-        $this->app->render('login-form.php');
-    }
+    const LOGIN_ERROR = 'login.error';
+    const LOGIN_FORWARD = 'login.forward';
 
     public function doLoginAction() {
-        $entityManager   = $this->app->entityManager;
-        $userRepository  = $entityManager->getRepository(EntityNames::USER);
-
         $username = $this->app->request->params('username');
         $password = $this->app->request->params('password');
+        $forwardUrl = $this->app->request->params('forward');
 
-        $user = $userRepository->findOneBy(array('userName' => $username));
-
-        if ( ! ($user instanceof User)) {
-            $this->app->render('login-form.php', array('error' => 'password or username is wrong'));
+        if (null === $username && null === $password) {
+            if (null !== $forwardUrl) {
+                $this->app->flashNow(self::LOGIN_FORWARD, $forwardUrl);
+            }
+            $this->app->render('login-form.html.twig');
             return;
         }
 
-        if (PasswordHandler::isEqual($password, $user->getPasswordHash())) {
-            $_SESSION['user_id'] = $user->getId();
-            $_SESSION['user_user_name'] = $user->getUserName();
-            $_SESSION['user_first_name'] = $user->getFirstName();
-            $_SESSION['user_last_name'] = $user->getLastName();
-            $_SESSION['user_last_login_date'] = $user->getLastLoginDate();
-            $_SESSION['user_is_logged_in'] = true;
-            $this->app->redirect('/');
+        /** @var \rmatil\cms\Login\LoginHandler $loginHandler */
+        $loginHandler = $this->app->loginHandler;
+        try {
+            $loginHandler->login($username, $password, $this->app->request->getPath());
+        } catch (RuntimeException $re) {
+            $this->app->flashNow(self::LOGIN_ERROR, $re->getMessage());
+            $this->app->render('login-form.html.twig');
+            return;
         }
 
-        $this->app->response->setStatus(HttpStatusCodes::FORBIDDEN);
-        $this->app->render('login-form.php', array('error' => 'password or username is wrong'));
+        if (null !== $forwardUrl) {
+            $this->app->redirect(urldecode($forwardUrl));
+        }
+
+        $this->app->redirect('/');
     }
 
     public function doLogoutAction() {
