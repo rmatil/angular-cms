@@ -3,20 +3,17 @@
 namespace rmatil\cms\Controller;
 
 use DateTime;
-use Doctrine\ORM\EntityManager;
 use Exception;
-use JMS\Serializer\SerializerBuilder;
 use rmatil\cms\Constants\ConfigurationNames;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Entities\User;
-use rmatil\cms\Entities\UserGroup;
-use rmatil\cms\Handler\ConfigurationHandler;
-use rmatil\cms\Handler\HandlerSingleton;
 use rmatil\cms\Login\PasswordHandler;
-use rmatil\cms\Utils\EntityManagerFactory;
 use rmatil\cms\Utils\PasswordUtils;
 use SlimController\SlimController;
 
+/**
+ * @package rmatil\cms\Controller
+ */
 class InstallController extends SlimController {
 
     public function installAction() {
@@ -35,13 +32,13 @@ class InstallController extends SlimController {
             $this->app->redirect('/login');
             return;
         }
-        
+
         $userParams = array(
             ConfigurationNames::ADMIN_USERNAME => $this->app->request->params('admin-user'),
             ConfigurationNames::ADMIN_PASSWORD => $this->app->request->params('admin-password'),
             ConfigurationNames::ADMIN_EMAIL => $this->app->request->params('admin-email')
         );
-        
+
         try {
             $this->app->databaseHandler->setupDatabase();
             $this->app->databaseHandler->initDatabaseSettings(
@@ -57,7 +54,7 @@ class InstallController extends SlimController {
             $this->app->render('install-form.html.twig');
             return;
         }
-        
+
         $this->app->redirect('/login');
     }
 

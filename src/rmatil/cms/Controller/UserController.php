@@ -8,48 +8,46 @@ use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Entities\User;
 use rmatil\cms\Login\PasswordHandler;
+use rmatil\cms\Response\ResponseFactory;
 use rmatil\cms\Utils\PasswordUtils;
 use SlimController\SlimController;
 
+/**
+ * @package rmatil\cms\Controller
+ */
 class UserController extends SlimController {
 
     public function getUsersAction() {
-        $entityManager   = $this->app->entityManager;
-        $userRepository  = $entityManager->getRepository(EntityNames::USER);
-        $users           = $userRepository->findAll();
+        $userRepository = $this->app->entityManager->getRepository(EntityNames::USER);
+        $users = $userRepository->findAll();
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($users, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $users);
     }
 
     public function getUserByIdAction($id) {
-        $entityManager   = $this->app->entityManager;
-        $userRepository  = $entityManager->getRepository(EntityNames::USER);
-        $user            = $userRepository->findOneBy(array('id' => $id));
+        $entityManager = $this->app->entityManager;
+        $userRepository = $entityManager->getRepository(EntityNames::USER);
+        $user = $userRepository->findOneBy(array('id' => $id));
 
-        if ($user === null) {
+        if ( ! ($user instanceof User)) {
             $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
             return;
         }
 
         // do not show lock if requested by the same user as currently locked
-        if ($user->getIsLockedBy() !== null &&
-            $user->getIsLockedBy()->getId() === $_SESSION['user_id']) {
+        if (($user->getIsLockedBy() instanceof User) &&
+            $user->getIsLockedBy()->getId() === $_SESSION['user_id']
+        ) {
             $user->setIsLockedBy(null);
         }
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($user, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $user);
 
-        $userRepository             = $entityManager->getRepository(EntityNames::USER);
-        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
+        $userRepository = $entityManager->getRepository(EntityNames::USER);
+        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         // set requesting user as lock
         $user->setIsLockedBy($origUser);
-        
+
         // force update
         try {
             $entityManager->flush();
@@ -62,23 +60,30 @@ class UserController extends SlimController {
     }
 
     public function updateUserAction($userId) {
-        $userObject                 = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::USER, 'json');
+        /** @var \rmatil\cms\Entities\User $userObject */
+        $userObject = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::USER, 'json');
 
-        $entityManager              = $this->app->entityManager;
-        $userRepository             = $entityManager->getRepository(EntityNames::USER);
-        $origUser                   = $userRepository->findOneBy(array('id' => $userId));
+        $entityManager = $this->app->entityManager;
+        $userRepository = $entityManager->getRepository(EntityNames::USER);
+        $origUser = $userRepository->findOneBy(array('id' => $userId));
 
-        $userGroupRepository        = $entityManager->getRepository(EntityNames::USER_GROUP);
-        $origUserGroup              = $userGroupRepository->findOneBy(array('id' => $origUser->getUserGroup()->getId()));
+        if ( ! ($origUser instanceof User)) {
+            $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
+            return;
+        }
+
+        $userGroupRepository = $entityManager->getRepository(EntityNames::USER_GROUP);
+        $origUserGroup = $userGroupRepository->findOneBy(array('id' => $origUser->getUserGroup()->getId()));
         $userObject->setUserGroup($origUserGroup);
 
         if ($userObject->getPlainPassword() === null ||
-            $userObject->getPlainPassword() === '') {
+            $userObject->getPlainPassword() === ''
+        ) {
             // user has not set a new password
             $userObject->setPasswordHash($origUser->getPasswordHash());
         } else {
             // hash provided plaintext password
-	    $userObject->setPasswordHash(PasswordHandler::hash($userObject->getPlainPassword()));
+            $userObject->setPasswordHash(PasswordHandler::hash($userObject->getPlainPassword()));
         }
 
         $origUser->update($userObject);
@@ -95,18 +100,16 @@ class UserController extends SlimController {
             return;
         }
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($origUser, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $origUser);
     }
 
     public function insertUserAction() {
-        $userObject      = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::USER, 'json');
+        /** @var \rmatil\cms\Entities\User $userObject */
+        $userObject = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::USER, 'json');
 
-        $entityManager              = $this->app->entityManager;
-        $userGroupRepository        = $entityManager->getRepository(EntityNames::USER_GROUP);
-        $origUserGroup              = $userGroupRepository->findOneBy(array('id' => $userObject->getUserGroup()->getId()));
+        $entityManager = $this->app->entityManager;
+        $userGroupRepository = $entityManager->getRepository(EntityNames::USER_GROUP);
+        $origUserGroup = $userGroupRepository->findOneBy(array('id' => $userObject->getUserGroup()->getId()));
         $userObject->setUserGroup($origUserGroup);
 
         $now = new DateTime();
@@ -120,30 +123,28 @@ class UserController extends SlimController {
 
         try {
             $entityManager->flush();
-        } catch(DBALException $dbalex) {
+        } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
             $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
             return;
         }
 
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::CREATED);
-        $this->app->response->setBody($this->app->serializer->serialize($userObject, 'json'));
+        ResponseFactory::createJsonResponseWithCode($this->app, HttpStatusCodes::CREATED, $userObject);
     }
 
     public function deleteUserByIdAction($id) {
-        $entityManager   = $this->app->entityManager;
-        $userRepository  = $entityManager->getRepository(EntityNames::USER);
-        $user            = $userRepository->findOneBy(array('id' => $id));
+        $entityManager = $this->app->entityManager;
+        $userRepository = $entityManager->getRepository(EntityNames::USER);
+        $user = $userRepository->findOneBy(array('id' => $id));
 
-        if ($user === null) {
+        if ( ! ($user instanceof User)) {
             $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
             return;
         }
 
         $registrationRepository = $entityManager->getRepository(EntityNames::REGISTRATION);
-        $registration           = $registrationRepository->findOneBy(array('user' => $user));
+        $registration = $registrationRepository->findOneBy(array('user' => $user));
 
         if ($registration !== null) {
             $entityManager->remove($registration);
@@ -170,8 +171,6 @@ class UserController extends SlimController {
     public function getEmptyUserAction() {
         $user = new User();
 
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($user, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $user);
     }
 }

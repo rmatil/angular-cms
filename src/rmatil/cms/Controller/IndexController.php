@@ -9,6 +9,9 @@ use rmatil\cms\Entities\Page;
 use rmatil\cms\Entities\User;
 use SlimController\SlimController;
 
+/**
+ * @package rmatil\cms\Controller
+ */
 class IndexController extends SlimController {
 
     public function indexAction() {
@@ -16,13 +19,13 @@ class IndexController extends SlimController {
         $em = $this->app->entityManager;
 
         $articles = $em->createQueryBuilder()
-                        ->select('a')
-                        ->from(EntityNames::ARTICLE, 'a')
-                        ->innerJoin('a.page', 'p')
-                        ->where('p.isStartPage = true')
-                        ->andWhere('a.isPublished = true')
-                        ->getQuery()
-                        ->getResult();
+            ->select('a')
+            ->from(EntityNames::ARTICLE, 'a')
+            ->innerJoin('a.page', 'p')
+            ->where('p.isStartPage = true')
+            ->andWhere('a.isPublished = true')
+            ->getQuery()
+            ->getResult();
 
         $this->app->render('index.html.twig', array(
             'articles' => $articles

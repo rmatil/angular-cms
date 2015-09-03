@@ -317,7 +317,7 @@ class Page {
     /**
      * Gets the An array of articles (bidirectional - inverse side).
      *
-     * @return array
+     * @return \Doctrine\Common\Collections\ArrayCollection
      */
     public function getArticles() {
         return $this->articles;

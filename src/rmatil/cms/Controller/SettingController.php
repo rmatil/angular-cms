@@ -6,40 +6,42 @@ use DateTime;
 use Doctrine\DBAL\DBALException;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Entities\Setting;
+use rmatil\cms\Response\ResponseFactory;
 use SlimController\SlimController;
 
+/**
+ * @package rmatil\cms\Controller
+ */
 class SettingController extends SlimController {
 
     public function getSettingsAction() {
-        $entityManager      = $this->app->entityManager;
-        $settingRepository  = $entityManager->getRepository(EntityNames::SETTING);
-        $settings           = $settingRepository->findAll();
+        $entityManager = $this->app->entityManager;
+        $settingRepository = $entityManager->getRepository(EntityNames::SETTING);
+        $settings = $settingRepository->findAll();
 
-        $returnValues       = array();
+        $returnValues = array();
         foreach ($settings as $entry) {
             $returnValues[$entry->getName()] = $entry;
         }
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($returnValues, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $returnValues);
     }
 
     public function updateSettingsAction() {
         $settings = json_decode($this->app->request->getBody(), true);
 
-        $entityManager      = $this->app->entityManager;
+        $entityManager = $this->app->entityManager;
         $settingsRepository = $entityManager->getRepository(EntityNames::SETTING);
 
         foreach ($settings as $entry) {
-            if (!is_array($entry)) {
+            if ( ! is_array($entry)) {
                 continue;
             }
 
             $origSetting = $settingsRepository->findOneBy(array('id' => $entry['id']));
 
-            if ($origSetting === null) {
+            if (!($origSetting instanceof Setting)) {
                 continue;
             }
 

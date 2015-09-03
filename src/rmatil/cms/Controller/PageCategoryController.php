@@ -6,44 +6,49 @@ use DateTime;
 use Doctrine\DBAL\DBALException;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Entities\PageCategory;
+use rmatil\cms\Response\ResponseFactory;
 use SlimController\SlimController;
 
+/**
+ * @package rmatil\cms\Controller
+ */
 class PageCategoryController extends SlimController {
 
     public function getPageCategoriesAction() {
-        $entityManager              = $this->app->entityManager;
-        $pageCategoryRepository     = $entityManager->getRepository(EntityNames::PAGE_CATEGORY);
-        $pageCategories             = $pageCategoryRepository->findAll();
+        $entityManager = $this->app->entityManager;
+        $pageCategoryRepository = $entityManager->getRepository(EntityNames::PAGE_CATEGORY);
+        $pageCategories = $pageCategoryRepository->findAll();
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($pageCategories, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $pageCategories);
     }
 
     public function getPageCategoryByIdAction($id) {
-        $entityManager              = $this->app->entityManager;
-        $pageCategoryRepository     = $entityManager->getRepository(EntityNames::PAGE);
-        $pageCategory               = $pageCategoryRepository->findOneBy(array('id' => $id));
+        $entityManager = $this->app->entityManager;
+        $pageCategoryRepository = $entityManager->getRepository(EntityNames::PAGE);
+        $pageCategory = $pageCategoryRepository->findOneBy(array('id' => $id));
 
-        if ($pageCategory === null) {
-            $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
+        if ( ! ($pageCategory instanceof PageCategory)) {
+            ResponseFactory::createNotFoundResponse($this->app);
             return;
         }
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($pageCategory, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $pageCategory);
     }
 
     public function updatePageCategoryAction($pageCategoryId) {
-        $pageCategoryObj            = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::PAGE, 'json');
+        /** @var \rmatil\cms\Entities\PageCategory $pageCategoryObj */
+        $pageCategoryObj = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::PAGE, 'json');
 
         // get original page category
-        $entityManager              = $this->app->entityManager;
-        $pageCategoryRepository     = $entityManager->getRepository(EntityNames::PAGE);
-        $origPageCategory           = $pageCategoryRepository->findOneBy(array('id' => $pageCategoryId));
+        $entityManager = $this->app->entityManager;
+        $pageCategoryRepository = $entityManager->getRepository(EntityNames::PAGE);
+        $origPageCategory = $pageCategoryRepository->findOneBy(array('id' => $pageCategoryId));
+
+        if (!($origPageCategory instanceof PageCategory)) {
+            ResponseFactory::createNotFoundResponse($this->app);
+            return;
+        }
 
         $origPageCategory->update($pageCategoryObj);
 
@@ -57,39 +62,35 @@ class PageCategoryController extends SlimController {
             return;
         }
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($origPageCategory, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $origPageCategory);
     }
 
     public function insertPageAction() {
-        $pageCategoryObj          = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::PAGE, 'json');
+        /** @var \rmatil\cms\Entities\PageCategory $pageCategoryObj */
+        $pageCategoryObj = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::PAGE, 'json');
 
-        $entityManager            = $this->app->entityManager;
+        $entityManager = $this->app->entityManager;
         $entityManager->persist($pageCategoryObj);
 
         try {
             $entityManager->flush();
-        } catch(DBALException $dbalex) {
+        } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
             $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
             return;
         }
 
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::CREATED);
-        $this->app->response->setBody($this->app->serializer->serialize($pageCategoryObj, 'json'));
+        ResponseFactory::createJsonResponseWithCode($this->app, HttpStatusCodes::CREATED, $pageCategoryObj);
     }
 
     public function deletePageCategoryByIdAction($id) {
-        $entityManager              = $this->app->entityManager;
-        $pageCategoryRepository     = $entityManager->getRepository(EntityNames::PAGE);
-        $pageCategory               = $pageCategoryRepository->findOneBy(array('id' => $id));
+        $entityManager = $this->app->entityManager;
+        $pageCategoryRepository = $entityManager->getRepository(EntityNames::PAGE);
+        $pageCategory = $pageCategoryRepository->findOneBy(array('id' => $id));
 
-        if ($pageCategory === null) {
-            $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
+        if (!($pageCategory instanceof PageCategory)) {
+            ResponseFactory::createNotFoundResponse($this->app);
             return;
         }
 

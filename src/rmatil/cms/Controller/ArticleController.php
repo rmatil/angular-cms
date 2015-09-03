@@ -7,49 +7,50 @@ use Doctrine\DBAL\DBALException;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Entities\Article;
+use rmatil\cms\Entities\ArticleCategory;
+use rmatil\cms\Entities\Language;
+use rmatil\cms\Entities\User;
+use rmatil\cms\Response\ResponseFactory;
 use SlimController\SlimController;
 
+/**
+ * @package rmatil\cms\Controller
+ */
 class ArticleController extends SlimController {
 
     public function getArticlesAction() {
-        $entityManager      = $this->app->entityManager;
-        $articleRepository  = $entityManager->getRepository(EntityNames::ARTICLE);
-        $articles           = $articleRepository->findAll();
+        $articleRepository = $this->app->entityManager->getRepository(EntityNames::ARTICLE);
+        $articles = $articleRepository->findAll();
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($articles, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $articles);
     }
 
     public function getArticleByIdAction($id) {
-        $entityManager      = $this->app->entityManager;
-        $articleRepository  = $entityManager->getRepository(EntityNames::ARTICLE);
-        $article            = $articleRepository->findOneBy(array('id' => $id));
+        $entityManager = $this->app->entityManager;
+        $articleRepository = $entityManager->getRepository(EntityNames::ARTICLE);
+        $article = $articleRepository->findOneBy(array('id' => $id));
 
-        if ($article === null) {
-            $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
+        if ( ! ($article instanceof Article)) {
+            ResponseFactory::createNotFoundResponse($this->app);
             return;
         }
 
         // do not show lock if requested by the same user as currently locked
-        if ($article->getIsLockedBy() !== null &&
-            $article->getIsLockedBy()->getId() === $_SESSION['user_id']) {
+        if ($article->getIsLockedBy() instanceof User &&
+            $article->getIsLockedBy()->getId() === $_SESSION['user_id']
+        ) {
             $article->setIsLockedBy(null);
         }
 
-        $userRepository             = $entityManager->getRepository(EntityNames::USER);
-        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
+        $userRepository = $entityManager->getRepository(EntityNames::USER);
+        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $article->setAuthor($origUser);
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($article, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $article);
 
         // set requesting user as lock
         $article->setIsLockedBy($origUser);
-        
+
         // force update
         try {
             $entityManager->flush();
@@ -62,28 +63,38 @@ class ArticleController extends SlimController {
     }
 
     public function updateArticleAction($articleId) {
-        $articleObject              = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::ARTICLE, 'json');
+        /** @var \rmatil\cms\Entities\Article $articleObject */
+        $articleObject = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::ARTICLE, 'json');
 
         // set now as edit date
-        $now                        = new DateTime();
+        $now = new DateTime();
         $articleObject->setLastEditDate($now);
 
         // get original article
-        $entityManager              = $this->app->entityManager;
-        $articleRepository          = $entityManager->getRepository(EntityNames::ARTICLE);
-        $origArticle                = $articleRepository->findOneBy(array('id' => $articleId));
+        $entityManager = $this->app->entityManager;
+        $articleRepository = $entityManager->getRepository(EntityNames::ARTICLE);
+        $origArticle = $articleRepository->findOneBy(array('id' => $articleId));
 
-        $languageRepository         = $entityManager->getRepository(EntityNames::LANGUAGE);
-        $origLanguage               = $languageRepository->findOneBy(array('id' => $articleObject->getLanguage()->getId()));
-        $articleObject->setLanguage($origLanguage);
+        if ( ! ($origArticle instanceof Article)) {
+            ResponseFactory::createNotFoundResponse($this->app);
+            return;
+        }
 
-        $userRepository             = $entityManager->getRepository(EntityNames::USER);
-        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
+        if ($articleObject->getLanguage() instanceof Language) {
+            $languageRepository = $entityManager->getRepository(EntityNames::LANGUAGE);
+            $origLanguage = $languageRepository->findOneBy(array('id' => $articleObject->getLanguage()->getId()));
+            $articleObject->setLanguage($origLanguage);
+        }
+
+        $userRepository = $entityManager->getRepository(EntityNames::USER);
+        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $articleObject->setAuthor($origUser);
 
-        $articleCategoryRepository  = $entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
-        $origArticleCategory        = $articleCategoryRepository->findOneBy(array('id' => $articleObject->getCategory()->getId()));
-        $articleObject->setCategory($origArticleCategory);
+        if ($articleObject->getCategory() instanceof ArticleCategory) {
+            $articleCategoryRepository = $entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
+            $origArticleCategory = $articleCategoryRepository->findOneBy(array('id' => $articleObject->getCategory()->getId()));
+            $articleObject->setCategory($origArticleCategory);
+        }
 
         $origArticle->update($articleObject);
         // release lock on editing
@@ -99,56 +110,56 @@ class ArticleController extends SlimController {
             return;
         }
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($origArticle, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $origArticle);
     }
 
     public function insertArticleAction() {
-        $articleObject      = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::ARTICLE, 'json');
+        /** @var \rmatil\cms\Entities\Article $articleObject */
+        $articleObject = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::ARTICLE, 'json');
 
         // set now as creation date
-        $now                = new DateTime();
+        $now = new DateTime();
         $articleObject->setLastEditDate($now);
         $articleObject->setCreationDate($now);
 
-        $entityManager              = $this->app->entityManager;
-        $userRepository             = $entityManager->getRepository(EntityNames::USER);
-        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
+        $entityManager = $this->app->entityManager;
+        $userRepository = $entityManager->getRepository(EntityNames::USER);
+        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $articleObject->setAuthor($origUser);
 
-        $languageRepository         = $entityManager->getRepository(EntityNames::LANGUAGE);
-        $origLanguage               = $languageRepository->findOneBy(array('id' => $articleObject->getLanguage()->getId()));
-        $articleObject->setLanguage($origLanguage);
+        if ($articleObject->getLanguage() instanceof Language) {
+            $languageRepository = $entityManager->getRepository(EntityNames::LANGUAGE);
+            $origLanguage = $languageRepository->findOneBy(array('id' => $articleObject->getLanguage()->getId()));
+            $articleObject->setLanguage($origLanguage);
+        }
 
-        $articleCategoryRepository  = $entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
-        $origArticleCategory        = $articleCategoryRepository->findOneBy(array('id' => $articleObject->getCategory()->getId()));
-        $articleObject->setCategory($origArticleCategory);
+        if ($articleObject->getCategory() instanceof ArticleCategory) {
+            $articleCategoryRepository = $entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
+            $origArticleCategory = $articleCategoryRepository->findOneBy(array('id' => $articleObject->getCategory()->getId()));
+            $articleObject->setCategory($origArticleCategory);
+        }
 
-        $entityManager              = $this->app->entityManager;
+        $entityManager = $this->app->entityManager;
         $entityManager->persist($articleObject);
 
         try {
             $entityManager->flush();
-        } catch(DBALException $dbalex) {
+        } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
             $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
             return;
         }
 
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::CREATED);
-        $this->app->response->setBody($this->app->serializer->serialize($articleObject, 'json'));
+        ResponseFactory::createJsonResponseWithCode($this->app, HttpStatusCodes::CREATED, $articleObject);
     }
 
     public function deleteArticleByIdAction($id) {
-        $entityManager      = $this->app->entityManager;
-        $articleRepository  = $entityManager->getRepository(EntityNames::ARTICLE);
-        $article            = $articleRepository->findOneBy(array('id' => $id));
+        $entityManager = $this->app->entityManager;
+        $articleRepository = $entityManager->getRepository(EntityNames::ARTICLE);
+        $article = $articleRepository->findOneBy(array('id' => $id));
 
-        if ($article === null) {
+        if ( ! ($article instanceof Article)) {
             $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
             return;
         }
@@ -171,17 +182,15 @@ class ArticleController extends SlimController {
 
     public function getEmptyArticleAction() {
         $article = new Article();
-        
-        $userRepository             = $this->app->entityManager->getRepository(EntityNames::USER);
-        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
+
+        $userRepository = $this->app->entityManager->getRepository(EntityNames::USER);
+        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $article->setAuthor($origUser);
-        
+
         $now = new DateTime();
         $article->setCreationDate($now);
         $article->setLastEditDate($now);
 
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($article, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $article);
     }
 }

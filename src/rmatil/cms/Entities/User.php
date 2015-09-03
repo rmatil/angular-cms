@@ -527,7 +527,7 @@ class User {
     /**
      * Gets the user which locks this user
      *
-     * @return boolean
+     * @return \rmatil\cms\Entities\User
      */
     public function getIsLockedBy() {
         return $this->isLockedBy;

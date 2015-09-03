@@ -9,18 +9,21 @@ use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Utils\PasswordUtils;
 use SlimController\SlimController;
 
+/**
+ * @package rmatil\cms\Controller
+ */
 class RegistrationController extends SlimController {
 
     public function completeRegistrationAction($token) {
-        $submittedPass          = $this->app->request->post('password');
+        $submittedPass = $this->app->request->post('password');
 
         if (strlen($submittedPass) < 8) {
             return $this->app->response->setStatus(HttpStatusCodes::BAD_REQUEST);
         }
 
-        $entityManager          = $this->app->entityManager;
+        $entityManager = $this->app->entityManager;
         $registrationRepository = $entityManager->getRepository(EntityNames::REGISTRATION);
-        $origRegistration       = $registrationRepository->findOneBy(array('token' => $token));
+        $origRegistration = $registrationRepository->findOneBy(array('token' => $token));
 
         if ($origRegistration === null) {
             return $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);

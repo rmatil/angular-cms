@@ -9,8 +9,8 @@ use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Entities\Event;
 use rmatil\cms\Entities\Location;
 use rmatil\cms\Entities\RepeatOption;
+use rmatil\cms\Entities\User;
 use rmatil\cms\Response\ResponseFactory;
-use Slim\Http\Response;
 use SlimController\SlimController;
 
 /**
@@ -19,9 +19,9 @@ use SlimController\SlimController;
 class EventController extends SlimController {
 
     public function getEventsAction() {
-        $entityManager      = $this->app->entityManager;
-        $eventRepository    = $entityManager->getRepository(EntityNames::EVENT);
-        $events             = $eventRepository->findAll();
+        $entityManager = $this->app->entityManager;
+        $eventRepository = $entityManager->getRepository(EntityNames::EVENT);
+        $events = $eventRepository->findAll();
 
         ResponseFactory::createJsonResponse($this->app, $events);
     }
@@ -37,8 +37,9 @@ class EventController extends SlimController {
         }
 
         // do not show lock if requested by the same user as currently locked
-        if ($event->getIsLockedBy() !== null &&
-            $event->getIsLockedBy()->getId() === $_SESSION['user_id']) {
+        if (($event->getIsLockedBy() instanceof User) &&
+            $event->getIsLockedBy()->getId() === $_SESSION['user_id']
+        ) {
             $event->setIsLockedBy(null);
         }
 
@@ -48,7 +49,7 @@ class EventController extends SlimController {
 
         ResponseFactory::createJsonResponse($this->app, $event);
 
-         // set requesting user as lock
+        // set requesting user as lock
         $event->setIsLockedBy($origUser);
 
         // force update
@@ -59,7 +60,7 @@ class EventController extends SlimController {
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
             $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
             return;
-        } 
+        }
     }
 
     public function updateEventAction($eventId) {
@@ -149,7 +150,7 @@ class EventController extends SlimController {
 
         try {
             $entityManager->flush();
-        } catch(DBALException $dbalex) {
+        } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
             $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
@@ -160,9 +161,9 @@ class EventController extends SlimController {
     }
 
     public function deleteEventByIdAction($id) {
-        $entityManager      = $this->app->entityManager;
-        $eventRepository    = $entityManager->getRepository(EntityNames::EVENT);
-        $event              = $eventRepository->findOneBy(array('id' => $id));
+        $entityManager = $this->app->entityManager;
+        $eventRepository = $entityManager->getRepository(EntityNames::EVENT);
+        $event = $eventRepository->findOneBy(array('id' => $id));
 
         if ( ! ($event instanceof Event)) {
             $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
@@ -181,15 +182,15 @@ class EventController extends SlimController {
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
             $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
         }
-        
+
         $this->app->response->setStatus(HttpStatusCodes::NO_CONTENT);
     }
 
     public function getEmptyEventAction() {
-        $event  = new Event();
+        $event = new Event();
 
         $userRepository = $this->app->entityManager->getRepository(EntityNames::USER);
-        $origUser       = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
+        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $event->setAuthor($origUser);
 
         $now = new DateTime();
