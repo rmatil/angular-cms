@@ -27,8 +27,10 @@ composer.lock
 # gulp.js
 node_modules
 
-# Config
-/config
+# app config
+/app/config
+/app/cache
+/app/logs
 
 # Vagrant
 .vagrant

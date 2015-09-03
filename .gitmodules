@@ -1,0 +1,3 @@
+[submodule "web/cms"]
+	path = web/cms
+	url = git@github.com:rmatil/angular-cms-frontend.git

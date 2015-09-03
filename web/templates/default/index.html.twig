@@ -1,0 +1,25 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>Default Index Template</title>
+    <meta name="description" content="Default Index Template">
+    <meta name="author" content="rmatil">
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+<body>
+
+<h1>Articles</h1>
+<ul>
+{% for article in articles %}
+    <li><a href="/articles/{{ article.urlName }}">{{ article.title }}</a></li>
+{% endfor %}
+</ul>
+
+</body>
+</html>

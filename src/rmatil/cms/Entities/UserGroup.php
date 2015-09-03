@@ -2,6 +2,7 @@
 
 namespace rmatil\cms\Entities;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Annotation\Type;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -45,6 +46,39 @@ class UserGroup {
      * @var string
      */
     protected $role;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Article", mappedBy="allowedUserGroups")
+     *
+     * @Type("ArrayCollection<rmatil\cms\Entities\Article>")
+     *
+     * @var ArrayCollection[rmatil\cms\Entities\Article]
+     */
+    protected $accessibleArticles;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Page", mappedBy="allowedUserGroups")
+     *
+     * @Type("ArrayCollection<rmatil\cms\Entities\Page>")
+     *
+     * @var ArrayCollection[rmatil\cms\Entities\Page]
+     */
+    protected $accessiblePages;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Event", mappedBy="allowedUserGroups")
+     *
+     * @Type("ArrayCollection<rmatil\cms\Entities\Event>")
+     *
+     * @var ArrayCollection[rmatil\cms\Entities\Event]
+     */
+    protected $accessibleEvents;
+
+    public function __construct() {
+        $this->accessibleArticles = new ArrayCollection();
+        $this->accessiblePages = new ArrayCollection();
+        $this->accessibleEvents = new ArrayCollection();
+    }
 
     
      /**
@@ -101,8 +135,71 @@ class UserGroup {
         $this->role = $role;
     }
 
+    /**
+     * Gets all articles which are accessible by this
+     * user group
+     *
+     * @return ArrayCollection[rmatil\cms\Entity\Article]
+     */
+    public function getAccessibleArticles() {
+        return $this->accessibleArticles;
+    }
+
+    /**
+     * Sets all articles which are accessible by this
+     * user group
+     *
+     * @param ArrayCollection[rmatil\cms\Entity\Article] $accessibleArticles
+     */
+    public function setAccessibleArticles($accessibleArticles) {
+        $this->accessibleArticles = $accessibleArticles;
+    }
+
+    public function addAccessibleArticle(Article $article) {
+        $this->accessibleArticles->add($article);
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getAccessiblePages() {
+        return $this->accessiblePages;
+    }
+
+    /**
+     * @param ArrayCollection $accessiblePages
+     */
+    public function setAccessiblePages($accessiblePages) {
+        $this->accessiblePages = $accessiblePages;
+    }
+
+    public function addAccessiblePage(Page $page) {
+        $this->accessiblePages->add($page);
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getAccessibleEvents() {
+        return $this->accessibleEvents;
+    }
+
+    /**
+     * @param ArrayCollection $accessibleEvents
+     */
+    public function setAccessibleEvents($accessibleEvents) {
+        $this->accessibleEvents = $accessibleEvents;
+    }
+
+    public function addAccessibleEvent(Event $event) {
+        $this->accessibleEvents->add($event);
+    }
+
     public function update(UserGroup $userGroup) {
         $this->setName($userGroup->getName());
         $this->setRole($userGroup->getRole());
+        $this->setAccessibleArticles($userGroup->getAccessibleArticles());
+        $this->setAccessiblePages($userGroup->getAccessiblePages());
+        $this->setAccessibleEvents($userGroup->getAccessibleEvents());
     }
 }

@@ -2,6 +2,7 @@
 
 namespace rmatil\cms\Entities;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Annotation\Type;
 use Doctrine\ORM\Mapping as ORM;
 use \DateTime;
@@ -43,7 +44,7 @@ class Article {
      *
      * @Type("rmatil\cms\Entities\ArticleCategory")
      * 
-     * @var rmatil\cms\Entities\ArticleCategory
+     * @var \rmatil\cms\Entities\ArticleCategory
      */
     protected $category;
 
@@ -54,7 +55,7 @@ class Article {
      *
      * @Type("rmatil\cms\Entities\User")
      * 
-     * @var rmatil\cms\Entities\User
+     * @var \rmatil\cms\Entities\User
      */
     protected $author;
 
@@ -65,7 +66,7 @@ class Article {
      *
      * @Type("rmatil\cms\Entities\Language")
      * 
-     * @var rmatil\cms\Entities\Language
+     * @var \rmatil\cms\Entities\Language
      */
     protected $language;
 
@@ -136,7 +137,7 @@ class Article {
      * 
      * @var boolean
      */
-    protected $isPublic;
+    protected $isPublished;
 
     /**
      * Page to which this article belongs
@@ -145,18 +146,31 @@ class Article {
      *
      * @Type("rmatil\cms\Entities\Page")
      * 
-     * @var rmatil\cms\Entities\Page
+     * @var \rmatil\cms\Entities\Page
      */
     protected $page;
 
+    /**
+     * All user groups which are allowed to access this article
+     *
+     * @ORM\ManyToMany(targetEntity="UserGroup", inversedBy="accessibleArticles")
+     * @ORM\JoinTable(name="usergroup_articles")
+     *
+     * @Type("ArrayCollection<rmatil\cms\Entities\UserGroup>")
+     *
+     * @var ArrayCollection[rmatil\cms\Entities\UserGroup]
+     */
+    protected $allowedUserGroups;
+
 
     public function __construct() {
-        $this->content      = '';
+        $this->content  = '';
         $this->creationDate = new DateTime();
         $this->lastEditDate = new DateTime();
-        $this->urlName      = '';
-        $this->title        = '';
-        $this->isPublic     = true;
+        $this->urlName  = '';
+        $this->title  = '';
+        $this->isPublished = true;
+        $this->allowedUserGroups = new ArrayCollection();
     }
     
 
@@ -199,7 +213,7 @@ class Article {
     /**
      * Gets the The category to which the article belongs.
      *
-     * @return rmatil\cms\Entities\ArticleCategory
+     * @return \rmatil\cms\Entities\ArticleCategory
      */
     public function getCategory() {
         return $this->category;
@@ -208,7 +222,7 @@ class Article {
     /**
      * Sets the The category to which the article belongs.
      *
-     * @param rmatil\cms\Entities\ArticleCategory $category the article category
+     * @param \rmatil\cms\Entities\ArticleCategory $category the article category
      */
     public function setCategory(ArticleCategory $category = null) {
         $this->category = $category;
@@ -217,7 +231,7 @@ class Article {
     /**
      * Gets the The author of this article.
      *
-     * @return rmatil\cms\Entities\User
+     * @return \rmatil\cms\Entities\User
      */
     public function getAuthor() {
         return $this->author;
@@ -226,7 +240,7 @@ class Article {
     /**
      * Sets the The author of this article.
      *
-     * @param rmatil\cms\Entities\User $author the author
+     * @param \rmatil\cms\Entities\User $author the author
      */
     public function setAuthor(User $author = null) {
         $this->author = $author;
@@ -235,7 +249,7 @@ class Article {
     /**
      * Gets the The languate of this article.
      *
-     * @return rmatil\cms\Entities\Language
+     * @return \rmatil\cms\Entities\Language
      */
     public function getLanguage() {
         return $this->language;
@@ -244,7 +258,7 @@ class Article {
     /**
      * Sets the The languate of this article.
      *
-     * @param rmatil\cms\Entities\Language $language the language
+     * @param \rmatil\cms\Entities\Language $language the language
      */
     public function setLanguage(Language $language = null) {
         $this->language = $language;
@@ -349,23 +363,23 @@ class Article {
      *
      * @return boolean
      */
-    public function getIsPublic() {
-        return $this->isPublic;
+    public function getIsPublished() {
+        return $this->isPublished;
     }
 
     /**
      * Sets the Indicates whether the article should be published or not.
      *
-     * @param boolean $isPublic the is public
+     * @param boolean $isPublished the is public
      */
-    public function setIsPublic($isPublic) {
-        $this->isPublic = $isPublic;
+    public function setIsPublished($isPublished) {
+        $this->isPublished = $isPublished;
     }
 
     /**
      * Gets the Page to which this article belongs.
      *
-     * @return rmatil\cms\Entities\Page
+     * @return \rmatil\cms\Entities\Page
      */
     public function getPage() {
         return $this->page;
@@ -374,10 +388,33 @@ class Article {
     /**
      * Sets the Page to which this article belongs.
      *
-     * @param rmatil\cms\Entities\Page $page the page
+     * @param \rmatil\cms\Entities\Page $page the page
      */
     public function setPage(Page $page = null) {
         $this->page = $page;
+    }
+
+    /**
+     * Gets all user groups which are allowed to access this article
+     *
+     * @return ArrayCollection
+     */
+    public function getAllowedUserGroups() {
+        return $this->allowedUserGroups;
+    }
+
+    /**
+     * Sets all user groups which are allowed to access this article
+     *
+     * @param ArrayCollection $allowedUserGroups
+     */
+    public function setAllowedUserGroups($allowedUserGroups) {
+        $this->allowedUserGroups = $allowedUserGroups;
+    }
+
+    public function addAllowedUserGroup(UserGroup $userGroup) {
+        $this->allowedUserGroups->add($userGroup);
+        $userGroup->addAccessibleArticle($this);
     }
 
     /**
@@ -391,12 +428,13 @@ class Article {
         $this->setContent($article->getContent());
         $this->setUrlName($article->getUrlName());
         $this->setIsLockedBy($article->getIsLockedBy());
-        $this->setIsPublic($article->getIsPublic());
+        $this->setIsPublished($article->getIsPublished());
         $this->setCategory($article->getCategory());            
         $this->setAuthor($article->getAuthor());
         $this->setLanguage($article->getLanguage());
         $this->setLastEditDate($article->getLastEditDate());
         $this->setCreationDate($article->getCreationDate());
+        $this->setAllowedUserGroups($article->getAllowedUserGroups());
     }
 
 }

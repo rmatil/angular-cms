@@ -1,5 +1,6 @@
 <?php
 
+use rmatil\cms\Middleware\BasicAuthMiddleware;
 use Slim\LogWriter;
 use SlimController\Slim;
 use JMS\Serializer\SerializerBuilder;
@@ -16,7 +17,7 @@ use rmatil\cms\Utils\EntityManagerFactory;
  *     - HTTP_MEDIA_DIR: url to media directory
  *     - HTTP_LOCAL_DIR: path to local media directory
  *
- * Sets local to ch_DE
+ * Sets locale to ch_DE
  *
  * Logs for this application are setup in the folder LOCAL_ROOT/log/cms.log
  *
@@ -34,44 +35,55 @@ define('HTTP_ROOT', $protocol.$_SERVER['HTTP_HOST']);
 define('LOCAL_ROOT', __DIR__);
 define('HTTP_MEDIA_DIR', HTTP_ROOT.'/media');
 define('LOCAL_MEDIA_DIR', LOCAL_ROOT.'/web/media');
-define('CONFIG_FILE', LOCAL_ROOT.'/config/yaml/parameters.yml');
+define('CONFIG_FILE', LOCAL_ROOT.'/app/config/parameters.yml');
 define('SRC_FOLDER', LOCAL_ROOT.'/src');
 
 // set locale to german
 $newLocale = setlocale(LC_TIME, 'de_CH.UTF-8', 'de_CH');
 
-// prevent PHP from sending conficting cache expiration headers with the HTTP response
+// prevent PHP from sending conflicting cache expiration headers with the HTTP response
 session_cache_limiter(false);
 session_start();
 
 // enable this for log writing to file
-$logWriter        = new LogWriter(fopen(__DIR__.'/log/cms.log', 'a'));
+$logWriter        = new LogWriter(fopen(__DIR__ . '/app/log/cms.log', 'a'));
 
-$app              = new Slim(array(
-                                'debug'                      => true, // enable slim exception handler
-                                'log.level'                  => \Slim\Log::DEBUG,
-                                'log.enabled'                => true, // enable logging
-                                'controller.class_prefix'    => 'rmatil\cms\Controller',
-                                'controller.class_suffix'    => 'Controller',
-                                'controller.method_suffix'   => 'Action',
-                                'controller.template_suffix' => 'php',
-                                'log.writer'                 => $logWriter, // enable this forl log writing to file
-                                'templates.path'             => LOCAL_ROOT.'/web/slim-templates',
-                            ));
+$config = \rmatil\cms\Handler\ConfigurationHandler::readConfiguration(CONFIG_FILE);
+
+$app = new Slim(array(
+    'debug'                      => true, // enable slim exception handler
+    'log.level'                  => \Slim\Log::DEBUG,
+    'log.enabled'                => true, // enable logging
+    'controller.class_prefix'    => 'rmatil\cms\Controller',
+    'controller.class_suffix'    => 'Controller',
+    'controller.method_suffix'   => 'Action',
+    'controller.template_suffix' => 'php',
+    'log.writer'                 => $logWriter, // enable this for log writing to file
+    'templates.path'             => LOCAL_ROOT . '/web/templates/' . $config[\rmatil\cms\Constants\ConfigurationNames::TEMPLATE][\rmatil\cms\Constants\ConfigurationNames::TEMPLATE_PATH],
+    'view'                       => new \Slim\Views\Twig()
+));
+
+$view = $app->view();
+$view->parserOptions = array(
+    'debug' => true,
+    'cache' => __DIR__ . '/app/cache'
+);
+$view->parserExtensions = array(
+    new \Slim\Views\TwigExtension(),
+    new \Twig_Extension_Debug(),
+);
 
 // Add JMS Serializer to app
 $app->container->singleton('serializer', function () {
     return SerializerBuilder::create()->build();
 });
 
-// reinit because only here the constants are available
-$entityManager = EntityManagerFactory::createEntityManager(HTTP_MEDIA_DIR, LOCAL_MEDIA_DIR, CONFIG_FILE, SRC_FOLDER, $devMode);
-
 HandlerSingleton::setEntityManager($entityManager);
 $thumbnailHandler = HandlerSingleton::getThumbnailHandler();
 $fileHandler = HandlerSingleton::getFileHandler(HTTP_MEDIA_DIR, LOCAL_MEDIA_DIR);
 $registrationHandler = HandlerSingleton::getRegistrationHandler();
 $databaseHandler = HandlerSingleton::getDatabaseHandler();
+$loginHandler = HandlerSingleton::getLoginHandler(array('^\/api\/.*' => array('ROLE_SUPER_ADMIN')));
 
 // Add Doctrine Entity Manager to app
 $app->container->singleton('entityManager', function () use ($entityManager) {
@@ -95,6 +107,22 @@ $app->container->singleton('fileHandler', function () use ($fileHandler) {
 $app->container->singleton('registrationHandler', function() use ($registrationHandler) {
     return $registrationHandler;
 });
+
+$app->container->singleton('loginHandler', function () use ($loginHandler) {
+    return $loginHandler;
+});
+
+// Add Basic Auth Security
+$app->add(new BasicAuthMiddleware($entityManager, 'API Access'));
+$corsOptions = array(
+    "origin" => "*",
+    "maxAge" => 1728000,
+    "allowCredentials" => true,
+    "allowHeaders" => array("X-PINGOTHER", "Authorization", "Content-Type"),
+    "allowMethods" => array("POST", "GET", "DELETE", "PUT", "OPTIONS", "HEAD")
+);
+$cors = new \CorsSlim\CorsSlim($corsOptions);
+$app->add($cors);
 
 include('routes.php');
 

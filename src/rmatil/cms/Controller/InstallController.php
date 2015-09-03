@@ -8,6 +8,7 @@ use JMS\Serializer\SerializerBuilder;
 use rmatil\cms\Constants\ConfigurationNames;
 use rmatil\cms\Entities\User;
 use rmatil\cms\Entities\UserGroup;
+use rmatil\cms\Handler\ConfigurationHandler;
 use rmatil\cms\Handler\HandlerSingleton;
 use rmatil\cms\Utils\EntityManagerFactory;
 use rmatil\cms\Utils\PasswordUtils;
@@ -20,7 +21,7 @@ class InstallController extends SlimController {
             // installation is already done
             return $this->app->redirect('/login');
         }
-        $this->app->render('install-form.php');
+        $this->app->render('install-form.html.twig');
     }
 
     public function doInstallAction() {
@@ -58,9 +59,9 @@ class InstallController extends SlimController {
         $config[ConfigurationNames::ADMIN_PREFIX] = $userParams;
         
         try {            
-            $this->app->fileHandler->rewriteConfigFile($config);
+            ConfigurationHandler::writeConfiguration($config, CONFIG_FILE);
             // uses the freshly written config file params
-            $em = EntityManagerFactory::createEntityManager(\HTTP_MEDIA_DIR, \LOCAL_MEDIA_DIR, \CONFIG_FILE, \SRC_FOLDER, true);
+            $em = EntityManagerFactory::createEntityManager(\CONFIG_FILE, \SRC_FOLDER, true);
             
             // inits singletons, like all handlers
             $this->reinitAppSingletons($em);
@@ -74,7 +75,7 @@ class InstallController extends SlimController {
             $this->createAdminUser($config);
         } catch (Exception $e) {
             $this->app->databaseHandler->deleteDatabase();
-            return $this->app->render('install-form.php', array('errors' => array($e->getMessage(), $e->getTraceAsString())));
+            return $this->app->render('install-form.html.twig', array('errors' => array($e->getMessage(), $e->getTraceAsString())));
         }
         
         $this->app->redirect('/login');
