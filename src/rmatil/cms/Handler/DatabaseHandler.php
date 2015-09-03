@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Entities\ArticleCategory;
+use rmatil\cms\Entities\Language;
 use rmatil\cms\Entities\PageCategory;
 use rmatil\cms\Entities\Setting;
 use rmatil\cms\Entities\UserGroup;
@@ -52,7 +53,7 @@ class DatabaseHandler {
      * Creates all tables needed by this project
      */
     public function setupDatabase() {
-        $this->tool->createSchema($this->classes, true);
+        $this->tool->createSchema($this->classes);
     }
     
     /**
@@ -89,10 +90,10 @@ class DatabaseHandler {
     /**
      * Initalises the default settings used for this application
      *
-     * @param $websiteName The name of the website
-     * @param $websiteEmail The email of the website
-     * @param $websiteReplyToEmail The email to which users may reply
-     * @param $websiteUrl The url of the website
+     * @param $websiteName string The name of the website
+     * @param $websiteEmail string The email of the website
+     * @param $websiteReplyToEmail string The email to which users may reply
+     * @param $websiteUrl string The url of the website
      */
     public function initDatabaseSettings($websiteName, $websiteEmail, $websiteReplyToEmail, $websiteUrl) {
         $websiteNameSetting = new Setting();
@@ -124,6 +125,14 @@ class DatabaseHandler {
         $defaultUserGroup = new UserGroup();
         $defaultUserGroup->setName('User');
         $defaultUserGroup->setRole('ROLE_USER');
+
+        $adminUserGroup = new UserGroup();
+        $adminUserGroup->setName('Admin');
+        $adminUserGroup->setRole('ROLE_SUPER_ADMIN');
+
+        $language = new Language();
+        $language->setCode('en');
+        $language->setName('English');
         
         $this->entityManager->persist($websiteNameSetting);
         $this->entityManager->persist($websiteEmailSetting);
@@ -133,6 +142,8 @@ class DatabaseHandler {
         $this->entityManager->persist($defaultArticleCategory);
         $this->entityManager->persist($defaultPageCategory);
         $this->entityManager->persist($defaultUserGroup);
+        $this->entityManager->persist($adminUserGroup);
+        $this->entityManager->persist($language);
         
         $this->entityManager->flush();
     }
