@@ -25,11 +25,10 @@ class AuthenticationController extends SlimController {
             }
         }
 
-
         // requires SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
         // in htaccess for forwarding Basic-Auth headers
-        $auth = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER']: null;
-        $pw = isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW']: null;
+        $auth = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : null;
+        $pw = isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : null;
 
         try {
             $this->app->loginHandler->login($auth, $pw, $this->app->request->getPath());

@@ -142,7 +142,7 @@ class Page {
      * 
      * @ORM\Column(type="datetime")
      *
-     * @Type("DateTime")
+     * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
      * 
      * @var \DateTime
      */
@@ -153,7 +153,7 @@ class Page {
      * 
      * @ORM\Column(type="datetime")
      *
-     * @Type("DateTime")
+     * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
      * 
      * @var \DateTime
      */
@@ -317,7 +317,7 @@ class Page {
     /**
      * Gets the An array of articles (bidirectional - inverse side).
      *
-     * @return array
+     * @return \Doctrine\Common\Collections\ArrayCollection
      */
     public function getArticles() {
         return $this->articles;

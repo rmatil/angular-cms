@@ -2,14 +2,13 @@
 
 namespace rmatil\cms\Controller;
 
-use rmatil\cms\Constants\EntityNames;
-use rmatil\cms\Constants\HttpStatusCodes;
-use rmatil\cms\Entities\User;
-use rmatil\cms\Login\PasswordHandler;
 use rmatil\cms\Utils\PasswordUtils;
 use RuntimeException;
 use SlimController\SlimController;
 
+/**
+ * @package rmatil\cms\Controller
+ */
 class LoginController extends SlimController {
 
     const LOGIN_ERROR = 'login.error';

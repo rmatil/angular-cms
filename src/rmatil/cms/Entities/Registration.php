@@ -40,7 +40,7 @@ class Registration {
      * 
      * @ORM\Column(type="datetime")
      *
-     * @Type("DateTime")
+     * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
      * 
      * @var \DateTime
      */

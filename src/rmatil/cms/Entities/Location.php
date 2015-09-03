@@ -107,7 +107,7 @@ class Location {
      * 
      * @ORM\Column(type="datetime")
      *
-     * @Type("DateTime")
+     * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
      * 
      * @var \DateTime
      */
@@ -118,7 +118,7 @@ class Location {
      * 
      * @ORM\Column(type="datetime")
      *
-     * @Type("DateTime")
+     * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
      * 
      * @var \DateTime
      */
@@ -200,7 +200,7 @@ class Location {
     /**
      * Gets the user which locks this user
      *
-     * @return boolean
+     * @return \rmatil\cms\Entities\User
      */
     public function getIsLockedBy() {
         return $this->isLockedBy;

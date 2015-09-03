@@ -107,11 +107,11 @@ class ThumbnailHandler {
             throw new InvalidArgumentException('Either width or height must be provided');
         }
 
-        if ($fileExtension == 'jpg' || $fileExtension == 'jpeg') {
+        if ($fileExtension == 'jpg' || $fileExtension == 'jpeg' && function_exists('imagecreatefromjpeg')) {
             $img = imagecreatefromjpeg(sprintf('%s/%s.%s', $pathToMediaDirectory, $fileName, $fileExtension));
-        } else if ($fileExtension == 'png') {
+        } else if ($fileExtension == 'png' && function_exists('imagecreatefrompng')) {
             $img = imagecreatefrompng(sprintf('%s/%s.%s', $pathToMediaDirectory, $fileName, $fileExtension));
-        } else if ($fileExtension == 'gif') {
+        } else if ($fileExtension == 'gif' && function_exists('imagecreatefromgif')) {
             $img = imagecreatefromgif(sprintf('%s/%s.%s', $pathToMediaDirectory, $fileName, $fileExtension));
         } else {
             throw new ThumbnailCreationFailedException('No thumbnail could be created for the file format');

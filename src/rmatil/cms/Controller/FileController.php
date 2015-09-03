@@ -13,12 +13,15 @@ use rmatil\cms\Exceptions\FileNotSavedException;
 use rmatil\cms\Exceptions\ThumbnailCreationFailedException;
 use SlimController\SlimController;
 
+/**
+ * @package rmatil\cms\Controller
+ */
 class FileController extends SlimController {
 
     public function getFilesAction() {
-        $entityManager      = $this->app->entityManager;
-        $fileRepository     = $entityManager->getRepository(EntityNames::FILE);
-        $files              = $fileRepository->findAll();
+        $entityManager = $this->app->entityManager;
+        $fileRepository = $entityManager->getRepository(EntityNames::FILE);
+        $files = $fileRepository->findAll();
 
         $this->app->expires(0);
         $this->app->response->header('Content-Type', 'application/json');
@@ -27,9 +30,9 @@ class FileController extends SlimController {
     }
 
     public function getFileByIdAction($id) {
-        $entityManager      = $this->app->entityManager;
-        $fileRepository     = $entityManager->getRepository(EntityNames::FILE);
-        $file               = $fileRepository->findOneBy(array('id' => $id));
+        $entityManager = $this->app->entityManager;
+        $fileRepository = $entityManager->getRepository(EntityNames::FILE);
+        $file = $fileRepository->findOneBy(array('id' => $id));
 
         if ($file === null) {
             $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
@@ -40,14 +43,16 @@ class FileController extends SlimController {
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::OK);
         $this->app->response->setBody($this->app->serializer->serialize($file, 'json'));
-        
+
     }
 
     public function insertFileAction() {
         $fileObject = new File();
 
         try {
-            $this->app->fileHandler->saveUploadedFile($fileObject);
+            /** @var \rmatil\cms\Handler\FileHandler $fh */
+            $fh = $this->app->fileHandler;
+            $fh->saveUploadedFile($fileObject);
         } catch (FileAlreadyExistsException $faee) {
             $now = new DateTime();
             $this->app->log->info(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $faee->getMessage()));
@@ -71,37 +76,37 @@ class FileController extends SlimController {
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $e->getMessage()));
         }
 
-        if (!$fileObject->getDimensions()) {
+        if ( ! $fileObject->getDimensions()) {
             $fileObject->setDimensions('-');
         }
 
         $fileObject->setDescription($this->app->request->post('description'));
 
         // set now as creation date
-        $now                = new DateTime();
+        $now = new DateTime();
         $fileObject->setCreationDate($now);
 
-        $entityManager      = $this->app->entityManager;
+        $entityManager = $this->app->entityManager;
         $entityManager->persist($fileObject);
 
         try {
             $entityManager->flush();
-        } catch(DBALException $dbalex) {
+        } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
             $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
             return;
         }
-        
+
         $this->app->response->header('Content-Type', 'application/json');
         $this->app->response->setStatus(HttpStatusCodes::CREATED);
         $this->app->response->setBody($this->app->serializer->serialize($fileObject, 'json'));
     }
 
     public function deleteFileByIdAction($id) {
-        $entityManager      = $this->app->entityManager;
-        $fileRepository     = $entityManager->getRepository(EntityNames::FILE);
-        $file               = $fileRepository->findOneBy(array('id' => $id));
+        $entityManager = $this->app->entityManager;
+        $fileRepository = $entityManager->getRepository(EntityNames::FILE);
+        $file = $fileRepository->findOneBy(array('id' => $id));
 
         if ($file === null) {
             $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);

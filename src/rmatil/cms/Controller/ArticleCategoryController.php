@@ -6,44 +6,47 @@ use DateTime;
 use Doctrine\DBAL\DBALException;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Entities\ArticleCategory;
+use rmatil\cms\Response\ResponseFactory;
 use SlimController\SlimController;
 
+/**
+ * @package rmatil\cms\Controller
+ */
 class ArticleCategoryController extends SlimController {
 
     public function getArticleCategoriesAction() {
-        $entityManager              = $this->app->entityManager;
-        $articleCategoryRepository  = $entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
-        $articleCategories          = $articleCategoryRepository->findAll();
+        $articleCategoryRepository = $this->app->entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
+        $articleCategories = $articleCategoryRepository->findAll();
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($articleCategories, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $articleCategories);
     }
 
     public function getArticleCategoryByIdAction($id) {
-        $entityManager              = $this->app->entityManager;
-        $articleCategoryRepository  = $entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
-        $articleCategory            = $articleCategoryRepository->findOneBy(array('id' => $id));
+        $articleCategoryRepository = $this->app->entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
+        $articleCategory = $articleCategoryRepository->findOneBy(array('id' => $id));
 
-        if ($articleCategory === null) {
+        if ( ! ($articleCategory instanceof ArticleCategory)) {
             $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
             return;
         }
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($articleCategory, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $articleCategory);
     }
 
     public function updateArticleCategoryAction($articleCategoryId) {
-        $articleCategoryObj         = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::ARTICLE_CATEGORY, 'json');
+        $entityManager = $this->app->entityManager;
+        /** @var \rmatil\cms\Entities\ArticleCategory $articleCategoryObj */
+        $articleCategoryObj = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::ARTICLE_CATEGORY, 'json');
 
         // get original article
-        $entityManager              = $this->app->entityManager;
-        $articleCategoryRepository  = $entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
-        $origArticleCategory        = $articleCategoryRepository->findOneBy(array('id' => $articleCategoryId));
+        $articleCategoryRepository = $entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
+        $origArticleCategory = $articleCategoryRepository->findOneBy(array('id' => $articleCategoryId));
+
+        if ( ! ($origArticleCategory instanceof ArticleCategory)) {
+            ResponseFactory::createNotFoundResponse($this->app);
+            return;
+        }
 
         $origArticleCategory->update($articleCategoryObj);
 
@@ -57,39 +60,34 @@ class ArticleCategoryController extends SlimController {
             return;
         }
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($origArticleCategory, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $origArticleCategory);
     }
 
     public function insertArticleAction() {
-        $articleCategoryObj      = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::ARTICLE_CATEGORY, 'json');
+        $articleCategoryObj = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::ARTICLE_CATEGORY, 'json');
 
-        $entityManager           = $this->app->entityManager;
+        $entityManager = $this->app->entityManager;
         $entityManager->persist($articleCategoryObj);
 
         try {
             $entityManager->flush();
-        } catch(DBALException $dbalex) {
+        } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
             $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
             return;
         }
 
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::CREATED);
-        $this->app->response->setBody($this->app->serializer->serialize($articleCategoryObj, 'json'));
+        ResponseFactory::createJsonResponseWithCode($this->app, HttpStatusCodes::CREATED, $articleCategoryObj);
     }
 
     public function deleteArticleCategoryByIdAction($id) {
-        $entityManager              = $this->app->entityManager;
-        $articleCategoryRepository  = $entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
-        $articleCategory            = $articleCategoryRepository->findOneBy(array('id' => $id));
+        $entityManager = $this->app->entityManager;
+        $articleCategoryRepository = $entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
+        $articleCategory = $articleCategoryRepository->findOneBy(array('id' => $id));
 
-        if ($articleCategory === null) {
-            $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
+        if ( ! ($articleCategory instanceof ArticleCategory)) {
+            ResponseFactory::createNotFoundResponse($this->app);
             return;
         }
 

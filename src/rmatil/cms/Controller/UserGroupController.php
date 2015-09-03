@@ -6,44 +6,47 @@ use DateTime;
 use Doctrine\DBAL\DBALException;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Entities\UserGroup;
+use rmatil\cms\Response\ResponseFactory;
 use SlimController\SlimController;
 
+/**
+ * @package rmatil\cms\Controller
+ */
 class UserGroupController extends SlimController {
 
     public function getUserGroupsAction() {
-        $entityManager              = $this->app->entityManager;
-        $userGroupRepository        = $entityManager->getRepository(EntityNames::USER_GROUP);
-        $userGroups                 = $userGroupRepository->findAll();
+        $userGroupRepository = $this->app->entityManager->getRepository(EntityNames::USER_GROUP);
+        $userGroups = $userGroupRepository->findAll();
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($userGroups, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $userGroups);
     }
 
     public function getUserGroupByIdAction($id) {
-        $entityManager              = $this->app->entityManager;
-        $userGroupRepository        = $entityManager->getRepository(EntityNames::USER_GROUP);
-        $userGroup                  = $userGroupRepository->findOneBy(array('id' => $id));
+        $userGroupRepository = $this->app->entityManager->getRepository(EntityNames::USER_GROUP);
+        $userGroup = $userGroupRepository->findOneBy(array('id' => $id));
 
-        if ($userGroup === null) {
-            $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
+        if (!($userGroup instanceof UserGroup)) {
+            ResponseFactory::createNotFoundResponse($this->app);
             return;
         }
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($userGroup, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $userGroup);
     }
 
     public function updateUserGroupAction($userGroupId) {
-        $userGroupObj              = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::USER_GROUP, 'json');
+        /** @var \rmatil\cms\Entities\UserGroup $userGroupObj */
+        $userGroupObj = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::USER_GROUP, 'json');
 
         // get original page category
-        $entityManager              = $this->app->entityManager;
-        $userGroupRepository        = $entityManager->getRepository(EntityNames::USER_GROUP);
-        $origUserGroup              = $userGroupRepository->findOneBy(array('id' => $userGroupId));
+        $entityManager = $this->app->entityManager;
+        $userGroupRepository = $entityManager->getRepository(EntityNames::USER_GROUP);
+        $origUserGroup = $userGroupRepository->findOneBy(array('id' => $userGroupId));
+
+        if (!($origUserGroup instanceof UserGroup)) {
+            ResponseFactory::createNotFoundResponse($this->app);
+            return;
+        }
 
         $origUserGroup->update($userGroupObj);
 
@@ -57,39 +60,34 @@ class UserGroupController extends SlimController {
             return;
         }
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($origUserGroup, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $origUserGroup);
     }
 
     public function insertUserGroupAction() {
-        $userGroupObj          = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::USER_GROUP, 'json');
+        $userGroupObj = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::USER_GROUP, 'json');
 
-        $entityManager         = $this->app->entityManager;
+        $entityManager = $this->app->entityManager;
         $entityManager->persist($userGroupObj);
 
         try {
             $entityManager->flush();
-        } catch(DBALException $dbalex) {
+        } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
             $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
             return;
         }
 
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::CREATED);
-        $this->app->response->setBody($this->app->serializer->serialize($userGroupObj, 'json'));
+        ResponseFactory::createJsonResponseWithCode($this->app, HttpStatusCodes::CREATED, $userGroupObj);
     }
 
     public function deleteUserGroupByIdAction($id) {
-        $entityManager           = $this->app->entityManager;
-        $userGroupRepository     = $entityManager->getRepository(EntityNames::USER_GROUP);
-        $userGroup               = $userGroupRepository->findOneBy(array('id' => $id));
+        $entityManager = $this->app->entityManager;
+        $userGroupRepository = $entityManager->getRepository(EntityNames::USER_GROUP);
+        $userGroup = $userGroupRepository->findOneBy(array('id' => $id));
 
-        if ($userGroup === null) {
-            $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
+        if (!($userGroup instanceof UserGroup)) {
+            ResponseFactory::createNotFoundResponse($this->app);
             return;
         }
 

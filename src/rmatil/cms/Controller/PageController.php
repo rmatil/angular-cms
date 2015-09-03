@@ -7,46 +7,47 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\DBALException;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Entities\Language;
 use rmatil\cms\Entities\Page;
+use rmatil\cms\Entities\PageCategory;
+use rmatil\cms\Entities\User;
+use rmatil\cms\Response\ResponseFactory;
 use SlimController\SlimController;
 
+/**
+ * @package rmatil\cms\Controller
+ */
 class PageController extends SlimController {
 
     public function getPagesAction() {
-        $entityManager   = $this->app->entityManager;
-        $pageRepository  = $entityManager->getRepository(EntityNames::PAGE);
-        $pages           = $pageRepository->findAll();
+        $pageRepository = $this->app->entityManager->getRepository(EntityNames::PAGE);
+        $pages = $pageRepository->findAll();
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($pages, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $pages);
     }
 
     public function getPageByIdAction($id) {
-        $entityManager   = $this->app->entityManager;
-        $pageRepository  = $entityManager->getRepository(EntityNames::PAGE);
-        $page            = $pageRepository->findOneBy(array('id' => $id));
+        $entityManager = $this->app->entityManager;
+        $pageRepository = $entityManager->getRepository(EntityNames::PAGE);
+        $page = $pageRepository->findOneBy(array('id' => $id));
 
-        if ($page === null) {
-            $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
+        if ( ! ($page instanceof Page)) {
+            ResponseFactory::createNotFoundResponse($this->app);
             return;
         }
 
         // do not show lock if requested by the same user as currently locked
-        if ($page->getIsLockedBy() !== null &&
-            $page->getIsLockedBy()->getId() === $_SESSION['user_id']) {
+        if (($page->getIsLockedBy() instanceof User) &&
+            $page->getIsLockedBy()->getId() === $_SESSION['user_id']
+        ) {
             $page->setIsLockedBy(null);
         }
 
-        $userRepository             = $entityManager->getRepository(EntityNames::USER);
-        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
+        $userRepository = $entityManager->getRepository(EntityNames::USER);
+        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $page->setAuthor($origUser);
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($page, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $page);
 
         // set requesting user as lock
         $page->setIsLockedBy($origUser);
@@ -63,31 +64,41 @@ class PageController extends SlimController {
     }
 
     public function updatePageAction($pageId) {
-        $pageObject                 = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::PAGE, 'json');
+        /** @var \rmatil\cms\Entities\Page $pageObject */
+        $pageObject = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::PAGE, 'json');
 
-        $now                        = new DateTime();
+        $now = new DateTime();
         $pageObject->setLastEditDate($now);
 
         // get original page
-        $entityManager              = $this->app->entityManager;
-        $pageRepository             = $entityManager->getRepository(EntityNames::PAGE);
-        $origPage                   = $pageRepository->findOneBy(array('id' => $pageId));
+        $entityManager = $this->app->entityManager;
+        $pageRepository = $entityManager->getRepository(EntityNames::PAGE);
+        $origPage = $pageRepository->findOneBy(array('id' => $pageId));
 
-        $languageRepository         = $entityManager->getRepository(EntityNames::LANGUAGE);
-        $origLanguage               = $languageRepository->findOneBy(array('id' => $pageObject->getLanguage()->getId()));
-        $pageObject->setLanguage($origLanguage);
+        if (!($origPage instanceof Page)) {
+            ResponseFactory::createNotFoundResponse($this->app);
+            return;
+        }
 
-        $userRepository             = $entityManager->getRepository(EntityNames::USER);
-        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
+        if ($pageObject->getLanguage() instanceof Language) {
+            $languageRepository = $entityManager->getRepository(EntityNames::LANGUAGE);
+            $origLanguage = $languageRepository->findOneBy(array('id' => $pageObject->getLanguage()->getId()));
+            $pageObject->setLanguage($origLanguage);
+        }
+
+        if ($origPage->getCategory() instanceof PageCategory) {
+            $pageCategoryRepository = $entityManager->getRepository(EntityNames::PAGE_CATEGORY);
+            $origPageCategory = $pageCategoryRepository->findOneBy(array('id' => $origPage->getCategory()->getId()));
+            $pageObject->setCategory($origPageCategory);
+        }
+
+        $userRepository = $entityManager->getRepository(EntityNames::USER);
+        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $pageObject->setAuthor($origUser);
 
-        $pageCategoryRepository     = $entityManager->getRepository(EntityNames::PAGE_CATEGORY);
-        $origPageCategory           = $pageCategoryRepository->findOneBy(array('id' => $origPage->getCategory()->getId()));
-        $pageObject->setCategory($origPageCategory);
-
         // get all articles
-        $articleRepository          = $entityManager->getRepository(EntityNames::ARTICLE);
-        $origArticles               = new ArrayCollection();
+        $articleRepository = $entityManager->getRepository(EntityNames::ARTICLE);
+        $origArticles = new ArrayCollection();
 
         // remove association of this page from each article
         foreach ($origPage->getArticles()->toArray() as $article) {
@@ -133,66 +144,68 @@ class PageController extends SlimController {
             return;
         }
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($origPage, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $origPage);
     }
 
     public function insertPageAction() {
-        $pageObject                 = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::PAGE, 'json');
+        /** @var \rmatil\cms\Entities\Page $pageObject */
+        $pageObject = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::PAGE, 'json');
 
         // set now as creation date
-        $now                        = new DateTime();
+        $now = new DateTime();
         $pageObject->setLastEditDate($now);
         $pageObject->setCreationDate($now);
 
-        $entityManager              = $this->app->entityManager;
-        $languageRepository         = $entityManager->getRepository(EntityNames::LANGUAGE);
-        $origLanguage               = $languageRepository->findOneBy(array('id' => $pageObject->getLanguage()->getId()));
-        $pageObject->setLanguage($origLanguage);
+        $entityManager = $this->app->entityManager;
 
-        $userRepository             = $entityManager->getRepository(EntityNames::USER);
-        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
+        if ($pageObject->getLanguage() instanceof Language) {
+            $languageRepository = $entityManager->getRepository(EntityNames::LANGUAGE);
+            $origLanguage = $languageRepository->findOneBy(array('id' => $pageObject->getLanguage()->getId()));
+            $pageObject->setLanguage($origLanguage);
+        }
+
+        if ($pageObject->getCategory() instanceof PageCategory) {
+            $pageCategoryRepository = $entityManager->getRepository(EntityNames::PAGE_CATEGORY);
+            $origPageCategory = $pageCategoryRepository->findOneBy(array('id' => $pageObject->getCategory()->getId()));
+            $pageObject->setCategory($origPageCategory);
+        }
+
+        $userRepository = $entityManager->getRepository(EntityNames::USER);
+        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $pageObject->setAuthor($origUser);
 
-        $pageCategoryRepository     = $entityManager->getRepository(EntityNames::PAGE_CATEGORY);
-        $origPageCategory           = $pageCategoryRepository->findOneBy(array('id' => $pageObject->getCategory()->getId()));
-        $pageObject->setCategory($origPageCategory);
-
-        $origArticles               = new ArrayCollection();
-        $articleRepository          = $entityManager->getRepository(EntityNames::ARTICLE);
+        $origArticles = new ArrayCollection();
+        $articleRepository = $entityManager->getRepository(EntityNames::ARTICLE);
         // get origArticles
         foreach ($pageObject->getArticles()->toArray() as $article) {
+            /** @var \rmatil\cms\Entities\Article $origArticle */
             $origArticle = $articleRepository->findOneBy(array('id' => $article->getId()));
             $origArticle->setPage($pageObject);
             $origArticles->add($origArticle);
         }
         $pageObject->setArticles($origArticles);
 
-        $entityManager              = $this->app->entityManager;
+        $entityManager = $this->app->entityManager;
         $entityManager->persist($pageObject);
 
         try {
             $entityManager->flush();
-        } catch(DBALException $dbalex) {
+        } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
             $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
             return;
         }
 
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::CREATED);
-        $this->app->response->setBody($this->app->serializer->serialize($pageObject, 'json'));
+        ResponseFactory::createJsonResponseWithCode($this->app, HttpStatusCodes::CREATED, $pageObject);
     }
 
     public function deletePageByIdAction($id) {
-        $entityManager          = $this->app->entityManager;
-        $pageRepository         = $entityManager->getRepository(EntityNames::PAGE);
-        $page                   = $pageRepository->findOneBy(array('id' => $id));
+        $entityManager = $this->app->entityManager;
+        $pageRepository = $entityManager->getRepository(EntityNames::PAGE);
+        $page = $pageRepository->findOneBy(array('id' => $id));
 
-        if ($page === null) {
+        if (! ($page instanceof Page)) {
             $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
             return;
         }
@@ -223,16 +236,14 @@ class PageController extends SlimController {
         $page = new Page();
 
         $userRepository = $this->app->entityManager->getRepository(EntityNames::USER);
-        $origUser       = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
+        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $page->setAuthor($origUser);
 
         $now = new DateTime();
         $page->setCreationDate($now);
         $page->setLastEditDate($now);
 
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($page, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $page);
     }
 
 }

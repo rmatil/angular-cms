@@ -7,50 +7,50 @@ use Doctrine\DBAL\DBALException;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Entities\Location;
+use rmatil\cms\Entities\User;
+use rmatil\cms\Response\ResponseFactory;
 use SlimController\SlimController;
 
+/**
+ * @package rmatil\cms\Controller
+ */
 class LocationController extends SlimController {
 
     public function getlocationsAction() {
-        $entityManager       = $this->app->entityManager;
-        $locationRepository  = $entityManager->getRepository(EntityNames::LOCATION);
-        $locations           = $locationRepository->findAll();
+        $entityManager = $this->app->entityManager;
+        $locationRepository = $entityManager->getRepository(EntityNames::LOCATION);
+        $locations = $locationRepository->findAll();
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($locations, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $locations);
     }
 
     public function getLocationByIdAction($id) {
-        $entityManager       = $this->app->entityManager;
-        $locationRepository  = $entityManager->getRepository(EntityNames::LOCATION);
-        $location            = $locationRepository->findOneBy(array('id' => $id));
+        $entityManager = $this->app->entityManager;
+        $locationRepository = $entityManager->getRepository(EntityNames::LOCATION);
+        $location = $locationRepository->findOneBy(array('id' => $id));
 
-        if ($location === null) {
-            $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
+        if ( ! ($location instanceof Location)) {
+            ResponseFactory::createNotFoundResponse($this->app);
             return;
         }
 
         // do not show lock if requested by the same user as currently locked
-        if ($location->getIsLockedBy() !== null &&
-            $location->getIsLockedBy()->getId() === $_SESSION['user_id']) {
+        if (($location->getIsLockedBy() instanceof User) &&
+            $location->getIsLockedBy()->getId() === $_SESSION['user_id']
+        ) {
             $location->setIsLockedBy(null);
         }
 
-        $userRepository             = $entityManager->getRepository(EntityNames::USER);
-        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
+        $userRepository = $entityManager->getRepository(EntityNames::USER);
+        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $location->setAuthor($origUser);
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($location, 'json'));
-        
+        ResponseFactory::createJsonResponse($this->app, $location);
+
         // set requesting user as lock
         $location->setIsLockedBy($origUser);
 
-         // force update
+        // force update
         try {
             $entityManager->flush();
         } catch (DBALException $dbalex) {
@@ -62,15 +62,21 @@ class LocationController extends SlimController {
     }
 
     public function updateLocationAction($locationId) {
-        $locationObject      = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::LOCATION, 'json');
+        /** @var \rmatil\cms\Entities\Location $locationObject */
+        $locationObject = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::LOCATION, 'json');
 
         // get original location
-        $entityManager       = $this->app->entityManager;
-        $locationRepository  = $entityManager->getRepository(EntityNames::LOCATION);
-        $origLocation        = $locationRepository->findOneBy(array('id' => $locationId));
+        $entityManager = $this->app->entityManager;
+        $locationRepository = $entityManager->getRepository(EntityNames::LOCATION);
+        $origLocation = $locationRepository->findOneBy(array('id' => $locationId));
 
-        $userRepository      = $entityManager->getRepository(EntityNames::USER);
-        $origUser            = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
+        if ( ! ($origLocation instanceof Location)) {
+            ResponseFactory::createNotFoundResponse($this->app);
+            return;
+        }
+
+        $userRepository = $entityManager->getRepository(EntityNames::USER);
+        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $locationObject->setAuthor($origUser);
 
         $origLocation->update($locationObject);
@@ -87,52 +93,49 @@ class LocationController extends SlimController {
             return;
         }
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($origLocation, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $origLocation);
     }
 
     public function insertLocationAction() {
-        $locationObject      = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::LOCATION, 'json');
+        /** @var \rmatil\cms\Entities\Location $locationObject */
+        $locationObject = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::LOCATION, 'json');
 
         // set now as creation date
-        $now                = new DateTime();
+        $now = new DateTime();
         $locationObject->setLastEditDate($now);
         $locationObject->setCreationDate($now);
 
-        $entityManager       = $this->app->entityManager;
+        $entityManager = $this->app->entityManager;
 
-        $userRepository      = $entityManager->getRepository(EntityNames::USER);
-        $origUser            = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
+        $userRepository = $entityManager->getRepository(EntityNames::USER);
+        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $locationObject->setAuthor($origUser);
 
         $entityManager->persist($locationObject);
 
         try {
             $entityManager->flush();
-        } catch(DBALException $dbalex) {
+        } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
             $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
             return;
         }
 
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::CREATED);
-        $this->app->response->setBody($this->app->serializer->serialize($locationObject, 'json'));
+        ResponseFactory::createJsonResponseWithCode($this->app, HttpStatusCodes::CREATED, $locationObject);
     }
 
     public function deleteLocationByIdAction($id) {
-        $entityManager       = $this->app->entityManager;
-        $locationRepository  = $entityManager->getRepository(EntityNames::LOCATION);
-        $location            = $locationRepository->findOneBy(array('id' => $id));
+        $entityManager = $this->app->entityManager;
+        $locationRepository = $entityManager->getRepository(EntityNames::LOCATION);
+        $location = $locationRepository->findOneBy(array('id' => $id));
 
-        if ($location === null) {
+        if ( ! ($location instanceof Location)) {
             $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
             return;
         }
 
+        /** @var \rmatil\cms\Entities\Event[] $attachedEvents */
         $attachedEvents = $entityManager->getRepository(EntityNames::EVENT)->findBy(array(
             'location' => $location->getId()
         ));
@@ -157,18 +160,16 @@ class LocationController extends SlimController {
     public function getEmptyLocationAction() {
         $location = new Location();
 
-        $entityManager              = $this->app->entityManager;
-        $now                        = new DateTime();
+        $entityManager = $this->app->entityManager;
+        $now = new DateTime();
 
-        $userRepository             = $entityManager->getRepository(EntityNames::USER);
-        $origUser                   = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
+        $userRepository = $entityManager->getRepository(EntityNames::USER);
+        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $location->setAuthor($origUser);
 
         $location->setCreationDate($now);
         $location->setLastEditDate($now);
 
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($location, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $location);
     }
 }

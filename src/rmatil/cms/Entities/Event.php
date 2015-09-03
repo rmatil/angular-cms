@@ -85,7 +85,7 @@ class Event {
      * 
      * @ORM\Column(type="datetime", nullable=true)
      *
-     * @Type("DateTime")
+     * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
      * 
      * @var \DateTime
      */
@@ -96,7 +96,7 @@ class Event {
      * 
      * @ORM\Column(type="datetime", nullable=true)
      *
-     * @Type("DateTime")
+     * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
      * 
      * @var \DateTime
      */
@@ -130,7 +130,7 @@ class Event {
      * 
      * @ORM\Column(type="datetime")
      *
-     * @Type("DateTime")
+     * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
      * 
      * @var \DateTime
      */
@@ -141,7 +141,7 @@ class Event {
      * 
      * @ORM\Column(type="datetime")
      *
-     * @Type("DateTime")
+     * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
      * 
      * @var \DateTime
      */
@@ -203,7 +203,7 @@ class Event {
     /**
      * Gets a file attached to this event.
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * @return \rmatil\cms\Entities\File
      */
     public function getFile() {
         return $this->file;
@@ -311,7 +311,7 @@ class Event {
     /**
      * Gets the user which locks this user
      *
-     * @return boolean
+     * @return \rmatil\cms\Entities\User
      */
     public function getIsLockedBy() {
         return $this->isLockedBy;

@@ -56,7 +56,6 @@ class RegistrationHandler {
 
         $registrationLink = sprintf(PROTOCOL.'%s/api/registration/%s', $websiteUrl->getValue(), $registration->getToken());
 
-        $this->entityManager->persist($user->getUserGroup());
         $this->entityManager->persist($user);
         $this->entityManager->persist($registration);
 
