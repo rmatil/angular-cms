@@ -98,7 +98,7 @@ class Article {
      * 
      * @ORM\Column(type="datetime")
      *
-     * @Type("DateTime")
+     * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
      * 
      * @var \DateTime
      */
@@ -110,7 +110,7 @@ class Article {
      * 
      * @ORM\Column(type="datetime")
      *
-     * @Type("DateTime")
+     * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
      * 
      * @var \DateTime
      */
