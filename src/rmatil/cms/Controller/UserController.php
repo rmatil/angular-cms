@@ -7,6 +7,7 @@ use Doctrine\DBAL\DBALException;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Entities\User;
+use rmatil\cms\Login\PasswordHandler;
 use rmatil\cms\Utils\PasswordUtils;
 use SlimController\SlimController;
 
@@ -77,7 +78,7 @@ class UserController extends SlimController {
             $userObject->setPasswordHash($origUser->getPasswordHash());
         } else {
             // hash provided plaintext password
-            $userObject->setPasswordHash(PasswordUtils::hash($userObject->getPlainPassword()));
+	    $userObject->setPasswordHash(PasswordHandler::hash($userObject->getPlainPassword()));
         }
 
         $origUser->update($userObject);
