@@ -7,6 +7,7 @@ use Doctrine\DBAL\DBALException;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Entities\Event;
+use rmatil\cms\Entities\Location;
 use SlimController\SlimController;
 
 class EventController extends SlimController {
@@ -73,9 +74,11 @@ class EventController extends SlimController {
         $origUser           = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $eventObject->setAuthor($origUser);
 
-        $locationRepository = $entityManager->getRepository(EntityNames::LOCATION);
-        $origLocation       = $locationRepository->findOneBy(array('id' => $eventObject->getLocation()->getId()));
-        $eventObject->setLocation($origLocation);
+        if ($eventObject->getLocation() instanceof Location) {
+            $locationRepository = $entityManager->getRepository(EntityNames::LOCATION);
+            $origLocation = $locationRepository->findOneBy(array('id' => $eventObject->getLocation()->getId()));
+            $eventObject->setLocation($origLocation);
+        }
 
         if (null !== $eventObject->getRepeatOption()) {
             $repeatOptionRepository = $entityManager->getRepository(EntityNames::REPEAT_OPTION);
@@ -121,9 +124,11 @@ class EventController extends SlimController {
         $origUser           = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $eventObject->setAuthor($origUser);
 
-        $locationRepository = $entityManager->getRepository(EntityNames::LOCATION);
-        $origLocation       = $locationRepository->findOneBy(array('id' => $eventObject->getLocation()->getId()));
-        $eventObject->setLocation($origLocation);
+        if ($eventObject->getLocation() instanceof Location) {
+            $locationRepository = $entityManager->getRepository(EntityNames::LOCATION);
+            $origLocation = $locationRepository->findOneBy(array('id' => $eventObject->getLocation()->getId()));
+            $eventObject->setLocation($origLocation);
+        }
 
         if (null !== $eventObject->getRepeatOption()) {
             $repeatOptionRepository = $entityManager->getRepository(EntityNames::REPEAT_OPTION);
