@@ -2,13 +2,12 @@
 
 namespace rmatil\cms\Controller;
 
-use SlimController\SlimController;
-use rmatil\cms\Constants\HttpStatusCodes;
-use rmatil\cms\Constants\EntityNames;
-use rmatil\cms\Entities\Location;
-use Doctrine\ORM\EntityManager;
-use Doctrine\DBAL\DBALException;
 use DateTime;
+use Doctrine\DBAL\DBALException;
+use rmatil\cms\Constants\EntityNames;
+use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Entities\Location;
+use SlimController\SlimController;
 
 class LocationController extends SlimController {
 

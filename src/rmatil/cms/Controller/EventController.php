@@ -2,14 +2,12 @@
 
 namespace rmatil\cms\Controller;
 
-use SlimController\SlimController;
-use rmatil\cms\Constants\HttpStatusCodes;
-use rmatil\cms\Constants\EntityNames;
-use rmatil\cms\Entities\Article;
-use rmatil\cms\Entities\Event;
-use Doctrine\ORM\EntityManager;
-use Doctrine\DBAL\DBALException;
 use DateTime;
+use Doctrine\DBAL\DBALException;
+use rmatil\cms\Constants\EntityNames;
+use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Entities\Event;
+use SlimController\SlimController;
 
 class EventController extends SlimController {
 
@@ -79,9 +77,11 @@ class EventController extends SlimController {
         $origLocation       = $locationRepository->findOneBy(array('id' => $eventObject->getLocation()->getId()));
         $eventObject->setLocation($origLocation);
 
-        $repeatOptionRepository = $entityManager->getRepository(EntityNames::REPEAT_OPTION);
-        $origRepeatOption   = $repeatOptionRepository->findOneBy(array('id' => $eventObject->getRepeatOption()->getId()));
-        $eventObject->setRepeatOption($origRepeatOption);
+        if (null !== $eventObject->getRepeatOption()) {
+            $repeatOptionRepository = $entityManager->getRepository(EntityNames::REPEAT_OPTION);
+            $origRepeatOption   = $repeatOptionRepository->findOneBy(array('id' => $eventObject->getRepeatOption()->getId()));
+            $eventObject->setRepeatOption($origRepeatOption);
+        }
 
         $fileRepository     = $entityManager->getRepository(EntityNames::FILE);
         $origFile           = $fileRepository->findOneBy(array('id' => $eventObject->getFile()));

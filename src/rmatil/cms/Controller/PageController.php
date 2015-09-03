@@ -2,14 +2,13 @@
 
 namespace rmatil\cms\Controller;
 
-use SlimController\SlimController;
-use rmatil\cms\Constants\HttpStatusCodes;
-use rmatil\cms\Constants\EntityNames;
-use rmatil\cms\Entities\Page;
-use Doctrine\ORM\EntityManager;
-use Doctrine\DBAL\DBALException;
-use Doctrine\Common\Collections\ArrayCollection;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\DBALException;
+use rmatil\cms\Constants\EntityNames;
+use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Entities\Page;
+use SlimController\SlimController;
 
 class PageController extends SlimController {
 

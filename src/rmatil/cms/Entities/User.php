@@ -34,7 +34,7 @@ class User {
      *
      * @Type("rmatil\cms\Entities\UserGroup")
      * 
-     * @var rmatil\cms\Entities\UserGroup
+     * @var \rmatil\cms\Entities\UserGroup
      */
     protected $userGroup;
 
@@ -149,7 +149,7 @@ class User {
     protected $plainPassword;
 
     /**
-     * Hash of the users password
+     * Hash of the users password including the salt
      * 
      * @ORM\Column(type="string", nullable=true)
      *
@@ -239,7 +239,7 @@ class User {
     /**
      * Gets the The usergroup to which the user belongs.
      *
-     * @return rmatil\cms\Entities\UserGroup
+     * @return \rmatil\cms\Entities\UserGroup
      */
     public function getUserGroup() {
         return $this->userGroup;
@@ -248,7 +248,7 @@ class User {
     /**
      * Sets the The usergroup to which the user belongs.
      *
-     * @param rmatil\cms\Entities\UserGroup $userGroup the user group
+     * @param \rmatil\cms\Entities\UserGroup $userGroup the user group
      */
     public function setUserGroup(UserGroup $userGroup = null) {
         $this->userGroup = $userGroup;
@@ -536,7 +536,7 @@ class User {
     /**
      * Sets the user which locks this article
      *
-     * @param \rmatil\cms\Entities\User $isLocked the user which locks the article
+     * @param \rmatil\cms\Entities\User $isLockedBy the user which locks the article
      */
     public function setIsLockedBy(User $isLockedBy = null) {
         $this->isLockedBy = $isLockedBy;

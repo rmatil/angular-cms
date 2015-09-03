@@ -2,12 +2,11 @@
 
 namespace rmatil\cms\Controller;
 
-use SlimController\SlimController;
-use rmatil\cms\Constants\HttpStatusCodes;
-use rmatil\cms\Constants\EntityNames;
-use rmatil\cms\Entities\User;
-use Doctrine\ORM\EntityManager;
+use DateTime;
 use Doctrine\DBAL\DBALException;
+use rmatil\cms\Constants\EntityNames;
+use rmatil\cms\Constants\HttpStatusCodes;
+use SlimController\SlimController;
 
 class SettingController extends SlimController {
 
@@ -34,6 +33,10 @@ class SettingController extends SlimController {
         $settingsRepository = $entityManager->getRepository(EntityNames::SETTING);
 
         foreach ($settings as $entry) {
+            if (!is_array($entry)) {
+                continue;
+            }
+
             $origSetting = $settingsRepository->findOneBy(array('id' => $entry['id']));
 
             if ($origSetting === null) {

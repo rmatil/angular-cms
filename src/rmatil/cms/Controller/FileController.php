@@ -2,17 +2,16 @@
 
 namespace rmatil\cms\Controller;
 
-use SlimController\SlimController;
-use rmatil\cms\Constants\HttpStatusCodes;
-use rmatil\cms\Constants\EntityNames;
-use rmatil\cms\Entities\Article;
-use Doctrine\ORM\EntityManager;
-use Doctrine\DBAL\DBALException;
-use rmatil\cms\Exceptions\FileNotSavedException;
-use rmatil\cms\Exceptions\FileAlreadyExistsException;
-use rmatil\cms\Exceptions\ThumbnailCreationFailedException;
-use rmatil\cms\Entities\File;
 use DateTime;
+use Doctrine\DBAL\DBALException;
+use InvalidArgumentException;
+use rmatil\cms\Constants\EntityNames;
+use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Entities\File;
+use rmatil\cms\Exceptions\FileAlreadyExistsException;
+use rmatil\cms\Exceptions\FileNotSavedException;
+use rmatil\cms\Exceptions\ThumbnailCreationFailedException;
+use SlimController\SlimController;
 
 class FileController extends SlimController {
 

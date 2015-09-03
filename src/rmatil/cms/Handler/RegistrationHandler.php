@@ -2,20 +2,20 @@
 
 namespace rmatil\cms\Handler;
 
+use DateInterval;
+use DateTime;
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
-use rmatil\cms\Entities\User;
+use PHPMailer;
+use rmatil\cms\Constants\ConfigurationNames;
+use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Entities\Registration;
+use rmatil\cms\Entities\User;
 use rmatil\cms\Exceptions\UserNotSavedException;
 use rmatil\cms\Mail\MailInterface;
 use rmatil\cms\Mail\RegistrationMail;
-use PHPMailer;
-use DateTime;
-use DateInterval;
 
 class RegistrationHandler {
-
-    protected static $USER_FULL_QUALIFIED_CLASSNAME     = 'rmatil\cms\Entities\User';
-    protected static $SETTINGS_FULL_QUALIFIED_CLASSNAME = 'rmatil\cms\Entities\Setting';
 
     protected $entityManager;
 
@@ -23,12 +23,20 @@ class RegistrationHandler {
 
     protected $defaultMailerSettings = array();
 
-    public function __construct(EntityManager $entityManager, PHPMailer $phpMailer, array $mailerSettings = array()) {
+    public function __construct(EntityManager $entityManager, PHPMailer $phpMailer) {
         $this->entityManager    = $entityManager;
         $this->phpMailer        = $phpMailer;
-        $this->initMailer($mailerSettings);
+        $this->initMailer();
     }
 
+    /**
+     * Registers the given user and starts the registration process.
+     * <b>Note that any entity associated with the user object
+     * must be stored beforehand in the database.</b>
+     * 
+     * @param User $user The user to store
+     * @throws UserNotSavedException Thrown if a problem occurred during saving of the user
+     */
     public function registerUser(User &$user) {
         $expirationDate = new DateTime();
         $expirationDate->add(new DateInterval('PT48H'));
@@ -40,25 +48,21 @@ class RegistrationHandler {
         $registration->setExpirationDate($expirationDate);
         $registration->setToken($token);
 
-        $settingsRepo        = $this->entityManager->getRepository(self::$SETTINGS_FULL_QUALIFIED_CLASSNAME);
+        $settingsRepo        = $this->entityManager->getRepository(EntityNames::SETTING);
         $websiteName         = $settingsRepo->findOneBy(array('name' => 'website_name'));
         $websiteEmail        = $settingsRepo->findOneBy(array('name' => 'website_email'));
         $websiteReplyToEmail = $settingsRepo->findOneBy(array('name' => 'website_reply_to_email'));
         $websiteUrl          = $settingsRepo->findOneBy(array('name' => 'website_url'));
 
-        $registrationLink = sprintf('%s/registration/%s', $websiteUrl->getValue(), $registration->getToken());
+        $registrationLink = sprintf(PROTOCOL.'%s/api/registration/%s', $websiteUrl->getValue(), $registration->getToken());
 
+        $this->entityManager->persist($user->getUserGroup());
         $this->entityManager->persist($user);
         $this->entityManager->persist($registration);
 
         try {
             $this->entityManager->flush();
         } catch (DBALException $dbalex) {
-            $this->entityManager->remove($user);
-            $this->entityManager->remove($registration);
-
-            $this->entityManager->flush();
-
             throw new UserNotSavedException($dbalex->getMessage());
         }
 
@@ -87,24 +91,23 @@ class RegistrationHandler {
 
     /**
      * Available mailerSettings are documented on https://github.com/PHPMailer/PHPMailer
-     * 
-     * @param  array  $mailerSettings An associative array containing as 
-     *                                keys the mailer property and 
-     *                                as value the corresponding value
      */
-    protected function initMailer(array $mailerSettings) {
+    protected function initMailer() {
+        $config = ConfigurationHandler::readConfiguration(CONFIG_FILE);
+        $mailerSettings = $config[ConfigurationNames::MAIL_PREFIX];
         if (empty($mailerSettings)) {
             // Set PHPMailer to use the sendmail transport
             $this->phpMailer->isSendmail();
         } else {
             // Set mailer to use SMTP
-            $this->phpMailer->isSMTP();                                      
+            $this->phpMailer->isSMTP();
+            $this->phpMailer->SMTPDebug = true;
+            $this->phpMailer->Debugoutput = 'html';
             // update settings
-            foreach ($mailerSettings as $key => $value) {
-                if (property_exists('PHPMailer', $key)) {
-                    $this->phpMailer->$key = $value;
-                }
-            }
+            $this->phpMailer->Host = $mailerSettings[ConfigurationNames::MAIL_HOST];
+            $this->phpMailer->Username = $mailerSettings[ConfigurationNames::MAIL_USERNAME];
+            $this->phpMailer->Password = $mailerSettings[ConfigurationNames::MAIL_PASSWORD];
+            $this->phpMailer->Port = intval($mailerSettings[ConfigurationNames::MAIL_PORT]);
         }
     }
 

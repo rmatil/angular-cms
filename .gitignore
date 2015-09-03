@@ -9,6 +9,12 @@ composer.lock
 *.sublime-project
 *.sublime-workspace
 
+# Netbeans
+/nbproject/private/
+
+# PHPStorm
+.idea
+
 # OS X
 .DS_Store
 
@@ -20,3 +26,12 @@ composer.lock
 
 # gulp.js
 node_modules
+
+# app config
+/app/config
+/app/cache
+/app/logs
+
+# Vagrant
+.vagrant
+/puphpet

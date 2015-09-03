@@ -8,6 +8,9 @@ use rmatil\cms\Exceptions\DocTypeNotFoundException;
 use rmatil\cms\Exceptions\FileNotSavedException;
 use rmatil\cms\Handler\ThumbnailHandler;
 use rmatil\cms\Utils\FileUtils;
+use rmatil\cms\Constants\ConfigurationNames;
+use Symfony\Component\Yaml\Yaml;
+use RuntimeException;
 
 class FileHandler {
 

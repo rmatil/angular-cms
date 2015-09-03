@@ -2,14 +2,13 @@
 
 namespace rmatil\cms\Controller;
 
-use SlimController\SlimController;
-use rmatil\cms\Constants\HttpStatusCodes;
+use DateTime;
+use Doctrine\DBAL\DBALException;
 use rmatil\cms\Constants\EntityNames;
+use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Entities\User;
 use rmatil\cms\Utils\PasswordUtils;
-use Doctrine\ORM\EntityManager;
-use Doctrine\DBAL\DBALException;
-use DateTime;
+use SlimController\SlimController;
 
 class UserController extends SlimController {
 

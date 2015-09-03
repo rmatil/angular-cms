@@ -32,7 +32,7 @@ class Event {
      *
      * @Type("rmatil\cms\Entities\User")
      * 
-     * @var rmatil\cms\Entities\User
+     * @var \rmatil\cms\Entities\User
      */
     protected $author;
 
@@ -43,7 +43,7 @@ class Event {
      *
      * @Type("rmatil\cms\Entities\Location")
      * 
-     * @var rmatil\cms\Entities\Location
+     * @var \rmatil\cms\Entities\Location
      */
     protected $location;
 
@@ -54,7 +54,7 @@ class Event {
      *
      * @Type("rmatil\cms\Entities\File")
      *
-     * @var rmatil\cms\Entities\File
+     * @var \rmatil\cms\Entities\File
      */
     protected $file;
 
@@ -76,7 +76,7 @@ class Event {
      *
      * @Type("rmatil\cms\Entities\RepeatOption")
      * 
-     * @var rmatil\cms\Entities\RepeatOption
+     * @var \rmatil\cms\Entities\RepeatOption
      */
     protected $repeatOption;
 
@@ -147,11 +147,27 @@ class Event {
      */
     protected $creationDate;
 
+    /**
+     * All user groups which are allowed to access this event
+     *
+     * @ORM\ManyToMany(targetEntity="UserGroup", inversedBy="accessibleEvents")
+     * @ORM\JoinTable(name="usergroup_events")
+     *
+     * @Type("ArrayCollection<rmatil\cms\Entities\UserGroup>")
+     *
+     * @var ArrayCollection[rmatil\cms\Entities\UserGroup]
+     */
+    protected $allowedUserGroups;
+
+    public function __construct() {
+        $this->allowedUserGroups = new ArrayCollection();
+    }
+
 
     /**
      * Gets the The author of this article.
      *
-     * @return rmatil\cms\Entities\User
+     * @return \rmatil\cms\Entities\User
      */
     public function getAuthor() {
         return $this->author;
@@ -160,7 +176,7 @@ class Event {
     /**
      * Sets the The author of this article.
      *
-     * @param rmatil\cms\Entities\User $author the author
+     * @param \rmatil\cms\Entities\User $author the author
      */
     public function setAuthor(User $author = null) {
         $this->author = $author;
@@ -169,7 +185,7 @@ class Event {
     /**
      * Gets the The author of this article.
      *
-     * @return rmatil\cms\Entities\Location
+     * @return \rmatil\cms\Entities\Location
      */
     public function getLocation() {
         return $this->location;
@@ -178,7 +194,7 @@ class Event {
     /**
      * Sets the The author of this article.
      *
-     * @param rmatil\cms\Entities\Location $location the location
+     * @param \rmatil\cms\Entities\Location $location the location
      */
     public function setLocation(Location $location = null) {
         $this->location = $location;
@@ -187,7 +203,7 @@ class Event {
     /**
      * Gets a file attached to this event.
      *
-     * @return Doctrine\Common\Collections\ArrayCollection
+     * @return \Doctrine\Common\Collections\ArrayCollection
      */
     public function getFile() {
         return $this->file;
@@ -196,7 +212,7 @@ class Event {
     /**
      * Sets a file attached to this event.
      *
-     * @param rmatil\cms\Entities\File $file the file to attach
+     * @param \rmatil\cms\Entities\File $file the file to attach
      */
     public function setFile(File $file = null) {
         $this->file = $file;
@@ -223,7 +239,7 @@ class Event {
     /**
      * Gets the Repeat options for event.
      *
-     * @return rmatil\cms\Entities\RepeatOption
+     * @return \rmatil\cms\Entities\RepeatOption
      */
     public function getRepeatOption() {
         return $this->repeatOption;
@@ -232,7 +248,7 @@ class Event {
     /**
      * Sets the Repeat options for event.
      *
-     * @param rmatil\cms\Entities\RepeatOption $repeatOption the repeat option
+     * @param \rmatil\cms\Entities\RepeatOption $repeatOption the repeat option
      */
     public function setRepeatOption(RepeatOption $repeatOption = null) {
         $this->repeatOption = $repeatOption;
@@ -304,7 +320,7 @@ class Event {
     /**
      * Sets the user which locks this article
      *
-     * @param \rmatil\cms\Entities\User $isLocked the user which locks the article
+     * @param \rmatil\cms\Entities\User $isLockedBy the user which locks the article
      */
     public function setIsLockedBy($isLockedBy) {
         $this->isLockedBy = $isLockedBy;
@@ -357,6 +373,7 @@ class Event {
         $this->setDescription($event->getDescription());
         $this->setLastEditDate($event->getLastEditDate());
         $this->setCreationDate($event->getCreationDate());
+        $this->setAllowedUserGroups($event->getAllowedUserGroups());
     }
 
     /**
@@ -375,5 +392,28 @@ class Event {
      */
     public function setId($id) {
         $this->id = $id;
+    }
+
+    /**
+     * Gets all user groups which are allowed to access this event
+     *
+     * @return ArrayCollection
+     */
+    public function getAllowedUserGroups() {
+        return $this->allowedUserGroups;
+    }
+
+    /**
+     * Sets all user groups which are allowed to access this event
+     *
+     * @param ArrayCollection $allowedUserGroups
+     */
+    public function setAllowedUserGroups($allowedUserGroups) {
+        $this->allowedUserGroups = $allowedUserGroups;
+    }
+
+    public function addAllowedUserGroup(UserGroup $userGroup) {
+        $this->allowedUserGroups->add($userGroup);
+        $userGroup->addAccessibleEvent($this);
     }
 }
