@@ -137,7 +137,7 @@ class Article {
      * 
      * @var boolean
      */
-    protected $isPublished;
+    protected $isPublished = false;
 
     /**
      * Page to which this article belongs
