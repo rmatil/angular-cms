@@ -51,4 +51,33 @@ class ResponseFactory {
         $app->response->setStatus(HttpStatusCodes::NOT_FOUND);
     }
 
+    /**
+     * Creates a Basic Authorization Response which prompts a
+     * login maks to the Client
+     *
+     * @param $app \Slim\Slim The slim application instance
+     * @param $realm string The realm of the request
+     */
+    public static function createUnauthorizedResponse($app, $realm) {
+        $app->response->status(HttpStatusCodes::UNAUTHORIZED);
+        $app->response->header('WWW-Authenticate', sprintf('Basic realm="%s"', $realm));
+    }
+
+    /**
+     * Creates a JSON response containing the error and the corresponding
+     * error message.
+     *
+     * @param $app \Slim\Slim The slim application instance
+     * @param $code integer The HTTP status code
+     * @param $errorMsg string The error message
+     */
+    public static function createErrorJsonResponse($app, $code, $errorMsg) {
+        $app->response->header('Content-Type', 'application/json');
+        $app->response->status($code);
+        $app->response->body(json_encode(array(
+            'error' => $code,
+            'message' => $errorMsg
+        )));
+    }
+
 }

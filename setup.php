@@ -83,7 +83,9 @@ $thumbnailHandler = HandlerSingleton::getThumbnailHandler();
 $fileHandler = HandlerSingleton::getFileHandler(HTTP_MEDIA_DIR, LOCAL_MEDIA_DIR);
 $registrationHandler = HandlerSingleton::getRegistrationHandler();
 $databaseHandler = HandlerSingleton::getDatabaseHandler();
-$loginHandler = HandlerSingleton::getLoginHandler(array('^\/api\/.*' => array('ROLE_SUPER_ADMIN')));
+$loginHandler = HandlerSingleton::getLoginHandler(array(
+    '^\/api\/.*' => array('ROLE_SUPER_ADMIN')
+));
 
 // Add Doctrine Entity Manager to app
 $app->container->singleton('entityManager', function () use ($entityManager) {
@@ -113,7 +115,8 @@ $app->container->singleton('loginHandler', function () use ($loginHandler) {
 });
 
 // Add Basic Auth Security
-$app->add(new BasicAuthMiddleware($entityManager, 'API Access'));
+$app->add(new BasicAuthMiddleware($entityManager, 'Secured Area'));
+
 $corsOptions = array(
     "origin" => "*",
     "maxAge" => 1728000,
