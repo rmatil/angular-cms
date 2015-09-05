@@ -24,10 +24,13 @@ use SlimController\SlimController;
 class AuthenticationController extends SlimController {
 
     public function authenticateAction() {
+        /** @var \rmatil\cms\Login\LoginHandler $loginHandler */
+        $loginHandler = $this->app->loginHandler;
+
         if (PHP_SESSION_NONE === session_status()) {
             session_start();
         } else {
-            $this->app->loginHandler->logout();
+            $loginHandler->logout();
         }
 
         // requires SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
@@ -40,8 +43,6 @@ class AuthenticationController extends SlimController {
         }
 
         try {
-            /** @var \rmatil\cms\Login\LoginHandler $loginHandler */
-            $loginHandler = $this->app->loginHandler;
             $loginHandler->login($auth, $pw, $this->app->request->getPath());
         } catch (UserNotFoundException $unfe) {
             ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::NOT_FOUND, $unfe->getMessage());

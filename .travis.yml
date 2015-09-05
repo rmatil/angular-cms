@@ -12,3 +12,5 @@ cache:
   directories:
   - vendor
   - node_modules
+git:
+  submodules: false
