@@ -118,7 +118,7 @@ $app->container->singleton('loginHandler', function () use ($loginHandler) {
 $app->add(new BasicAuthMiddleware($entityManager, 'Secured Area'));
 
 $corsOptions = array(
-    "origin" => "*",
+    "origin" => "http://cms-frontend.dev.local",
     "maxAge" => 1728000,
     "allowCredentials" => true,
     "allowHeaders" => array("X-PINGOTHER", "Authorization", "Content-Type"),
