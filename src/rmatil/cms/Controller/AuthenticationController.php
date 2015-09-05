@@ -5,37 +5,55 @@ namespace rmatil\cms\Controller;
 
 
 use rmatil\cms\Constants\HttpStatusCodes;
+use rmatil\cms\Exceptions\AccessDeniedException;
+use rmatil\cms\Exceptions\UserLockedException;
+use rmatil\cms\Exceptions\UserNotFoundException;
+use rmatil\cms\Exceptions\WrongCredentialsException;
+use rmatil\cms\Response\ResponseFactory;
 use RuntimeException;
 use SlimController\SlimController;
 
+/**
+ * Use the routes specified in this class for authenticating clients
+ * through REST like calls, i.e. without displaying a login form at all.
+ *
+ * @see \rmatil\cms\Controller\LoginController For login through a login form
+ *
+ * @package rmatil\cms\Controller
+ */
 class AuthenticationController extends SlimController {
 
     public function authenticateAction() {
         if (PHP_SESSION_NONE === session_status()) {
             session_start();
-        }
-
-        if (array_key_exists('user_is_logged_in', $_SESSION) && true === $_SESSION['user_is_logged_in']) {
-            // check whether basic auth user matches current session user
-            if (isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER'] === $_SESSION['user_user_name']) {
-                return;
-            } else if ( ! isset($_SERVER['PHP_AUTH_USER'])) {
-                // no basic auth headers were set
-                return;
-            }
+        } else {
+            $this->app->loginHandler->logout();
         }
 
         // requires SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
         // in htaccess for forwarding Basic-Auth headers
-        $auth = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : null;
-        $pw = isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : null;
+        $auth = $this->app->request->params('username');
+        $pw = $this->app->request->params('password');
+
+        if (null === $auth || null === $pw) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::BAD_REQUEST, 'Username and password must be specified');
+        }
 
         try {
-            $this->app->loginHandler->login($auth, $pw, $this->app->request->getPath());
-        } catch (RuntimeException $ade) {
-            $this->app->response->header('Content-Type', 'application/json');
-            $this->app->response->status(HttpStatusCodes::FORBIDDEN);
-            $this->app->response->body(json_encode(array('error' => HttpStatusCodes::FORBIDDEN, 'message' => $ade->getMessage())));
+            /** @var \rmatil\cms\Login\LoginHandler $loginHandler */
+            $loginHandler = $this->app->loginHandler;
+            $loginHandler->login($auth, $pw, $this->app->request->getPath());
+        } catch (UserNotFoundException $unfe) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::NOT_FOUND, $unfe->getMessage());
+            return;
+        } catch (WrongCredentialsException $wce) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::FORBIDDEN, $wce->getMessage());
+            return;
+        } catch (UserLockedException $ule) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::FORBIDDEN, $ule->getMessage());
+            return;
+        } catch (AccessDeniedException $ade) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::FORBIDDEN, $ade->getMessage());
             return;
         }
     }

@@ -13,6 +13,11 @@ use rmatil\cms\Response\ResponseFactory;
 use Slim\Middleware;
 
 /**
+ * Handles Basic Authentication Headers for requests.
+ * Displays a login form, if the route is secured and no
+ * Basic Authentication Headers are present in the request.
+ *
+ * @see \rmatil\cms\Login\LoginHandler To specify how routes are secured
  *
  * @package rmatil\cms\Middleware
  */
@@ -65,10 +70,11 @@ class BasicAuthMiddleware extends Middleware {
             $user = $loginHandler->authenticateUser($auth, $pw);
             $loginHandler->isGranted($this->app->request->getPath(), $user->getUserGroup()->getRole());
         } catch (UserNotFoundException $unfe) {
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::FORBIDDEN, $unfe->getMessage());
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::NOT_FOUND, $unfe->getMessage());
             return;
         } catch (WrongCredentialsException $wce) {
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::FORBIDDEN, $wce->getMessage());
+            // resend basic auth login form, if credentials are wrong
+            ResponseFactory::createUnauthorizedResponse($this->app, $this->realm);
             return;
         } catch (UserLockedException $ule) {
             ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::FORBIDDEN, $ule->getMessage());
@@ -76,12 +82,6 @@ class BasicAuthMiddleware extends Middleware {
         } catch (AccessDeniedException $ade) {
             ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::FORBIDDEN, $ade->getMessage());
             return;
-        } finally {
-            $_SERVER['PHP_AUTH_USER'] = null;
-            $_SERVER['PHP_AUTH_PW'] = null;
-            $_SERVER['AUTHORIZATION'] = null;
-            $_SERVER['HTTP_AUTHORIZATION'] = null;
-            $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] = null;
         }
 
         $this->next->call();

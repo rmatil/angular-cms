@@ -7,6 +7,11 @@ use RuntimeException;
 use SlimController\SlimController;
 
 /**
+ * Use the routes specified here for use of a form
+ * for the login process.
+ *
+ * @see \rmatil\cms\Controller\AuthenticationController For authentication through REST like calls
+ *
  * @package rmatil\cms\Controller
  */
 class LoginController extends SlimController {
