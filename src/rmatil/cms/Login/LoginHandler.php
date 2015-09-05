@@ -33,19 +33,7 @@ class LoginHandler {
             return;
         }
 
-        $user = $this->em->getRepository(EntityNames::USER)->findOneBy(array('userName' => $userName));
-
-        if ( ! ($user instanceof User)) {
-            throw new UserNotFoundException(sprintf('User with username "%s" could not be found', $userName));
-        }
-
-        if (false === PasswordHandler::isEqual($password, $user->getPasswordHash())) {
-            throw new WrongCredentialsException('Password does not match');
-        }
-
-        if (true === $user->getIsLocked()) {
-            throw new UserLockedException(sprintf('User with username "%s" is locked', $userName));
-        }
+        $user = $this->authenticateUser($userName, $password);
 
         if (false === $this->isGranted($path, $user->getUserGroup()->getRole())) {
             throw new AccessDeniedException(sprintf('Access denied for user "%s"', $userName));
@@ -82,6 +70,54 @@ class LoginHandler {
             // only throw if a route exist which should be protected
             throw new AccessDeniedException(sprintf('User does not have the required role'));
         }
+    }
+
+    /**
+     * Checks if the given route is secured by any access restriction
+     *
+     * @param $path string The route to check for access restrictions
+     * @return bool True, if the route is access restricted, false otherwise
+     */
+    public function isRouteProtected($path) {
+        foreach ($this->securedRoutes as $securedRoute => $allowedRoles) {
+            if (1 === preg_match(sprintf('/%s/', $securedRoute), $path) &&
+                ! in_array('ROLE_ANONYMOUS', $allowedRoles)) {
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks whether a user with the given credentials exist.
+     *
+     * @param $userName string The username
+     * @param $password string The password
+     *
+     * @return \rmatil\cms\Entities\User The found user, on success
+     *
+     * @throws \rmatil\cms\Exceptions\UserNotFoundException If the user does not exist
+     * @throws \rmatil\cms\Exceptions\WrongCredentialsException If the credentials do not match
+     * @throws \rmatil\cms\Exceptions\UserLockedException If the uesr is locked
+     */
+    public function authenticateUser($userName, $password) {
+        $user = $this->em->getRepository(EntityNames::USER)->findOneBy(array('userName' => $userName));
+
+        if ( ! ($user instanceof User)) {
+            throw new UserNotFoundException(sprintf('User with username "%s" could not be found', $userName));
+        }
+
+        if (false === PasswordHandler::isEqual($password, $user->getPasswordHash())) {
+            throw new WrongCredentialsException('Password does not match');
+        }
+
+        if (true === $user->getIsLocked()) {
+            throw new UserLockedException(sprintf('User with username "%s" is locked', $userName));
+        }
+
+        return $user;
     }
 
     protected function initSessionParams(User $user) {
