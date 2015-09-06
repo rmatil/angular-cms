@@ -71,11 +71,12 @@ class PageController extends SlimController {
         $pageObject->setLastEditDate($now);
 
         // get original page
+        /** @var \Doctrine\ORM\EntityManager $entityManager */
         $entityManager = $this->app->entityManager;
         $pageRepository = $entityManager->getRepository(EntityNames::PAGE);
         $origPage = $pageRepository->findOneBy(array('id' => $pageId));
 
-        if (!($origPage instanceof Page)) {
+        if ( ! ($origPage instanceof Page)) {
             ResponseFactory::createNotFoundResponse($this->app);
             return;
         }
@@ -95,6 +96,57 @@ class PageController extends SlimController {
         $userRepository = $entityManager->getRepository(EntityNames::USER);
         $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
         $pageObject->setAuthor($origUser);
+
+        // get all allowed usergroups
+        $userGroupRepo = $entityManager->getRepository(EntityNames::USER_GROUP);
+        $allUserGroups = $userGroupRepo->findAll();
+
+        foreach ($allUserGroups as $userGroup) {
+            if ($userGroup->getAccessiblePages()->contains($origPage) &&
+                ! $origPage->getAllowedUserGroups()->contains($userGroup)
+            ) {
+                // maintain inverse side
+                $origPage->addAllowedUserGroup($userGroup);
+            } else if ( ! $userGroup->getAccessiblePages()->contains($origPage) &&
+                $origPage->getAllowedUserGroups()->contains($userGroup)
+            ) {
+                // maintain inverse side
+                $origPage->removeAllowedUserGroup($userGroup);
+            }
+
+            if ( ! $userGroup->getAccessiblePages()->contains($origPage) &&
+                ! $origPage->getAllowedUserGroups()->contains($userGroup)
+            ) {
+                // use this loop here, as contains() does not
+                // consider a proxy object as a equally object. Basically, it isn't...
+                foreach ($pageObject->getAllowedUserGroups() as $userGroupObj) {
+                    if ($userGroupObj->getId() === $userGroup->getId()) {
+                        // usergroup was selected and we can add the page to the accessible usergroups
+                        // and the usergroup as allowedUserGroup to the page (inside addAccessiblePage-Method)
+                        $userGroup->addAccessiblePage($origPage);
+                        break;
+                    }
+                }
+
+            } else if ($userGroup->getAccessiblePages()->contains($origPage) &&
+                $origPage->getAllowedUserGroups()->contains($userGroup) &&
+                ! $pageObject->getAllowedUserGroups()->contains($userGroup)
+            ) {
+                $doesContainObj = false;
+                foreach ($pageObject->getAllowedUserGroups() as $userGroupObj) {
+                    if ($userGroupObj->getId() === $userGroup->getId()) {
+                        $doesContainObj = true;
+                        break;
+                    }
+                }
+
+                if ( ! $doesContainObj) {
+                    // usegroup was unselected and we can remove the page from the accessible usergroups
+                    // and the usergroup as the allowedUserGroup from the page (inside removeAccessiblePage)
+                    $userGroup->removeAccessiblePage($origPage);
+                }
+            }
+        }
 
         // get all articles
         $articleRepository = $entityManager->getRepository(EntityNames::ARTICLE);
@@ -130,7 +182,19 @@ class PageController extends SlimController {
         }
         $pageObject->setArticles($origArticles);
 
-        $origPage->update($pageObject);
+        $origPage->setArticles($pageObject->getArticles());
+        $origPage->setAuthor($pageObject->getAuthor());
+        $origPage->setCategory($pageObject->getCategory());
+        $origPage->setLanguage($pageObject->getLanguage());
+        $origPage->setParent($pageObject->getParent());
+        $origPage->setTitle($pageObject->getTitle());
+        $origPage->setCreationDate($pageObject->getCreationDate());
+        $origPage->setHasSubnavigation($pageObject->getHasSubnavigation());
+        $origPage->setIsPublished($pageObject->getIsPublished());
+        $origPage->setUrlName($pageObject->getUrlName());
+        $origPage->setLastEditDate($pageObject->getLastEditDate());
+        $origPage->setIsStartPage($pageObject->getIsStartPage());
+
         // release lock on editing
         $origPage->setIsLockedBy(null);
 
@@ -185,6 +249,24 @@ class PageController extends SlimController {
         }
         $pageObject->setArticles($origArticles);
 
+
+        // get all allowed usergroups
+        $userGroupObjs = $pageObject->getAllowedUserGroups()->toArray(); // use array here, otherwise this reference will also be empty after clear()
+        $pageObject->getAllowedUserGroups()->clear();
+        $userGroupRepo = $entityManager->getRepository(EntityNames::USER_GROUP);
+        $allUserGroups = $userGroupRepo->findAll();
+
+        foreach ($allUserGroups as $userGroup) {
+            foreach ($userGroupObjs as $userGroupObj) {
+                if ($userGroupObj->getId() === $userGroup->getId()) {
+                    // usergroup was selected and we can add the article to the accessible usergroups
+                    // and the usergroup as allowedUserGroup to the article (inside addAccessibleArticle-Method)
+                    $userGroup->addAccessiblePage($pageObject);
+                    break;
+                }
+            }
+        }
+
         $entityManager = $this->app->entityManager;
         $entityManager->persist($pageObject);
 
@@ -205,7 +287,7 @@ class PageController extends SlimController {
         $pageRepository = $entityManager->getRepository(EntityNames::PAGE);
         $page = $pageRepository->findOneBy(array('id' => $id));
 
-        if (! ($page instanceof Page)) {
+        if ( ! ($page instanceof Page)) {
             $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
             return;
         }

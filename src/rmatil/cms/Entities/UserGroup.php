@@ -3,52 +3,57 @@
 namespace rmatil\cms\Entities;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use JMS\Serializer\Annotation\Type;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity 
+ * @ORM\Entity
  * @ORM\Table(name="userGroups")
  **/
 class UserGroup {
 
     /**
      * Id of the user
-     * 
-     * @ORM\Id 
-     * @ORM\Column(type="integer") 
+     *
+     * @ORM\Id
+     * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      *
      * @Type("integer")
-     * 
+     *
      * @var integer
      */
     protected $id;
 
     /**
      * Name of the usergroup
-     * 
+     *
      * @ORM\Column(type="string")
      *
      * @Type("string")
-     * 
+     *
      * @var string
      */
     protected $name;
 
     /**
      * Role of the usergroup
-     * 
+     *
      * @ORM\Column(type="string")
      *
      * @Type("string")
-     * 
+     *
      * @var string
      */
     protected $role;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Article", mappedBy="allowedUserGroups")
+     * All articles which may be accessed by this user group.
+     *
+     * THIS IS THE OWNING SIDE.
+     * @see \rmatil\cms\Entities\Article::$allowedUserGroups
+     * @link http://docs.doctrine-project.org/en/latest/reference/working-with-associations.html#working-with-associations
+     *
+     * @ORM\ManyToMany(targetEntity="Article", inversedBy="allowedUserGroups")
      *
      * @Type("ArrayCollection<rmatil\cms\Entities\Article>")
      *
@@ -57,7 +62,13 @@ class UserGroup {
     protected $accessibleArticles;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Page", mappedBy="allowedUserGroups")
+     * All pages which may be accessed by this user group.
+     *
+     * THIS IS THE OWNING SIDE.
+     * @see \rmatil\cms\Entities\Page::$allowedUserGroups
+     * @link http://docs.doctrine-project.org/en/latest/reference/working-with-associations.html#working-with-associations
+     *
+     * @ORM\ManyToMany(targetEntity="Page", inversedBy="allowedUserGroups")
      *
      * @Type("ArrayCollection<rmatil\cms\Entities\Page>")
      *
@@ -66,7 +77,13 @@ class UserGroup {
     protected $accessiblePages;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Event", mappedBy="allowedUserGroups")
+     * All events which may be accessed by this user group.
+     *
+     * THIS IS THE OWNING SIDE.
+     * @see \rmatil\cms\Entities\Event::$allowedUserGroups
+     * @link http://docs.doctrine-project.org/en/latest/reference/working-with-associations.html#working-with-associations
+     *
+     * @ORM\ManyToMany(targetEntity="Event", inversedBy="allowedUserGroups")
      *
      * @Type("ArrayCollection<rmatil\cms\Entities\Event>")
      *
@@ -80,8 +97,8 @@ class UserGroup {
         $this->accessibleEvents = new ArrayCollection();
     }
 
-    
-     /**
+
+    /**
      * Gets the Id of the user.
      *
      * @return integer
@@ -117,7 +134,7 @@ class UserGroup {
         $this->name = $name;
     }
 
-     /**
+    /**
      * Gets the Role of the usergroup.
      *
      * @return string
@@ -146,20 +163,41 @@ class UserGroup {
     }
 
     /**
-     * Sets all articles which are accessible by this
-     * user group
+     * Sets all articles which are accessible by this user group.
+     * THIS IS THE OWNING SIDE. USE ADD/REMOVE TO PERSIST CHANGES TO INVERSE SIDE TOO:
      *
-     * @param ArrayCollection[rmatil\cms\Entity\Article] $accessibleArticles
+     * @param ArrayCollection [rmatil\cms\Entity\Article] $accessibleArticles
      */
     public function setAccessibleArticles($accessibleArticles) {
         $this->accessibleArticles = $accessibleArticles;
     }
 
+    /**
+     * Adds an accessible article. Updates the given article too.
+     * THIS IS THE OWNING SIDE.
+     *
+     * @param Article $article
+     */
     public function addAccessibleArticle(Article $article) {
         $this->accessibleArticles->add($article);
+        $article->addAllowedUserGroup($this);
     }
 
     /**
+     * Removes an accessible article. Updates the given article too.
+     * THIS IS THE OWNING SIDE.
+     *
+     * @param Article $article
+     */
+    public function removeAccessibleArticle(Article $article) {
+        $this->accessibleArticles->removeElement($article);
+        $article->removeAllowedUserGroup($this);
+    }
+
+    /**
+     * Gets all accessible pages.
+     * THIS IS THE OWNING SIDE.
+     *
      * @return ArrayCollection
      */
     public function getAccessiblePages() {
@@ -167,17 +205,41 @@ class UserGroup {
     }
 
     /**
+     * Sets all accessible pages.
+     * THIS IS THE OWNING SIDE. USE ADD/REMOVE TO PERSIST CHANGES TO INVERSE SIDE TOO:
+     *
      * @param ArrayCollection $accessiblePages
      */
     public function setAccessiblePages($accessiblePages) {
         $this->accessiblePages = $accessiblePages;
     }
 
+    /**
+     * Adds an accessible page. Updates the given page too.
+     * THIS IS THE OWNING SIDE.
+     *
+     * @param Page $page
+     */
     public function addAccessiblePage(Page $page) {
         $this->accessiblePages->add($page);
+        $page->addAllowedUserGroup($this);
     }
 
     /**
+     * Removes an accessible page. Updates the given page too.
+     * THIS IS THE OWNING SIDE.
+     *
+     * @param Page $page
+     */
+    public function removeAccessiblePage(Page $page) {
+        $this->accessiblePages->removeElement($page);
+        $page->removeAllowedUserGroup($this);
+    }
+
+    /**
+     * Gets all accessible events
+     * THIS IS THE OWNING SIDE.
+     *
      * @return ArrayCollection
      */
     public function getAccessibleEvents() {
@@ -185,14 +247,35 @@ class UserGroup {
     }
 
     /**
+     * Sets all accessible events.
+     * THIS IS THE OWNING SIDE. USE ADD/REMOVE TO PERSIST CHANGES TO INVERSE SIDE TOO:
+     *
      * @param ArrayCollection $accessibleEvents
      */
     public function setAccessibleEvents($accessibleEvents) {
         $this->accessibleEvents = $accessibleEvents;
     }
 
+    /**
+     * Adds an accessible event. Updates the given event too.
+     * THIS IS THE OWNING SIDE.
+     *
+     * @param Event $event
+     */
     public function addAccessibleEvent(Event $event) {
         $this->accessibleEvents->add($event);
+        $event->addAllowedUserGroup($this);
+    }
+
+    /**
+     * Removes an accessible event. Updates the given event too.
+     * THIS IS THE OWNING SIDE.
+     *
+     * @param Event $event
+     */
+    public function removeAccessibleEvent(Event $event) {
+        $this->accessibleEvents->removeElement($event);
+        $event->removeAllowedUserGroup($this);
     }
 
     public function update(UserGroup $userGroup) {

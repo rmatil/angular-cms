@@ -2,9 +2,8 @@
 
 namespace rmatil\cms\Entities;
 
-use JMS\Serializer\Annotation\Type;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
@@ -14,46 +13,46 @@ class Page {
 
     /**
      * Id of the page
-     * 
-     * @ORM\Id 
-     * @ORM\Column(type="integer") 
+     *
+     * @ORM\Id
+     * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      *
      * @Type("integer")
-     * 
+     *
      * @var integer
      */
     protected $id;
 
     /**
      * Url name for the page
-     * 
+     *
      * @ORM\Column(type="string")
      *
      * @Type("string")
-     * 
+     *
      * @var string
      */
     protected $urlName;
 
     /**
-     * The category to which the page belongs 
+     * The category to which the page belongs
      *
      * @ORM\ManyToOne(targetEntity="PageCategory", cascade="persist")
      *
      * @Type("rmatil\cms\Entities\PageCategory")
-     * 
+     *
      * @var \rmatil\cms\Entities\PageCategory
      */
     protected $category;
 
-     /**
+    /**
      * The author of this page
      *
      * @ORM\ManyToOne(targetEntity="User", cascade="persist")
      *
      * @Type("rmatil\cms\Entities\User")
-     * 
+     *
      * @var \rmatil\cms\Entities\User
      */
     protected $author;
@@ -64,29 +63,29 @@ class Page {
      * @ORM\ManyToOne(targetEntity="Language", cascade="persist")
      *
      * @Type("rmatil\cms\Entities\Language")
-     * 
+     *
      * @var \rmatil\cms\Entities\Language
      */
     protected $language;
 
     /**
      * Title of the page
-     * 
+     *
      * @ORM\Column(type="string")
      *
      * @Type("string")
-     * 
+     *
      * @var string
      */
     protected $title;
 
     /**
      * Parentpage of this page
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="Page", cascade="persist")
      *
      * @Type("rmatil\cms\Entities\Page")
-     * 
+     *
      * @var \rmatil\cms\Entities\Page
      */
     protected $parent;
@@ -97,7 +96,7 @@ class Page {
      * @ORM\OneToMany(targetEntity="Article", mappedBy="page")
      *
      * @Type("ArrayCollection<rmatil\cms\Entities\Article>")
-     * 
+     *
      * @var array
      */
     protected $articles;
@@ -105,64 +104,68 @@ class Page {
     /**
      * Indicates whether this page should show
      * its articles as subnavigation
-     * 
+     *
      * @ORM\Column(type="boolean")
      *
      * @Type("boolean")
-     * 
+     *
      * @var boolean
      */
     protected $hasSubnavigation = false;
 
     /**
-     * Indicates whether this page is locked 
+     * Indicates whether this page is locked
      * for editing or not
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="User", cascade="persist")
      *
      * @Type("rmatil\cms\Entities\User")
-     * 
+     *
      * @var \rmatil\cms\Entities\User
      */
     protected $isLockedBy;
 
     /**
      * Indicates whether the page should be published or not
-     * 
+     *
      * @ORM\Column(type="boolean")
      *
      * @Type("boolean")
-     * 
+     *
      * @var boolean
      */
     protected $isPublished = false;
 
     /**
      * DateTime object of the last edit date. May be null
-     * 
+     *
      * @ORM\Column(type="datetime")
      *
      * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
-     * 
+     *
      * @var \DateTime
      */
     protected $lastEditDate;
 
     /**
      * DateTime object of the creation date. May be null
-     * 
+     *
      * @ORM\Column(type="datetime")
      *
      * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
-     * 
+     *
      * @var \DateTime
      */
     protected $creationDate;
 
     /**
-     * All user groups which are allowed to access this page
+     * All user groups which are allowed to access this page.
      *
-     * @ORM\ManyToMany(targetEntity="UserGroup", inversedBy="accessiblePages")
+     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
+     * @see \rmatil\cms\Entities\UserGroup::$accessiblePages
+     * @link http://docs.doctrine-project.org/en/latest/reference/working-with-associations.html#working-with-associations
+     *
+     * @ORM\ManyToMany(targetEntity="UserGroup", mappedBy="accessiblePages")
      * @ORM\JoinTable(name="usergroup_pages")
      *
      * @Type("ArrayCollection<rmatil\cms\Entities\UserGroup>")
@@ -432,17 +435,39 @@ class Page {
     }
 
     /**
-     * Sets all user groups which are allowed to access this page
+     * Sets all user groups which are allowed to access this page.
      *
-     * @param ArrayCollection $allowedUserGroups
+     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
+     * @see \rmatil\cms\Entities\UserGroup::$accessiblePages
+     *
+     * @param ArrayCollection $allowedUserGroups The user groups which may access this page
      */
     public function setAllowedUserGroups($allowedUserGroups) {
         $this->allowedUserGroups = $allowedUserGroups;
     }
 
+    /**
+     * Adds an user group which may access this page.
+     *
+     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
+     * @see \rmatil\cms\Entities\UserGroup::$accessiblePages
+     *
+     * @param UserGroup $userGroup The user group to allow access to this page
+     */
     public function addAllowedUserGroup(UserGroup $userGroup) {
-        $this->allowedUserGroups->add($userGroup);
-        $userGroup->addAccessiblePage($this);
+        $this->allowedUserGroups[] = $userGroup;
+    }
+
+    /**
+     * Removes the given user group from the groups which may access this page.
+     *
+     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
+     * @see \rmatil\cms\Entities\UserGroup::$accessiblePages
+     *
+     * @param UserGroup $userGroup
+     */
+    public function removeAllowedUserGroup(UserGroup $userGroup) {
+        $this->allowedUserGroups->removeElement($userGroup);
     }
 
     /**
@@ -461,29 +486,6 @@ class Page {
      */
     public function setIsStartPage($isStartPage) {
         $this->isStartPage = $isStartPage;
-    }
-
-    /**
-     * Updates this object with the values of the given page
-     * 
-     * @param  Page   $page The page with the values to use
-     */
-    public function update(Page $page) {
-        $this->setArticles($page->getArticles());
-        $this->setAuthor($page->getAuthor());
-        $this->setCategory($page->getCategory());
-        $this->setId($page->getId());
-        $this->setLanguage($page->getLanguage());
-        $this->setParent($page->getParent());
-        $this->setTitle($page->getTitle());
-        $this->setCreationDate($page->getCreationDate());
-        $this->setHasSubnavigation($page->getHasSubnavigation());
-        $this->setIsPublished($page->getIsPublished());
-        $this->setUrlName($page->getUrlName());
-        $this->setIsLockedBy($page->getIsLockedBy());
-        $this->setLastEditDate($page->getLastEditDate());
-        $this->setAllowedUserGroups($page->getAllowedUserGroups());
-        $this->setIsStartPage($page->getIsStartPage());
     }
 }
 

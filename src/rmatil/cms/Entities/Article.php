@@ -2,10 +2,9 @@
 
 namespace rmatil\cms\Entities;
 
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
-use JMS\Serializer\Annotation\Type;
 use Doctrine\ORM\Mapping as ORM;
-use \DateTime;
 
 /**
  * @ORM\Entity
@@ -15,35 +14,35 @@ class Article {
 
     /**
      * Id of the article
-     * 
-     * @ORM\Id 
-     * @ORM\Column(type="integer") 
+     *
+     * @ORM\Id
+     * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      *
      * @Type("integer")
-     * 
+     *
      * @var integer
      */
     protected $id;
 
     /**
      * Url name for the article
-     * 
+     *
      * @ORM\Column(type="string")
      *
      * @Type("string")
-     * 
+     *
      * @var string
      */
     protected $urlName;
 
     /**
-     * The category to which the article belongs 
+     * The category to which the article belongs
      *
      * @ORM\ManyToOne(targetEntity="ArticleCategory", cascade="persist")
      *
      * @Type("rmatil\cms\Entities\ArticleCategory")
-     * 
+     *
      * @var \rmatil\cms\Entities\ArticleCategory
      */
     protected $category;
@@ -54,7 +53,7 @@ class Article {
      * @ORM\ManyToOne(targetEntity="User", cascade="persist")
      *
      * @Type("rmatil\cms\Entities\User")
-     * 
+     *
      * @var \rmatil\cms\Entities\User
      */
     protected $author;
@@ -65,29 +64,29 @@ class Article {
      * @ORM\ManyToOne(targetEntity="Language", cascade="persist")
      *
      * @Type("rmatil\cms\Entities\Language")
-     * 
+     *
      * @var \rmatil\cms\Entities\Language
      */
     protected $language;
 
     /**
      * Title of the article
-     * 
+     *
      * @ORM\Column(type="string")
      *
      * @Type("string")
-     * 
+     *
      * @var string
      */
     protected $title;
 
     /**
      * Body of the article
-     * 
+     *
      * @ORM\Column(type="text")
      *
      * @Type("string")
-     * 
+     *
      * @var string
      */
     protected $content;
@@ -95,11 +94,11 @@ class Article {
     /**
      * DateTime object of the last edit date
      * May be null
-     * 
+     *
      * @ORM\Column(type="datetime")
      *
      * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
-     * 
+     *
      * @var \DateTime
      */
     protected $lastEditDate;
@@ -107,34 +106,34 @@ class Article {
     /**
      * DateTime object of the creation date
      * May be null
-     * 
+     *
      * @ORM\Column(type="datetime")
      *
      * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
-     * 
+     *
      * @var \DateTime
      */
     protected $creationDate;
 
     /**
-     * Indicates whether this article is locked 
+     * Indicates whether this article is locked
      * for editing or not
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="User", cascade="persist")
      *
      * @Type("rmatil\cms\Entities\User")
-     * 
+     *
      * @var \rmatil\cms\Entities\User
      */
     protected $isLockedBy;
 
     /**
      * Indicates whether the article should be published or not
-     * 
+     *
      * @ORM\Column(type="boolean")
      *
      * @Type("boolean")
-     * 
+     *
      * @var boolean
      */
     protected $isPublished = false;
@@ -145,7 +144,7 @@ class Article {
      * @ORM\ManyToOne(targetEntity="Page", inversedBy="articles")
      *
      * @Type("rmatil\cms\Entities\Page")
-     * 
+     *
      * @var \rmatil\cms\Entities\Page
      */
     protected $page;
@@ -153,7 +152,11 @@ class Article {
     /**
      * All user groups which are allowed to access this article
      *
-     * @ORM\ManyToMany(targetEntity="UserGroup", inversedBy="accessibleArticles")
+     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
+     * @see \rmatil\cms\Entities\UserGroup::$accessibleArticles
+     * @link http://docs.doctrine-project.org/en/latest/reference/working-with-associations.html#working-with-associations
+     *
+     * @ORM\ManyToMany(targetEntity="UserGroup", mappedBy="accessibleArticles")
      * @ORM\JoinTable(name="usergroup_articles")
      *
      * @Type("ArrayCollection<rmatil\cms\Entities\UserGroup>")
@@ -164,15 +167,15 @@ class Article {
 
 
     public function __construct() {
-        $this->content  = '';
+        $this->content = '';
         $this->creationDate = new DateTime();
         $this->lastEditDate = new DateTime();
-        $this->urlName  = '';
-        $this->title  = '';
+        $this->urlName = '';
+        $this->title = '';
         $this->isPublished = true;
         $this->allowedUserGroups = new ArrayCollection();
     }
-    
+
 
     /**
      * Gets the Id of the article.
@@ -404,37 +407,39 @@ class Article {
     }
 
     /**
-     * Sets all user groups which are allowed to access this article
+     * Sets all user groups which are allowed to access this article.
      *
-     * @param ArrayCollection $allowedUserGroups
+     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
+     * @see \rmatil\cms\Entities\UserGroup::$accessibleArticles
+     *
+     * @param ArrayCollection $allowedUserGroups The user groups which may access this article
      */
     public function setAllowedUserGroups($allowedUserGroups) {
         $this->allowedUserGroups = $allowedUserGroups;
     }
 
+    /**
+     * Adds an user group which may access this article.
+     *
+     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
+     * @see \rmatil\cms\Entities\UserGroup::$accessibleArticles
+     *
+     * @param UserGroup $userGroup The user group to allow access to
+     */
     public function addAllowedUserGroup(UserGroup $userGroup) {
-        $this->allowedUserGroups->add($userGroup);
-        $userGroup->addAccessibleArticle($this);
+        $this->allowedUserGroups[] = $userGroup;
     }
 
     /**
-     * Updates this with the public accessible properties of 
-     * $article
-     * 
-     * @param  Article $article Article with updated values
+     * Removes the access to this article from the given user group.
+     *
+     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
+     * @see \rmatil\cms\Entities\UserGroup::$accessibleArticles
+     *
+     * @param UserGroup $userGroup The user group from which to revoke access from
      */
-    public function update(Article $article) {
-        $this->setTitle($article->getTitle());
-        $this->setContent($article->getContent());
-        $this->setUrlName($article->getUrlName());
-        $this->setIsLockedBy($article->getIsLockedBy());
-        $this->setIsPublished($article->getIsPublished());
-        $this->setCategory($article->getCategory());            
-        $this->setAuthor($article->getAuthor());
-        $this->setLanguage($article->getLanguage());
-        $this->setLastEditDate($article->getLastEditDate());
-        $this->setCreationDate($article->getCreationDate());
-        $this->setAllowedUserGroups($article->getAllowedUserGroups());
+    public function removeAllowedUserGroup(UserGroup $userGroup) {
+        $this->allowedUserGroups->removeElement($userGroup);
     }
 
 }

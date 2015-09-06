@@ -98,7 +98,68 @@ class EventController extends SlimController {
         $origFile = $fileRepository->findOneBy(array('id' => $eventObject->getFile()));
         $eventObject->setFile($origFile);
 
-        $origEvent->update($eventObject);
+        // get all allowed usergroups
+        $userGroupRepo = $entityManager->getRepository(EntityNames::USER_GROUP);
+        $allUserGroups = $userGroupRepo->findAll();
+
+        foreach ($allUserGroups as $userGroup) {
+            if ($userGroup->getAccessibleEvents()->contains($origEvent) &&
+                ! $origEvent->getAllowedUserGroups()->contains($userGroup)
+            ) {
+                // maintain inverse side
+                $origEvent->addAllowedUserGroup($userGroup);
+            } else if ( ! $userGroup->getAccessibleEvents()->contains($origEvent) &&
+                $origEvent->getAllowedUserGroups()->contains($userGroup)
+            ) {
+                // maintain inverse side
+                $origEvent->removeAllowedUserGroup($userGroup);
+            }
+
+            if ( ! $userGroup->getAccessibleEvents()->contains($origEvent) &&
+                ! $origEvent->getAllowedUserGroups()->contains($userGroup)
+            ) {
+                // use this loop here, as contains() does not
+                // consider a proxy object as a equally object. Basically, it isn't...
+                foreach ($eventObject->getAllowedUserGroups() as $userGroupObj) {
+                    if ($userGroupObj->getId() === $userGroup->getId()) {
+                        // usergroup was selected and we can add the event to the accessible usergroups
+                        // and the usergroup as allowedUserGroup to the event (inside addAccessibleEvent-Method)
+                        $userGroup->addAccessibleEvent($origEvent);
+                        break;
+                    }
+                }
+
+            } else if ($userGroup->getAccessibleEvents()->contains($origEvent) &&
+                $origEvent->getAllowedUserGroups()->contains($userGroup) &&
+                ! $eventObject->getAllowedUserGroups()->contains($userGroup)
+            ) {
+                $doesContainObj = false;
+                foreach ($eventObject->getAllowedUserGroups() as $userGroupObj) {
+                    if ($userGroupObj->getId() === $userGroup->getId()) {
+                        $doesContainObj = true;
+                        break;
+                    }
+                }
+
+                if ( ! $doesContainObj) {
+                    // usegroup was unselected and we can remove the event from the accessible usergroups
+                    // and the usergroup as the allowedUserGroup from the event (inside removeAccessibleEvent)
+                    $userGroup->removeAccessibleEvent($origEvent);
+                }
+            }
+        }
+
+        $origEvent->setAuthor($eventObject->getAuthor());
+        $origEvent->setLocation($eventObject->getLocation());
+        $origEvent->setFile($eventObject->getFile());
+        $origEvent->setName($eventObject->getName());
+        $origEvent->setRepeatOption($eventObject->getRepeatOption());
+        $origEvent->setStartDate($eventObject->getStartDate());
+        $origEvent->setEndDate($eventObject->getEndDate());
+        $origEvent->setDescription($eventObject->getDescription());
+        $origEvent->setLastEditDate($eventObject->getLastEditDate());
+        $origEvent->setCreationDate($eventObject->getCreationDate());
+
         // release lock on editing
         $origEvent->setIsLockedBy(null);
 
@@ -145,6 +206,23 @@ class EventController extends SlimController {
         $fileRepository = $entityManager->getRepository(EntityNames::FILE);
         $origFile = $fileRepository->findOneBy(array('id' => $eventObject->getFile()));
         $eventObject->setFile($origFile);
+
+        // get all allowed usergroups
+        $userGroupObjs = $eventObject->getAllowedUserGroups()->toArray(); // use array here, otherwise this reference will also be empty after clear()
+        $eventObject->getAllowedUserGroups()->clear();
+        $userGroupRepo = $entityManager->getRepository(EntityNames::USER_GROUP);
+        $allUserGroups = $userGroupRepo->findAll();
+
+        foreach ($allUserGroups as $userGroup) {
+            foreach ($userGroupObjs as $userGroupObj) {
+                if ($userGroupObj->getId() === $userGroup->getId()) {
+                    // usergroup was selected and we can add the article to the accessible usergroups
+                    // and the usergroup as allowedUserGroup to the article (inside addAccessibleArticle-Method)
+                    $userGroup->addAccessibleEvent($eventObject);
+                    break;
+                }
+            }
+        }
 
         $entityManager->persist($eventObject);
 

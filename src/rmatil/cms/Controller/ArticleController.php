@@ -3,6 +3,7 @@
 namespace rmatil\cms\Controller;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\DBALException;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
@@ -96,7 +97,67 @@ class ArticleController extends SlimController {
             $articleObject->setCategory($origArticleCategory);
         }
 
-        $origArticle->update($articleObject);
+        // get all allowed usergroups
+        // first clean all allowed user groups to remove the unselected ones
+        $userGroupRepo = $entityManager->getRepository(EntityNames::USER_GROUP);
+        $allUserGroups = $userGroupRepo->findAll();
+
+        foreach ($allUserGroups as $userGroup) {
+            if ($userGroup->getAccessibleArticles()->contains($origArticle) &&
+                ! $origArticle->getAllowedUserGroups()->contains($userGroup)
+            ) {
+                // maintain inverse side
+                $origArticle->addAllowedUserGroup($userGroup);
+            } else if ( ! $userGroup->getAccessibleArticles()->contains($origArticle) &&
+                $origArticle->getAllowedUserGroups()->contains($userGroup)
+            ) {
+                // maintain inverse side
+                $origArticle->removeAllowedUserGroup($userGroup);
+            }
+
+            if ( ! $userGroup->getAccessibleArticles()->contains($origArticle) &&
+                ! $origArticle->getAllowedUserGroups()->contains($userGroup)
+            ) {
+                // use this loop here, as contains() does not
+                // consider a proxy object as a equally object. Basically, it isn't...
+                foreach ($articleObject->getAllowedUserGroups() as $userGroupObj) {
+                    if ($userGroupObj->getId() === $userGroup->getId()) {
+                        // usergroup was selected and we can add the article to the accessible usergroups
+                        // and the usergroup as allowedUserGroup to the article (inside addAccessibleArticle-Method)
+                        $userGroup->addAccessibleArticle($origArticle);
+                        break;
+                    }
+                }
+
+            } else if ($userGroup->getAccessibleArticles()->contains($origArticle) &&
+                $origArticle->getAllowedUserGroups()->contains($userGroup) &&
+                ! $articleObject->getAllowedUserGroups()->contains($userGroup)
+            ) {
+                $doesContainObj = false;
+                foreach ($articleObject->getAllowedUserGroups() as $userGroupObj) {
+                    if ($userGroupObj->getId() === $userGroup->getId()) {
+                        $doesContainObj = true;
+                        break;
+                    }
+                }
+
+                if ( ! $doesContainObj) {
+                    // usegroup was unselected and we can remove the article from the accessible usergroups
+                    // and the usergroup as the allowedUserGroup from the article (inside removeAccessibleArticle)
+                    $userGroup->removeAccessibleArticle($origArticle);
+                }
+            }
+        }
+
+        $origArticle->setTitle($articleObject->getTitle());
+        $origArticle->setContent($articleObject->getContent());
+        $origArticle->setUrlName($articleObject->getUrlName());
+        $origArticle->setIsPublished($articleObject->getIsPublished());
+        $origArticle->setCategory($articleObject->getCategory());
+        $origArticle->setAuthor($articleObject->getAuthor());
+        $origArticle->setLanguage($articleObject->getLanguage());
+        $origArticle->setLastEditDate($articleObject->getLastEditDate());
+        $origArticle->setCreationDate($articleObject->getCreationDate());
         // release lock on editing
         $origArticle->setIsLockedBy(null);
 
@@ -139,6 +200,24 @@ class ArticleController extends SlimController {
             $articleObject->setCategory($origArticleCategory);
         }
 
+        // get all allowed usergroups
+        $userGroupObjs = $articleObject->getAllowedUserGroups()->toArray(); // use array here, otherwise this reference will also be empty after clear()
+        $articleObject->getAllowedUserGroups()->clear();
+        $userGroupRepo = $entityManager->getRepository(EntityNames::USER_GROUP);
+        $allUserGroups = $userGroupRepo->findAll();
+
+        foreach ($allUserGroups as $userGroup) {
+            foreach ($userGroupObjs as $userGroupObj) {
+                if ($userGroupObj->getId() === $userGroup->getId()) {
+                    // usergroup was selected and we can add the article to the accessible usergroups
+                    // and the usergroup as allowedUserGroup to the article (inside addAccessibleArticle-Method)
+                    $userGroup->addAccessibleArticle($articleObject);
+                    break;
+                }
+            }
+        }
+
+        /** @var \Doctrine\ORM\EntityManager $entityManager */
         $entityManager = $this->app->entityManager;
         $entityManager->persist($articleObject);
 

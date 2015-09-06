@@ -2,25 +2,24 @@
 
 namespace rmatil\cms\Entities;
 
-use JMS\Serializer\Annotation\Type;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity 
+ * @ORM\Entity
  * @ORM\Table(name="events")
  **/
 class Event {
 
     /**
      * Id of the Event
-     * 
-     * @ORM\Id 
-     * @ORM\Column(type="integer") 
+     *
+     * @ORM\Id
+     * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      *
      * @Type("integer")
-     * 
+     *
      * @var integer
      */
     protected $id;
@@ -31,7 +30,7 @@ class Event {
      * @ORM\ManyToOne(targetEntity="User")
      *
      * @Type("rmatil\cms\Entities\User")
-     * 
+     *
      * @var \rmatil\cms\Entities\User
      */
     protected $author;
@@ -42,14 +41,14 @@ class Event {
      * @ORM\ManyToOne(targetEntity="Location")
      *
      * @Type("rmatil\cms\Entities\Location")
-     * 
+     *
      * @var \rmatil\cms\Entities\Location
      */
     protected $location;
 
     /**
      * A file attached to this event
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="File")
      *
      * @Type("rmatil\cms\Entities\File")
@@ -60,11 +59,11 @@ class Event {
 
     /**
      * The name of the event
-     * 
-     * @ORM\Column(type="string") 
+     *
+     * @ORM\Column(type="string")
      *
      * @Type("string")
-     * 
+     *
      * @var string
      */
     protected $name;
@@ -75,82 +74,86 @@ class Event {
      * @ORM\ManyToOne(targetEntity="RepeatOption")
      *
      * @Type("rmatil\cms\Entities\RepeatOption")
-     * 
+     *
      * @var \rmatil\cms\Entities\RepeatOption
      */
     protected $repeatOption;
 
     /**
      * DateTime object of the start date
-     * 
+     *
      * @ORM\Column(type="datetime", nullable=true)
      *
      * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
-     * 
+     *
      * @var \DateTime
      */
     protected $startDate;
 
     /**
      * DateTime object of the end date
-     * 
+     *
      * @ORM\Column(type="datetime", nullable=true)
      *
      * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
-     * 
+     *
      * @var \DateTime
      */
     protected $endDate;
 
     /**
      * The description of the event
-     * 
+     *
      * @ORM\Column(type="text", nullable=true)
      *
      * @Type("string")
-     * 
+     *
      * @var string
      */
     protected $description;
 
     /**
-     * Indicates whether this article is locked 
+     * Indicates whether this article is locked
      * for editing or not
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="User", cascade="persist")
      *
      * @Type("rmatil\cms\Entities\User")
-     * 
+     *
      * @var \rmatil\cms\Entities\User
      */
     protected $isLockedBy;
 
-     /**
+    /**
      * DateTime object of the last edit date
-     * 
+     *
      * @ORM\Column(type="datetime")
      *
      * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
-     * 
+     *
      * @var \DateTime
      */
     protected $lastEditDate;
 
-     /**
+    /**
      * DateTime object of the creation date
-     * 
+     *
      * @ORM\Column(type="datetime")
      *
      * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
-     * 
+     *
      * @var \DateTime
      */
     protected $creationDate;
 
     /**
-     * All user groups which are allowed to access this event
+     * All user groups which are allowed to access this event.
      *
-     * @ORM\ManyToMany(targetEntity="UserGroup", inversedBy="accessibleEvents")
+     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
+     * @see \rmatil\cms\Entities\UserGroup::$accessiblePages
+     * @link http://docs.doctrine-project.org/en/latest/reference/working-with-associations.html#working-with-associations
+     *
+     * @ORM\ManyToMany(targetEntity="UserGroup", mappedBy="accessibleEvents")
      * @ORM\JoinTable(name="usergroup_events")
      *
      * @Type("ArrayCollection<rmatil\cms\Entities\UserGroup>")
@@ -159,10 +162,10 @@ class Event {
      */
     protected $allowedUserGroups;
 
+
     public function __construct() {
         $this->allowedUserGroups = new ArrayCollection();
     }
-
 
     /**
      * Gets the The author of this article.
@@ -362,20 +365,6 @@ class Event {
         $this->creationDate = $creationDate;
     }
 
-    public function update(Event $event) {
-        $this->setAuthor($event->getAuthor());
-        $this->setLocation($event->getLocation());
-        $this->setFile($event->getFile());
-        $this->setName($event->getName());
-        $this->setRepeatOption($event->getRepeatOption());
-        $this->setStartDate($event->getStartDate());
-        $this->setEndDate($event->getEndDate());
-        $this->setDescription($event->getDescription());
-        $this->setLastEditDate($event->getLastEditDate());
-        $this->setCreationDate($event->getCreationDate());
-        $this->setAllowedUserGroups($event->getAllowedUserGroups());
-    }
-
     /**
      * Gets the Id of the Event.
      *
@@ -404,16 +393,38 @@ class Event {
     }
 
     /**
-     * Sets all user groups which are allowed to access this event
+     * Sets all user groups which are allowed to access this event.
      *
-     * @param ArrayCollection $allowedUserGroups
+     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
+     * @see \rmatil\cms\Entities\UserGroup::$accessibleEvents
+     *
+     * @param ArrayCollection $allowedUserGroups The user groups which may access this event
      */
     public function setAllowedUserGroups($allowedUserGroups) {
         $this->allowedUserGroups = $allowedUserGroups;
     }
 
+    /**
+     * Adds an user group which may access this event.
+     *
+     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
+     * @see \rmatil\cms\Entities\UserGroup::$accessibleEvents
+     *
+     * @param UserGroup $userGroup The user group which will have access to this event
+     */
     public function addAllowedUserGroup(UserGroup $userGroup) {
-        $this->allowedUserGroups->add($userGroup);
-        $userGroup->addAccessibleEvent($this);
+        $this->allowedUserGroups[] = $userGroup;
+    }
+
+    /**
+     * Revokes access from a user group to this event.
+     *
+     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
+     * @see \rmatil\cms\Entities\UserGroup::$accessibleEvents
+     *
+     * @param UserGroup $userGroup
+     */
+    public function removeAllowedUserGroup(UserGroup $userGroup) {
+        $this->allowedUserGroups->removeElement($userGroup);
     }
 }
