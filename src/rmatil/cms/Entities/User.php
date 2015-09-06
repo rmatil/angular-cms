@@ -142,7 +142,7 @@ class User {
      * 
      * @ORM\Column(type="string", nullable=true)
      *
-     * @Type("string")
+     * @Exclude
      * 
      * @var string
      */
