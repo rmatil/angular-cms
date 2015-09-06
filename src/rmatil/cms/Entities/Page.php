@@ -112,7 +112,7 @@ class Page {
      * 
      * @var boolean
      */
-    protected $hasSubnavigation;
+    protected $hasSubnavigation = false;
 
     /**
      * Indicates whether this page is locked 
@@ -135,7 +135,7 @@ class Page {
      * 
      * @var boolean
      */
-    protected $isPublic;
+    protected $isPublished = false;
 
     /**
      * DateTime object of the last edit date. May be null
@@ -180,7 +180,7 @@ class Page {
      *
      * @var boolean
      */
-    protected $isStartPage;
+    protected $isStartPage = false;
 
 
     public function __construct() {
@@ -373,17 +373,17 @@ class Page {
      *
      * @return boolean
      */
-    public function getIsPublic() {
-        return $this->isPublic;
+    public function getIsPublished() {
+        return $this->isPublished;
     }
 
     /**
      * Sets the Indicates whether the page should be published or not.
      *
-     * @param boolean $isPublic the is public
+     * @param boolean $isPublished the is public
      */
-    public function setIsPublic($isPublic) {
-        $this->isPublic = $isPublic;
+    public function setIsPublished($isPublished) {
+        $this->isPublished = $isPublished;
     }
 
     /**
@@ -478,7 +478,7 @@ class Page {
         $this->setTitle($page->getTitle());
         $this->setCreationDate($page->getCreationDate());
         $this->setHasSubnavigation($page->getHasSubnavigation());
-        $this->setIsPublic($page->getIsPublic());
+        $this->setIsPublished($page->getIsPublished());
         $this->setUrlName($page->getUrlName());
         $this->setIsLockedBy($page->getIsLockedBy());
         $this->setLastEditDate($page->getLastEditDate());
