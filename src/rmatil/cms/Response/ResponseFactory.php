@@ -46,9 +46,10 @@ class ResponseFactory {
 
     /**
      * @param $app \Slim\Slim The slim application instance
+     * @param $message string The not found message
      */
-    public static function createNotFoundResponse($app) {
-        $app->response->setStatus(HttpStatusCodes::NOT_FOUND);
+    public static function createNotFoundResponse($app, $message) {
+        self::createErrorJsonResponse($app, HttpStatusCodes::NOT_FOUND, $message);
     }
 
     /**

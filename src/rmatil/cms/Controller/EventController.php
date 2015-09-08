@@ -32,7 +32,7 @@ class EventController extends SlimController {
         $event = $eventRepository->findOneBy(array('id' => $id));
 
         if ( ! ($event instanceof Event)) {
-            $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find event');
             return;
         }
 
@@ -58,7 +58,7 @@ class EventController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
     }
@@ -73,7 +73,7 @@ class EventController extends SlimController {
         $origEvent = $eventRepository->findOneBy(array('id' => $eventId));
 
         if ( ! ($origEvent instanceof Event)) {
-            $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find event');
             return;
         }
 
@@ -169,7 +169,7 @@ class EventController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 
@@ -231,7 +231,7 @@ class EventController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 
@@ -244,7 +244,7 @@ class EventController extends SlimController {
         $event = $eventRepository->findOneBy(array('id' => $id));
 
         if ( ! ($event instanceof Event)) {
-            $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find event');
             return;
         }
 
@@ -258,7 +258,7 @@ class EventController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
         }
 
         $this->app->response->setStatus(HttpStatusCodes::NO_CONTENT);

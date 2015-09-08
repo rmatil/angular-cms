@@ -32,7 +32,7 @@ class PageController extends SlimController {
         $page = $pageRepository->findOneBy(array('id' => $id));
 
         if ( ! ($page instanceof Page)) {
-            ResponseFactory::createNotFoundResponse($this->app);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find page');
             return;
         }
 
@@ -58,7 +58,7 @@ class PageController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
     }
@@ -77,7 +77,7 @@ class PageController extends SlimController {
         $origPage = $pageRepository->findOneBy(array('id' => $pageId));
 
         if ( ! ($origPage instanceof Page)) {
-            ResponseFactory::createNotFoundResponse($this->app);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find page');
             return;
         }
 
@@ -204,7 +204,7 @@ class PageController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 
@@ -275,7 +275,7 @@ class PageController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 
@@ -288,7 +288,7 @@ class PageController extends SlimController {
         $page = $pageRepository->findOneBy(array('id' => $id));
 
         if ( ! ($page instanceof Page)) {
-            $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find page');
             return;
         }
 
@@ -307,7 +307,7 @@ class PageController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 

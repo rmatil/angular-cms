@@ -11,6 +11,8 @@ use rmatil\cms\Entities\File;
 use rmatil\cms\Exceptions\FileAlreadyExistsException;
 use rmatil\cms\Exceptions\FileNotSavedException;
 use rmatil\cms\Exceptions\ThumbnailCreationFailedException;
+use rmatil\cms\Response\ResponseFactory;
+use Slim\Http\Response;
 use SlimController\SlimController;
 
 /**
@@ -23,10 +25,7 @@ class FileController extends SlimController {
         $fileRepository = $entityManager->getRepository(EntityNames::FILE);
         $files = $fileRepository->findAll();
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($files, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $files);
     }
 
     public function getFileByIdAction($id) {
@@ -35,14 +34,11 @@ class FileController extends SlimController {
         $file = $fileRepository->findOneBy(array('id' => $id));
 
         if ($file === null) {
-            $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find file');
             return;
         }
 
-        $this->app->expires(0);
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::OK);
-        $this->app->response->setBody($this->app->serializer->serialize($file, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $file);
 
     }
 
@@ -56,15 +52,13 @@ class FileController extends SlimController {
         } catch (FileAlreadyExistsException $faee) {
             $now = new DateTime();
             $this->app->log->info(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $faee->getMessage()));
-            $this->app->response->setStatus(HTTP::CONFLICT);
-            $this->app->response->setBody('File already exists');
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, 'File already exists');
             return;
         } catch (FileNotSavedException $fnse) {
             // file & thumbnail were not saved
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $fnse->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
-            $this->app->response->setBody('File could not be saved');
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $fnse->getMessage());
             return;
         } catch (InvalidArgumentException $iae) {
             // only thumbnail was not saved because of wrong parameters, file was saved
@@ -94,13 +88,11 @@ class FileController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 
-        $this->app->response->header('Content-Type', 'application/json');
-        $this->app->response->setStatus(HttpStatusCodes::CREATED);
-        $this->app->response->setBody($this->app->serializer->serialize($fileObject, 'json'));
+        ResponseFactory::createJsonResponse($this->app, $fileObject);
     }
 
     public function deleteFileByIdAction($id) {
@@ -108,8 +100,8 @@ class FileController extends SlimController {
         $fileRepository = $entityManager->getRepository(EntityNames::FILE);
         $file = $fileRepository->findOneBy(array('id' => $id));
 
-        if ($file === null) {
-            $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
+        if ( ! ($file instanceof File)) {
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find file');
             return;
         }
 
@@ -118,7 +110,7 @@ class FileController extends SlimController {
         } catch (\Exception $e) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $e->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $e->getMessage());
             return;
         }
 
@@ -129,7 +121,7 @@ class FileController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 

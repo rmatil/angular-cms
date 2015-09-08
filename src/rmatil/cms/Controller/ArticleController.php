@@ -32,7 +32,7 @@ class ArticleController extends SlimController {
         $article = $articleRepository->findOneBy(array('id' => $id));
 
         if ( ! ($article instanceof Article)) {
-            ResponseFactory::createNotFoundResponse($this->app);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find article');
             return;
         }
 
@@ -58,7 +58,7 @@ class ArticleController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
     }
@@ -77,7 +77,7 @@ class ArticleController extends SlimController {
         $origArticle = $articleRepository->findOneBy(array('id' => $articleId));
 
         if ( ! ($origArticle instanceof Article)) {
-            ResponseFactory::createNotFoundResponse($this->app);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find article');
             return;
         }
 
@@ -167,7 +167,7 @@ class ArticleController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 
@@ -226,7 +226,7 @@ class ArticleController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 
@@ -253,7 +253,7 @@ class ArticleController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
         }
 
         $this->app->response->setStatus(HttpStatusCodes::NO_CONTENT);

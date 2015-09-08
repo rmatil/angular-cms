@@ -29,7 +29,7 @@ class RepeatOptionController extends SlimController {
         $repeatOption = $repeatOptionRepository->findOneBy(array('id' => $id));
 
         if ( ! ($repeatOption instanceof RepeatOption)) {
-            ResponseFactory::createNotFoundResponse($this->app);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find repeat option');
         }
 
         ResponseFactory::createJsonResponse($this->app, $repeatOption);
@@ -45,7 +45,7 @@ class RepeatOptionController extends SlimController {
         $origRepeatOption = $repeatOptionRepository->findOneBy(array('id' => $repeatOptionId));
 
         if ( ! ($origRepeatOption instanceof RepeatOption)) {
-            ResponseFactory::createNotFoundResponse($this->app);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find repeat option');
             return;
         }
 
@@ -57,7 +57,7 @@ class RepeatOptionController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 
@@ -76,7 +76,7 @@ class RepeatOptionController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 
@@ -89,7 +89,7 @@ class RepeatOptionController extends SlimController {
         $repeatOption = $repeatOptionRepository->findOneBy(array('id' => $id));
 
         if ($repeatOption === null) {
-            ResponseFactory::createNotFoundResponse($this->app);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find repeat option');
             return;
         }
 
@@ -100,7 +100,7 @@ class RepeatOptionController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
         }
 
         $this->app->response->setStatus(HttpStatusCodes::NO_CONTENT);

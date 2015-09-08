@@ -29,7 +29,7 @@ class LanguageController extends SlimController {
         $language = $languageRepository->findOneBy(array('id' => $id));
 
         if ( ! ($language instanceof Language)) {
-            ResponseFactory::createNotFoundResponse($this->app);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find language');
             return;
         }
 
@@ -45,7 +45,7 @@ class LanguageController extends SlimController {
         $origLanguage = $languageRepository->findOneBy(array('id' => $languageId));
 
         if ( ! ($origLanguage instanceof Language)) {
-            ResponseFactory::createNotFoundResponse($this->app);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find language');
             return;
         }
 
@@ -57,7 +57,7 @@ class LanguageController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 
@@ -75,7 +75,7 @@ class LanguageController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 
@@ -88,7 +88,7 @@ class LanguageController extends SlimController {
         $language = $languageRepository->findOneBy(array('id' => $id));
 
         if ( ! ($language instanceof Language)) {
-            ResponseFactory::createNotFoundResponse($this->app);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find language');
             return;
         }
 
@@ -99,7 +99,7 @@ class LanguageController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
         }
 
         $this->app->response->setStatus(HttpStatusCodes::NO_CONTENT);
