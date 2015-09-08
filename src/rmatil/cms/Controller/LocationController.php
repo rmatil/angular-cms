@@ -30,7 +30,7 @@ class LocationController extends SlimController {
         $location = $locationRepository->findOneBy(array('id' => $id));
 
         if ( ! ($location instanceof Location)) {
-            ResponseFactory::createNotFoundResponse($this->app);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find location');
             return;
         }
 
@@ -56,7 +56,7 @@ class LocationController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
     }
@@ -71,7 +71,7 @@ class LocationController extends SlimController {
         $origLocation = $locationRepository->findOneBy(array('id' => $locationId));
 
         if ( ! ($origLocation instanceof Location)) {
-            ResponseFactory::createNotFoundResponse($this->app);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find location');
             return;
         }
 
@@ -89,7 +89,7 @@ class LocationController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 
@@ -118,7 +118,7 @@ class LocationController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 
@@ -131,7 +131,7 @@ class LocationController extends SlimController {
         $location = $locationRepository->findOneBy(array('id' => $id));
 
         if ( ! ($location instanceof Location)) {
-            $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find location');
             return;
         }
 
@@ -151,7 +151,7 @@ class LocationController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
         }
 
         $this->app->response->setStatus(HttpStatusCodes::NO_CONTENT);

@@ -29,7 +29,7 @@ class PageCategoryController extends SlimController {
         $pageCategory = $pageCategoryRepository->findOneBy(array('id' => $id));
 
         if ( ! ($pageCategory instanceof PageCategory)) {
-            ResponseFactory::createNotFoundResponse($this->app);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find page category');
             return;
         }
 
@@ -46,7 +46,7 @@ class PageCategoryController extends SlimController {
         $origPageCategory = $pageCategoryRepository->findOneBy(array('id' => $pageCategoryId));
 
         if (!($origPageCategory instanceof PageCategory)) {
-            ResponseFactory::createNotFoundResponse($this->app);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find page category');
             return;
         }
 
@@ -58,7 +58,7 @@ class PageCategoryController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 
@@ -77,7 +77,7 @@ class PageCategoryController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 
@@ -90,7 +90,7 @@ class PageCategoryController extends SlimController {
         $pageCategory = $pageCategoryRepository->findOneBy(array('id' => $id));
 
         if (!($pageCategory instanceof PageCategory)) {
-            ResponseFactory::createNotFoundResponse($this->app);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find page category');
             return;
         }
 
@@ -101,7 +101,7 @@ class PageCategoryController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
         }
 
         $this->app->response->setStatus(HttpStatusCodes::NO_CONTENT);

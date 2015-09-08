@@ -27,7 +27,7 @@ class UserGroupController extends SlimController {
         $userGroup = $userGroupRepository->findOneBy(array('id' => $id));
 
         if (!($userGroup instanceof UserGroup)) {
-            ResponseFactory::createNotFoundResponse($this->app);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find user group');
             return;
         }
 
@@ -44,7 +44,7 @@ class UserGroupController extends SlimController {
         $origUserGroup = $userGroupRepository->findOneBy(array('id' => $userGroupId));
 
         if (!($origUserGroup instanceof UserGroup)) {
-            ResponseFactory::createNotFoundResponse($this->app);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find user group');
             return;
         }
 
@@ -56,7 +56,7 @@ class UserGroupController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 
@@ -74,7 +74,7 @@ class UserGroupController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 
@@ -87,7 +87,7 @@ class UserGroupController extends SlimController {
         $userGroup = $userGroupRepository->findOneBy(array('id' => $id));
 
         if (!($userGroup instanceof UserGroup)) {
-            ResponseFactory::createNotFoundResponse($this->app);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find user group');
             return;
         }
 
@@ -98,7 +98,7 @@ class UserGroupController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
         }
 
         $this->app->response->setStatus(HttpStatusCodes::NO_CONTENT);

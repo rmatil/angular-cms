@@ -30,7 +30,7 @@ class UserController extends SlimController {
         $user = $userRepository->findOneBy(array('id' => $id));
 
         if ( ! ($user instanceof User)) {
-            $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find user');
             return;
         }
 
@@ -54,7 +54,7 @@ class UserController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
     }
@@ -68,7 +68,7 @@ class UserController extends SlimController {
         $origUser = $userRepository->findOneBy(array('id' => $userId));
 
         if ( ! ($origUser instanceof User)) {
-            $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find user');
             return;
         }
 
@@ -96,7 +96,7 @@ class UserController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 
@@ -126,7 +126,7 @@ class UserController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 
@@ -139,7 +139,7 @@ class UserController extends SlimController {
         $user = $userRepository->findOneBy(array('id' => $id));
 
         if ( ! ($user instanceof User)) {
-            $this->app->response->setStatus(HttpStatusCodes::NOT_FOUND);
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find user');
             return;
         }
 
@@ -161,7 +161,7 @@ class UserController extends SlimController {
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            $this->app->response->setStatus(HttpStatusCodes::CONFLICT);
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
 
