@@ -84,13 +84,13 @@ class Article {
     /**
      * Body of the article
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Type("string")
      *
      * @var string
      */
-    protected $content;
+    protected $content = '';
 
     /**
      * DateTime object of the last edit date
