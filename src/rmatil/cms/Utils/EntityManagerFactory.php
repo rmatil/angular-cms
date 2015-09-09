@@ -16,7 +16,10 @@ abstract class EntityManagerFactory {
 
     public static function createEntityManager($configFilePath, $sourceFolder,  $devMode) {
         $config = ConfigurationHandler::readConfiguration($configFilePath);
-        
+
+        // http://php.net/manual/en/ref.pdo-mysql.php#pdo.constants.mysql-attr-init-command
+        $config['driverOptions'] = array(1002 => 'SET NAMES utf8');
+
         return EntityManager::create($config[ConfigurationNames::DATABASE_PREFIX], self::getConfiguration($sourceFolder, $devMode));
     }
     
