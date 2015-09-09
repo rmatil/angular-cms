@@ -123,12 +123,15 @@ class IndexController extends SlimController {
                 if ($user instanceof User) {
                     if ($allowedUserGroups->contains($user->getUserGroup())) {
                         return;
+                    } else {
+                        $this->app->flash('login.error', 'You do not have the correct access rights to enter this page');
+                        $this->app->redirect('/login');
                     }
                 }
             }
         }
 
-        $this->app->redirect('/login');
+        $this->app->redirect('/login?forward=' . $this->app->request->getPath());
     }
 
 }
