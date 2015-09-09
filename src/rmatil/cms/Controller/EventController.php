@@ -152,6 +152,7 @@ class EventController extends SlimController {
         $origEvent->setAuthor($eventObject->getAuthor());
         $origEvent->setLocation($eventObject->getLocation());
         $origEvent->setFile($eventObject->getFile());
+        $origEvent->setUrlName($eventObject->getUrlName());
         $origEvent->setName($eventObject->getName());
         $origEvent->setRepeatOption($eventObject->getRepeatOption());
         $origEvent->setStartDate($eventObject->getStartDate());

@@ -163,6 +163,17 @@ class Event {
      */
     protected $allowedUserGroups;
 
+    /**
+     * Url name for the event
+     *
+     * @ORM\Column(type="string")
+     *
+     * @Type("string")
+     *
+     * @var string
+     */
+    protected $urlName;
+
 
     public function __construct() {
         $this->allowedUserGroups = new ArrayCollection();
@@ -427,5 +438,19 @@ class Event {
      */
     public function removeAllowedUserGroup(UserGroup $userGroup) {
         $this->allowedUserGroups->removeElement($userGroup);
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrlName() {
+        return $this->urlName;
+    }
+
+    /**
+     * @param string $urlName
+     */
+    public function setUrlName($urlName) {
+        $this->urlName = $urlName;
     }
 }
