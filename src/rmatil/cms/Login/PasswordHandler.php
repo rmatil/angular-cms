@@ -10,12 +10,6 @@ namespace rmatil\cms\Login;
 abstract class PasswordHandler {
 
     /**
-     * The hash algorithm used to hash strings
-     * @var string
-     */
-    private static $hashAlgorithm = 'sha512';
-
-    /**
      * Hashes the given token using the hash algorithm and salt 
      * specified in this class. Uses a default salt, stored in the hash
      * 
