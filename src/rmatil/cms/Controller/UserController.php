@@ -9,6 +9,7 @@ use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Entities\User;
 use rmatil\cms\Exceptions\RegistrationMailNotSentException;
 use rmatil\cms\Login\PasswordHandler;
+use rmatil\cms\Login\PasswordValidator;
 use rmatil\cms\Response\ResponseFactory;
 use rmatil\cms\Utils\PasswordUtils;
 use SlimController\SlimController;
@@ -105,11 +106,19 @@ class UserController extends SlimController {
     }
 
     public function insertUserAction() {
+        /** @var \Doctrine\ORM\EntityManager $em */
+        $em = $this->app->entityManager;
+        $userGroupRepository = $em->getRepository(EntityNames::USER_GROUP);
         /** @var \rmatil\cms\Entities\User $userObject */
         $userObject = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::USER, 'json');
 
-        $entityManager = $this->app->entityManager;
-        $userGroupRepository = $entityManager->getRepository(EntityNames::USER_GROUP);
+
+        $dbUser = $userGroupRepository->findOneBy(array('username' => $userObject->getUserName()));
+        if ($dbUser instanceof User) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, sprintf('User with username %s already exists', $userObject->getUserName()));
+            return;
+        }
+
         $origUserGroup = $userGroupRepository->findOneBy(array('id' => $userObject->getUserGroup()->getId()));
         $userObject->setUserGroup($origUserGroup);
 
@@ -119,10 +128,19 @@ class UserController extends SlimController {
         $userObject->setHasEmailValidated(false);
         $userObject->setIsLocked(true);
 
-        $entityManager->persist($userObject);
+        if (false === PasswordValidator::validatePassword($userObject->getPlainPassword())) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::BAD_REQUEST, 'Password must have at least 8 characters');
+            return;
+        }
+
+        $hash = PasswordHandler::hash($userObject->getPlainPassword());
+        $userObject->setPasswordHash($hash);
+        $userObject->setPlainPassword('');
+
+        $em->persist($userObject);
 
         try {
-            $entityManager->flush();
+            $em->flush();
         } catch (DBALException $dbalex) {
             $now = new DateTime();
             $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
@@ -137,7 +155,6 @@ class UserController extends SlimController {
             ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, sprintf('Could not sent registration email: %s', $rmnse->getMessage()));
             return;
         }
-
 
         ResponseFactory::createJsonResponseWithCode($this->app, HttpStatusCodes::CREATED, $userObject);
     }
