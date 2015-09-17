@@ -103,8 +103,11 @@ $app->addRoutes(array(
     '/api/registration/:token'          => array('post'   => 'Registration:completeRegistration'),
 
     // settings
-    '/api/settings'                     => array('get'    => 'Setting:getSettings'),
-    '/api/settings/update/:id'          => array('post'   => 'Setting:updateSettings'),
+    '/api/settings'                     => array('get'    => 'Setting:getSettings',
+                                                 'post'   => 'Setting:postSettings'),
+    '/api/settings/:id'                 => array('get'    => 'Setting:getSettingById',
+                                                 'put'    => 'Setting:updateSettings',
+                                                 'delete' => 'Setting:deleteSetting'),
 
 
     // empty objects
