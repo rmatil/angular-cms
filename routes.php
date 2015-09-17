@@ -23,6 +23,9 @@ $app->addRoutes(array(
 
     '/authenticate'                     => array('post'    => 'Authentication:authenticate'),
 
+    '/registration/:token'              => array('get'     => 'Registration:registerUser',
+                                                 'post'    => 'Registration:completeRegistration'),
+
     // articles
     '/api/articles'                     => array('get'     => 'Article:getArticles',
                                                  'post'    => 'Article:insertArticle'),
@@ -98,9 +101,6 @@ $app->addRoutes(array(
     '/api/usergroups/:id'               => array('get'    => 'UserGroup:getUserGroupById',
                                                  'put'    => 'UserGroup:updateUserGroup',
                                                  'delete' => 'UserGroup:deleteUserGroupById'),
-
-    // registration
-    '/api/registration/:token'          => array('post'   => 'Registration:completeRegistration'),
 
     // settings
     '/api/settings'                     => array('get'    => 'Setting:getSettings',

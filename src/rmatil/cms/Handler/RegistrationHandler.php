@@ -68,6 +68,7 @@ class RegistrationHandler {
 
         try {
             $this->sendRegistrationMail($mail);
+            $this->entityManager->flush();
         } catch (Exception $e) {
             throw new RegistrationMailNotSentException($e->getMessage());
         }

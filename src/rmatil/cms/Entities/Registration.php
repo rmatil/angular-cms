@@ -62,7 +62,7 @@ class Registration {
     /**
      * Gets the The user of this registration.
      *
-     * @return rmatil\cms\Entities\User
+     * @return \rmatil\cms\Entities\User
      */
     public function getUser() {
         return $this->user;
@@ -71,7 +71,7 @@ class Registration {
     /**
      * Sets the The user of this registration.
      *
-     * @param rmatil\cms\Entities\User $user the user
+     * @param \rmatil\cms\Entities\User $user the user
      */
     public function setUser(User $user = null) {
         $this->user = $user;

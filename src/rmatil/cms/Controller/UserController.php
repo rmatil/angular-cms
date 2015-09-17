@@ -7,6 +7,7 @@ use Doctrine\DBAL\DBALException;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Entities\User;
+use rmatil\cms\Exceptions\PasswordInvalidException;
 use rmatil\cms\Exceptions\RegistrationMailNotSentException;
 use rmatil\cms\Login\PasswordHandler;
 use rmatil\cms\Login\PasswordValidator;
@@ -113,7 +114,7 @@ class UserController extends SlimController {
         $userObject = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::USER, 'json');
 
 
-        $dbUser = $userGroupRepository->findOneBy(array('username' => $userObject->getUserName()));
+        $dbUser = $em->getRepository(EntityNames::USER)->findOneBy(array('userName' => $userObject->getUserName()));
         if ($dbUser instanceof User) {
             ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, sprintf('User with username %s already exists', $userObject->getUserName()));
             return;
@@ -128,14 +129,8 @@ class UserController extends SlimController {
         $userObject->setHasEmailValidated(false);
         $userObject->setIsLocked(true);
 
-        if (false === PasswordValidator::validatePassword($userObject->getPlainPassword())) {
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::BAD_REQUEST, 'Password must have at least 8 characters');
-            return;
-        }
-
-        $hash = PasswordHandler::hash($userObject->getPlainPassword());
-        $userObject->setPasswordHash($hash);
-        $userObject->setPlainPassword('');
+        // we do not set a password here, since the user
+        // has to create one by himself
 
         $em->persist($userObject);
 
