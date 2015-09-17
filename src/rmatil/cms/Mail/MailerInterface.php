@@ -5,5 +5,5 @@ namespace rmatil\cms\Mail;
 
 interface MailerInterface {
 
-    public function send();
+    public function send(MailInterface $mail);
 }
