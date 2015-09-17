@@ -51,9 +51,9 @@ abstract class HandlerSingleton {
         return self::$fileHandler;
     }
     
-    public static function getRegistrationHandler() {
+    public static function getRegistrationHandler($usedMailer) {
         if (null === self::$registrationHandler) {
-            self::$registrationHandler = new RegistrationHandler(self::$em, new PHPMailer);
+            self::$registrationHandler = new RegistrationHandler(self::$em, $usedMailer);
         }
         
         return self::$registrationHandler;

@@ -7,6 +7,7 @@ use Doctrine\DBAL\DBALException;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Entities\User;
+use rmatil\cms\Exceptions\RegistrationMailNotSentException;
 use rmatil\cms\Login\PasswordHandler;
 use rmatil\cms\Response\ResponseFactory;
 use rmatil\cms\Utils\PasswordUtils;
@@ -118,8 +119,7 @@ class UserController extends SlimController {
         $userObject->setHasEmailValidated(false);
         $userObject->setIsLocked(true);
 
-        // sends registration email and persists the user in the db
-        $this->app->registrationHandler->registerUser($userObject);
+        $entityManager->persist($userObject);
 
         try {
             $entityManager->flush();
@@ -129,6 +129,15 @@ class UserController extends SlimController {
             ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
             return;
         }
+
+        try {
+            // sends registration email and persists the user in the db
+            $this->app->registrationHandler->registerUser($userObject);
+        } catch (RegistrationMailNotSentException $rmnse) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, sprintf('Could not sent registration email: %s', $rmnse->getMessage()));
+            return;
+        }
+
 
         ResponseFactory::createJsonResponseWithCode($this->app, HttpStatusCodes::CREATED, $userObject);
     }

@@ -81,7 +81,7 @@ $app->container->singleton('serializer', function () {
 HandlerSingleton::setEntityManager($entityManager);
 $thumbnailHandler = HandlerSingleton::getThumbnailHandler();
 $fileHandler = HandlerSingleton::getFileHandler(HTTP_MEDIA_DIR, LOCAL_MEDIA_DIR);
-$registrationHandler = HandlerSingleton::getRegistrationHandler();
+$registrationHandler = HandlerSingleton::getRegistrationHandler($config['mail']['use']);
 $databaseHandler = HandlerSingleton::getDatabaseHandler();
 $loginHandler = HandlerSingleton::getLoginHandler(array(
     '^\/api\/.*' => array('ROLE_SUPER_ADMIN')

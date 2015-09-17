@@ -4,36 +4,35 @@ namespace rmatil\cms\Handler;
 
 use DateInterval;
 use DateTime;
-use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
-use PHPMailer;
-use rmatil\cms\Constants\ConfigurationNames;
+use Exception;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Entities\Registration;
 use rmatil\cms\Entities\User;
+use rmatil\cms\Exceptions\RegistrationMailNotSentException;
 use rmatil\cms\Exceptions\UserNotSavedException;
-use rmatil\cms\Mail\MailInterface;
+use rmatil\cms\Mail\Mandrill\MandrillTemplateMail;
+use rmatil\cms\Mail\Mandrill\MandrillTemplateMailer;
+use rmatil\cms\Mail\PhpMailer\PhpMailer;
+use rmatil\cms\Mail\PhpMailer\PhpMailerMail;
 use rmatil\cms\Mail\RegistrationMail;
 
 class RegistrationHandler {
 
     protected $entityManager;
 
-    protected $phpMailer;
+    protected $usedMailer;
 
-    protected $defaultMailerSettings = array();
-
-    public function __construct(EntityManager $entityManager, PHPMailer $phpMailer) {
-        $this->entityManager    = $entityManager;
-        $this->phpMailer        = $phpMailer;
-        $this->initMailer();
+    public function __construct(EntityManager $entityManager, $usedMailer) {
+        $this->entityManager = $entityManager;
+        $this->usedMailer = $usedMailer;
     }
 
     /**
      * Registers the given user and starts the registration process.
      * <b>Note that any entity associated with the user object
      * must be stored beforehand in the database.</b>
-     * 
+     *
      * @param User $user The user to store
      * @throws UserNotSavedException Thrown if a problem occurred during saving of the user
      */
@@ -48,66 +47,125 @@ class RegistrationHandler {
         $registration->setExpirationDate($expirationDate);
         $registration->setToken($token);
 
-        $settingsRepo        = $this->entityManager->getRepository(EntityNames::SETTING);
-        $websiteName         = $settingsRepo->findOneBy(array('name' => 'website_name'));
-        $websiteEmail        = $settingsRepo->findOneBy(array('name' => 'website_email'));
+        $settingsRepo = $this->entityManager->getRepository(EntityNames::SETTING);
+        $websiteName = $settingsRepo->findOneBy(array('name' => 'website_name'));
+        $websiteEmail = $settingsRepo->findOneBy(array('name' => 'website_email'));
         $websiteReplyToEmail = $settingsRepo->findOneBy(array('name' => 'website_reply_to_email'));
-        $websiteUrl          = $settingsRepo->findOneBy(array('name' => 'website_url'));
+        $websiteUrl = $settingsRepo->findOneBy(array('name' => 'website_url'));
 
-        $registrationLink = sprintf(PROTOCOL.'%s/api/registration/%s', $websiteUrl->getValue(), $registration->getToken());
+        $registrationLink = $this->getRegistrationLink($token, $websiteUrl->getValue());
 
-        $this->entityManager->persist($user);
         $this->entityManager->persist($registration);
 
+        $mail = new RegistrationMail($user,
+            $websiteName->getValue(),
+            $websiteEmail->getValue(),
+            $websiteUrl->getValue(),
+            $websiteReplyToEmail->getValue(),
+            $websiteName->getValue(),
+            $registrationLink
+        );
+
         try {
-            $this->entityManager->flush();
-        } catch (DBALException $dbalex) {
-            throw new UserNotSavedException($dbalex->getMessage());
-        }
-
-        $mail = new RegistrationMail($user, $websiteName->getValue(), 
-                                     $websiteEmail->getValue(), $websiteName->getValue(), 
-                                     $websiteReplyToEmail->getValue(), $websiteName->getValue(), 
-                                     array('registrationLink' => $registrationLink));
-        
-        $this->sendRegistrationMail($mail);
-    }
-
-    public function sendRegistrationMail(MailInterface $mail) {
-        $this->phpMailer->Subject   = $mail->getSubject();
-        $this->phpMailer->Body      = $mail->getBody();
-        $this->phpMailer->From      = $mail->getFromAddress();
-        $this->phpMailer->FromName  = $mail->getFromName();
-        $this->phpMailer->WordWrap  = 50;
-        $this->phpMailer->addAddress($mail->getReceiverAddress(), $mail->getReceiverName());
-        $this->phpMailer->addReplyTo($mail->getReplyToAddress(), $mail->getReplyToName());
-        $this->phpMailer->isHTML(true);
-
-        if (!$this->phpMailer->send()) {
-            throw new \Exception($this->phpMailer->ErrorInfo);
+            $this->sendRegistrationMail($mail);
+        } catch (Exception $e) {
+            throw new RegistrationMailNotSentException($e->getMessage());
         }
     }
 
-    /**
-     * Available mailerSettings are documented on https://github.com/PHPMailer/PHPMailer
-     */
-    protected function initMailer() {
+    public function getRegistrationLink($token, $websiteUrl) {
+        return sprintf(PROTOCOL . '%s/registration/%s', $websiteUrl, $token);;
+    }
+
+    public function sendRegistrationMail(RegistrationMail $mail) {
+        switch ($this->usedMailer) {
+            case 'mailChimp':
+                $this->sendMailChimpMail($mail);
+                break;
+            case 'phpMailer':
+                $this->sendPhpMailerMail($mail);
+                break;
+            default:
+                throw new \RuntimeException('Could not send email. No Mailer specified');
+        }
+    }
+
+    protected function sendMailChimpMail(RegistrationMail $registrationMail) {
         $config = ConfigurationHandler::readConfiguration(CONFIG_FILE);
-        $mailerSettings = $config[ConfigurationNames::MAIL_PREFIX];
-        if (empty($mailerSettings)) {
-            // Set PHPMailer to use the sendmail transport
-            $this->phpMailer->isSendmail();
-        } else {
-            // Set mailer to use SMTP
-            $this->phpMailer->isSMTP();
-            $this->phpMailer->SMTPDebug = true;
-            $this->phpMailer->Debugoutput = 'html';
-            // update settings
-            $this->phpMailer->Host = $mailerSettings[ConfigurationNames::MAIL_HOST];
-            $this->phpMailer->Username = $mailerSettings[ConfigurationNames::MAIL_USERNAME];
-            $this->phpMailer->Password = $mailerSettings[ConfigurationNames::MAIL_PASSWORD];
-            $this->phpMailer->Port = intval($mailerSettings[ConfigurationNames::MAIL_PORT]);
+        $mailChimpConfig = $config['mail']['mailChimp'];
+
+        $receiver = $registrationMail->getTo();
+
+        $mergeVars = array(
+            'rcpt' => $receiver['email'],
+            'vars' => array(
+                array(
+                    "name" => "FNAME",
+                    "content" => $registrationMail->getUser()->getFirstname()
+                ),
+                array(
+                    "name" => "REGLINK",
+                    "content" => $registrationMail->getRegistrationLink()
+                ),
+                array(
+                    "name" => 'HOMLINK',
+                    "content" => $registrationMail->getFromName()
+                )
+            )
+        );
+
+        $mail = new MandrillTemplateMail(
+            $registrationMail->getSubject(),
+            $registrationMail->getFromEmail(),
+            $registrationMail->getFromName(),
+            $registrationMail->getTo(),
+            $mergeVars,
+            array('registration')
+        );
+
+        $globalMergeVars = array();
+        foreach ($mailChimpConfig['globalMergeVars'] as $key => $val) {
+            $globalMergeVars[] = array(
+                'name' => $key,
+                'content' => $val
+            );
+        }
+
+        $mailChimpMailer = new MandrillTemplateMailer(
+            $mailChimpConfig['apiKey'],
+            $mailChimpConfig['templateName'],
+            $mailChimpConfig['templateContent'],
+            $globalMergeVars
+        );
+
+        try {
+            $mailChimpMailer->send($mail);
+        } catch (\Mandrill_Error $e) {
+            throw new RegistrationMailNotSentException($e->getMessage());
+        }
+
+    }
+
+    protected function sendPhpMailerMail(RegistrationMail $registrationMail) {
+        $config = ConfigurationHandler::readConfiguration(CONFIG_FILE);
+        $mailConfig = $config['mail']['phpMailer'];
+
+        $phpMailerMail = new PhpMailerMail(
+            $registrationMail->getSubject(),
+            $registrationMail->getFromEmail(),
+            $registrationMail->getFromName(),
+            $registrationMail->getTo(),
+            $registrationMail->getBody()
+        );
+
+        $phpMailer = new PhpMailer($mailConfig['host'], $mailConfig['username'], $mailConfig['password'], $mailConfig['port']);
+
+        try {
+            $phpMailer->send($phpMailerMail);
+        } catch (Exception $e) {
+            throw new RegistrationMailNotSentException($e->getMessage());
         }
     }
+
 
 }
