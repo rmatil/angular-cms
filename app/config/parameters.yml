@@ -1,15 +1,26 @@
 database:
-    driver: pdo_mysql
-    user: cmsv4
-    password: cmsv4
-    dbname: db_test_install4
-    host: localhost
+  driver: pdo_mysql
+  user: cmsv4
+  password: cmsv4
+  dbname: db_test_install4
+  host: localhost
+
 mail:
+  use: mailChimp
+  phpMailer:
     CharSet: utf-8
     SMTPAuth: true
-    Host:
-    Username:
-    Password:
-    Port: 587
+    host:
+    username:
+    password:
+    port: 587
+  mailChimp:
+    apiKey:
+    templateName:
+    templateContent: []
+    globalMergeVars:
+      COMPANY: myCompany
+      SENDERMAIL: sender@company.com
+
 template:
-    path: default
+  path: default
