@@ -4,34 +4,23 @@ namespace rmatil\cms\Mail;
 
 use rmatil\cms\Entities\User;
 
-class RegistrationMail implements MailInterface {
+class RegistrationMail extends AMail {
 
     protected $user;
 
     protected $homepageName;
 
-    protected $fromAddress;
-
     protected $fromName;
 
-    protected $replyToAddress;
+    protected $registrationLink;
 
-    protected $replyToName;
+    public function __construct(User $user, $homepageName, $fromAddress, $fromName, $replyToAddress, $replyToName, $registrationLink) {
+        $this->user = $user;
+        $this->homepageName = $homepageName;
+        $this->registrationLink = $registrationLink;
+        $this->fromName = $fromName;
 
-    protected $params; 
-
-    public function __construct(User $user, $homepageName, 
-                                $fromAddress, $fromName,
-                                $replyToAddress, $replyToName,
-                                array $params) {
-
-        $this->user             = $user;
-        $this->homepageName     = $homepageName;
-        $this->fromAddress      = $fromAddress;
-        $this->fromName         = $fromName;
-        $this->replyToAddress   = $replyToAddress;
-        $this->replyToName      = $replyToName;
-        $this->params           = $params;
+        parent::__construct($this->getSubject(), $fromAddress, $fromName, array('email' => $this->user->getEmail(), 'name' => $this->getReceiverName()));
     }
 
     public function getReceiverAddress() {
@@ -47,34 +36,62 @@ class RegistrationMail implements MailInterface {
     }
 
     public function getBody() {
-        $message  = sprintf('Hallo %s %s', $this->user->getFirstName(), $this->user->getLastName())."<br /><br />";
-        $message .= sprintf('Für dich wurde soeben ein neues Konto bei %s eröffnet', $this->homepageName)."<br />";
-        $message .= 'Um die Registrierung abzuschliessen, klicke bitte auf den untenstehenden Link:'."<br /> <br />";
+        $message = sprintf('Hallo %s %s', $this->user->getFirstName(), $this->user->getLastName()) . "<br /><br />";
+        $message .= sprintf('Für dich wurde soeben ein neues Konto bei %s eröffnet', $this->homepageName) . "<br />";
+        $message .= 'Um die Registrierung abzuschliessen, klicke bitte auf den untenstehenden Link:' . "<br /> <br />";
 
-        if (array_key_exists('registrationLink', $this->params)) {
-            $message .= sprintf('%s', $this->params['registrationLink'])."<br /><br />";
-            $message .= sprintf('<b>Bitte beache, dass der Link aus Sicherheitsgründen nur 48h gültig ist.</b>')."<br /><br />";
-        }
-        
-        $message .= sprintf('Bei Fragen oder Unklarheiten kontaktiere uns einfach unter %s.', $this->replyToAddress)."<br />";
+
+        $message .= sprintf('%s', $this->registrationLink) . "<br /><br />";
+        $message .= sprintf('<b>Bitte beache, dass der Link aus Sicherheitsgründen nur 48h gültig ist.</b>') . "<br /><br />";
+
+
+        $message .= sprintf('Bei Fragen oder Unklarheiten kontaktiere uns einfach unter %s.', $this->getFromEmail()) . "<br />";
         $message .= 'Bis bald';
 
         return $message;
     }
 
-    public function getFromAddress() {
-        return $this->fromAddress;
+    /**
+     * @return User
+     */
+    public function getUser() {
+        return $this->user;
     }
 
-    public function getFromName() {
-        return $this->fromName;
+    /**
+     * @param User $user
+     */
+    public function setUser($user) {
+        $this->user = $user;
     }
 
-    public function getReplyToAddress() {
-        return $this->replyToAddress;
+    /**
+     * @return string
+     */
+    public function getHomepageName() {
+        return $this->homepageName;
     }
 
-    public function getReplyToName() {
-        return $this->replyToName;
+    /**
+     * @param string $homepageName
+     */
+    public function setHomepageName($homepageName) {
+        $this->homepageName = $homepageName;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getRegistrationLink() {
+        return $this->registrationLink;
+    }
+
+    /**
+     * @param mixed $registrationLink
+     */
+    public function setRegistrationLink($registrationLink) {
+        $this->registrationLink = $registrationLink;
+    }
+
+
 }
