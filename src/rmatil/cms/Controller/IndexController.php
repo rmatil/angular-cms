@@ -61,7 +61,11 @@ class IndexController extends SlimController {
 
         $this->checkAccess($article);
 
+        $twig = clone $this->app->view()->getEnvironment();
+        $twig->setLoader(new \Twig_Loader_String());
+
         $this->app->render('article.html.twig', array(
+            'twig' => $twig,
             'article' => $article,
             'isPublished' => true
         ));
@@ -81,7 +85,11 @@ class IndexController extends SlimController {
 
         $this->checkAccess($page);
 
+        $twig = clone $this->app->view()->getEnvironment();
+        $twig->setLoader(new \Twig_Loader_String());
+
         $this->app->render('page.html.twig', array(
+            'twig' => $twig,
             'page' => $page
         ));
     }
@@ -98,7 +106,12 @@ class IndexController extends SlimController {
 
         $this->checkAccess($event);
 
+        $twig = clone $this->app->view()->getEnvironment();
+        $twig->setLoader(new \Twig_Loader_String());
+
+
         $this->app->render('event.html.twig', array(
+            'twig' => $twig,
             'event' => $event
         ));
     }
