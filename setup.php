@@ -128,9 +128,11 @@ $corsOptions = array(
 $cors = new \CorsSlim\CorsSlim($corsOptions);
 $app->add($cors);
 
+/** @var \Twig_Environment $twig */
 $twig = $app->view()->getEnvironment();
 $twig->addExtension(new \rmatil\cms\Twig\MetadataFunction($entityManager));
 $twig->addExtension(new \rmatil\cms\Twig\EventUtilities($entityManager));
+$twig->addExtension(new \rmatil\cms\Twig\FileUtilities($entityManager));
 
 include('routes.php');
 

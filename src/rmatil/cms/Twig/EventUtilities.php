@@ -5,9 +5,10 @@ namespace rmatil\cms\Twig;
 
 
 use rmatil\cms\Constants\EntityNames;
+use Twig_Extension;
 use Twig_Function_Method;
 
-class EventUtilities extends \Twig_Extension {
+class EventUtilities extends Twig_Extension {
 
     /**
      * @var \Doctrine\ORM\EntityManager
