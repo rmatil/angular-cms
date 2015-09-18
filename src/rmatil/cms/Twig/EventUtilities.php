@@ -28,12 +28,21 @@ class EventUtilities extends \Twig_Extension {
         return 'event_utilities_extension';
     }
 
-    public function getProtectedEvents() {
-        $events = $this->em->createQueryBuilder()
+    public function getProtectedEvents($userRole) {
+
+        $qb = $this->em->createQueryBuilder()
             ->select('e')
-            ->from(EntityNames::EVENT, 'e')
-            ->where('e.allowedUserGroups IS NOT EMPTY')
-            ->getQuery()
+            ->from(EntityNames::EVENT, 'e');
+
+        if ('ROLE_ANONYMOUS' !== $userRole) {
+            $qb->innerJoin(EntityNames::USER_GROUP, 'ug')
+                ->where('ug.role = :role')
+                ->setParameter(':role', $userRole);
+        } else {
+            $qb->where('e.allowedUserGroups IS EMPTY');
+        }
+
+        $events = $qb->getQuery()
             ->getResult();
 
         return $events;
