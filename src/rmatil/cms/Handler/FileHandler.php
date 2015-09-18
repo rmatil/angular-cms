@@ -67,6 +67,10 @@ class FileHandler {
                 case UPLOAD_ERR_EXTENSION:
                     throw new FileNotSavedException('A PHP extension stopped the file upload');
                     break;
+
+                default:
+                    throw new FileNotSavedException('An undefined error occurred');
+                    break;
             }
         }
 
@@ -108,7 +112,6 @@ class FileHandler {
         }
 
         // all checks passed -> move file to media dir
-        // echo"<pre>";var_dump($_FILES);exit();
         $code = move_uploaded_file($_FILES['file']['tmp_name'], sprintf('%s/%s.%s', $this->localPathToMediaDir, $_FILES['file']['name'], $fileExtension));
         if ($code === false) {
             // not a valid uploaded file or valid, but cannot be moved

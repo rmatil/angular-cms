@@ -75,7 +75,7 @@ class RegistrationHandler {
     }
 
     public function getRegistrationLink($token, $websiteUrl) {
-        return sprintf(PROTOCOL . '%s/registration/%s', $websiteUrl, $token);;
+        return sprintf('%s/registration/%s', $websiteUrl, $token);
     }
 
     public function sendRegistrationMail(RegistrationMail $mail) {
