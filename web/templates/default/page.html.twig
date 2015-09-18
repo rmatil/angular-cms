@@ -19,7 +19,12 @@
     {% for article in page.articles %}
         <article>
             <h2>{{ article.title }}</h2>
-            {{ article.content | raw }}
+
+            {% set ct = article.content %}
+
+            {{ twig.render(ct, {article:article}) | raw }}
+
+
         </article>
     {% endfor %}
 </section>

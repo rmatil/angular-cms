@@ -17,7 +17,9 @@
 <section>
     <h1>{{ article.title }}</h1>
     <article>
-        {{ article.content | raw }}
+        {% set ct = article.content %}
+
+        {{ twig.render(ct, {article:article}) | raw }}
     </article>
 </section>
 
