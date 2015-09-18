@@ -3,6 +3,7 @@
 namespace rmatil\cms\Controller;
 
 use DateTime;
+use DateTimeZone;
 use Doctrine\DBAL\DBALException;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
@@ -12,6 +13,7 @@ use rmatil\cms\Entities\RepeatOption;
 use rmatil\cms\Entities\User;
 use rmatil\cms\Response\ResponseFactory;
 use SlimController\SlimController;
+use Symfony\Component\Validator\Constraints\Date;
 
 /**
  * @package rmatil\cms\Controller
@@ -155,6 +157,18 @@ class EventController extends SlimController {
         $origEvent->setUrlName($eventObject->getUrlName());
         $origEvent->setName($eventObject->getName());
         $origEvent->setRepeatOption($eventObject->getRepeatOption());
+
+        // we get the correct timezone in the request,
+        // therefore we only have to apply the utc as timezone
+        $utc = new DateTimeZone("UTC");
+        if ($eventObject->getStartDate() instanceof DateTime) {
+            $eventObject->getStartDate()->setTimezone($utc);
+        }
+
+        if ($eventObject->getEndDate() instanceof DateTime) {
+            $eventObject->getEndDate()->setTimezone($utc);
+        }
+
         $origEvent->setStartDate($eventObject->getStartDate());
         $origEvent->setEndDate($eventObject->getEndDate());
         $origEvent->setDescription($eventObject->getDescription());
