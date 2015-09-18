@@ -130,6 +130,7 @@ $app->add($cors);
 
 $twig = $app->view()->getEnvironment();
 $twig->addExtension(new \rmatil\cms\Twig\MetadataFunction($entityManager));
+$twig->addExtension(new \rmatil\cms\Twig\EventUtilities($entityManager));
 
 include('routes.php');
 
