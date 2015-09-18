@@ -20,7 +20,8 @@
         "phpmailer/phpmailer": "~5.2",
         "ircmaxell/password-compat": "^1.0",
         "slim/views": "^0.1.3",
-        "palanik/corsslim": "^0.0.5"
+        "palanik/corsslim": "^0.0.5",
+        "mandrill/mandrill": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "4.1.*",
