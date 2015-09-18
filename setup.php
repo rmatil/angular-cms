@@ -84,6 +84,7 @@ $fileHandler = HandlerSingleton::getFileHandler(HTTP_MEDIA_DIR, LOCAL_MEDIA_DIR)
 $registrationHandler = HandlerSingleton::getRegistrationHandler($config['mail']['use']);
 $databaseHandler = HandlerSingleton::getDatabaseHandler();
 $loginHandler = HandlerSingleton::getLoginHandler(array(
+    '^\/authenticate' => array('ROLE_SUPER_ADMIN', 'ROLE_ANONYMOUS'), // allow anonymous user to send request to authenticate
     '^\/api\/.*' => array('ROLE_SUPER_ADMIN')
 ));
 
