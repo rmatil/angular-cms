@@ -2,6 +2,7 @@
 
 namespace rmatil\cms\Entities;
 
+use JMS\Serializer\Annotation\MaxDepth;
 use JMS\Serializer\Annotation\Type;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -97,8 +98,9 @@ class File {
      * @ORM\ManyToOne(targetEntity="FileCategory")
      *
      * @Type("rmatil\cms\Entities\FileCategory")
+     * @MaxDepth(1)
      * 
-     * @var rmatil\cms\Entities\FileCategory
+     * @var \rmatil\cms\Entities\FileCategory
      */
     protected $category;
 
@@ -141,8 +143,9 @@ class File {
      * @ORM\ManyToOne(targetEntity="User")
      *
      * @Type("rmatil\cms\Entities\User")
+     * @MaxDepth(1)
      * 
-     * @var rmatil\cms\Entities\User
+     * @var \rmatil\cms\Entities\User
      */
     protected $author;
 
@@ -269,7 +272,7 @@ class File {
     /**
      * Gets the File category.
      *
-     * @return rmatil\cms\Entities\FileCategory
+     * @return \rmatil\cms\Entities\FileCategory
      */
     public function getCategory() {
         return $this->category;
@@ -278,7 +281,7 @@ class File {
     /**
      * Sets the File category.
      *
-     * @param rmatil\cms\Entities\FileCategory $category the category
+     * @param\ rmatil\cms\Entities\FileCategory $category the category
      */
     public function setCategory(FileCategory $category = null) {
         $this->category = $category;
@@ -341,7 +344,7 @@ class File {
     /**
      * Gets the Author of this file.
      *
-     * @return rmatil\cms\Entities\User
+     * @return \rmatil\cms\Entities\User
      */
     public function getAuthor() {
         return $this->author;
@@ -350,7 +353,7 @@ class File {
     /**
      * Sets the Author of this file.
      *
-     * @param rmatil\cms\Entities\User $author the author
+     * @param \rmatil\cms\Entities\User $author the author
      */
     public function setAuthor(User $author = null) {
         $this->author = $author;

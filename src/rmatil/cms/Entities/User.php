@@ -2,6 +2,7 @@
 
 namespace rmatil\cms\Entities;
 
+use JMS\Serializer\Annotation\MaxDepth;
 use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\Exclude;
 use rmatil\cms\Entities\BaseEntity;
@@ -33,6 +34,7 @@ class User {
      * @ORM\ManyToOne(targetEntity="UserGroup")
      *
      * @Type("rmatil\cms\Entities\UserGroup")
+     * @MaxDepth(1)
      * 
      * @var \rmatil\cms\Entities\UserGroup
      */
@@ -212,6 +214,7 @@ class User {
      * @ORM\ManyToOne(targetEntity="User")
      *
      * @Type("rmatil\cms\Entities\User")
+     * @MaxDepth(1)
      * 
      * @var \rmatil\cms\Entities\User
      */

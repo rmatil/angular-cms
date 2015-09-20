@@ -4,6 +4,7 @@ namespace rmatil\cms\Entities;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\MaxDepth;
 use JMS\Serializer\Annotation\Type;
 
 /**
@@ -31,6 +32,7 @@ class Event {
      * @ORM\ManyToOne(targetEntity="User")
      *
      * @Type("rmatil\cms\Entities\User")
+     * @MaxDepth(1)
      *
      * @var \rmatil\cms\Entities\User
      */
@@ -42,6 +44,7 @@ class Event {
      * @ORM\ManyToOne(targetEntity="Location")
      *
      * @Type("rmatil\cms\Entities\Location")
+     * @MaxDepth(2)
      *
      * @var \rmatil\cms\Entities\Location
      */
@@ -53,6 +56,7 @@ class Event {
      * @ORM\ManyToOne(targetEntity="File")
      *
      * @Type("rmatil\cms\Entities\File")
+     * @MaxDepth(2)
      *
      * @var \rmatil\cms\Entities\File
      */
@@ -75,6 +79,7 @@ class Event {
      * @ORM\ManyToOne(targetEntity="RepeatOption")
      *
      * @Type("rmatil\cms\Entities\RepeatOption")
+     * @MaxDepth(1)
      *
      * @var \rmatil\cms\Entities\RepeatOption
      */
@@ -120,6 +125,7 @@ class Event {
      * @ORM\ManyToOne(targetEntity="User", cascade="persist")
      *
      * @Type("rmatil\cms\Entities\User")
+     * @MaxDepth(1)
      *
      * @var \rmatil\cms\Entities\User
      */
@@ -158,6 +164,7 @@ class Event {
      * @ORM\JoinTable(name="usergroup_events")
      *
      * @Type("ArrayCollection<rmatil\cms\Entities\UserGroup>")
+     * @MaxDepth(1)
      *
      * @var ArrayCollection[rmatil\cms\Entities\UserGroup]
      */

@@ -4,6 +4,7 @@ namespace rmatil\cms\Entities;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\MaxDepth;
 use JMS\Serializer\Annotation\Type;
 
 /**
@@ -57,6 +58,7 @@ class UserGroup {
      * @ORM\ManyToMany(targetEntity="Article", inversedBy="allowedUserGroups")
      *
      * @Type("ArrayCollection<rmatil\cms\Entities\Article>")
+     * @MaxDepth(2)
      *
      * @var ArrayCollection[rmatil\cms\Entities\Article]
      */
@@ -72,6 +74,7 @@ class UserGroup {
      * @ORM\ManyToMany(targetEntity="Page", inversedBy="allowedUserGroups")
      *
      * @Type("ArrayCollection<rmatil\cms\Entities\Page>")
+     * @MaxDepth(2)
      *
      * @var ArrayCollection[rmatil\cms\Entities\Page]
      */
@@ -87,6 +90,7 @@ class UserGroup {
      * @ORM\ManyToMany(targetEntity="Event", inversedBy="allowedUserGroups")
      *
      * @Type("ArrayCollection<rmatil\cms\Entities\Event>")
+     * @MaxDepth(2)
      *
      * @var ArrayCollection[rmatil\cms\Entities\Event]
      */

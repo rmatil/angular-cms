@@ -2,6 +2,7 @@
 
 namespace rmatil\cms\Entities;
 
+use JMS\Serializer\Annotation\MaxDepth;
 use JMS\Serializer\Annotation\Type;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -30,8 +31,9 @@ class Location {
      * @ORM\ManyToOne(targetEntity="User")
      *
      * @Type("rmatil\cms\Entities\User")
-     * 
-     * @var rmatil\cms\Entities\User
+     * @MaxDepth(1)
+     *
+     * @var \rmatil\cms\Entities\User
      */
     protected $author;
 
@@ -75,6 +77,7 @@ class Location {
      * @ORM\ManyToOne(targetEntity="User", cascade="persist")
      *
      * @Type("rmatil\cms\Entities\User")
+     * @MaxDepth(1)
      * 
      * @var \rmatil\cms\Entities\User
      */
@@ -128,7 +131,7 @@ class Location {
     /**
      * Gets the Author of this location.
      *
-     * @return rmatil\cms\Entities\User
+     * @return \rmatil\cms\Entities\User
      */
     public function getAuthor() {
         return $this->author;
@@ -137,7 +140,7 @@ class Location {
     /**
      * Sets the Author of this location.
      *
-     * @param rmatil\cms\Entities\User $author the author
+     * @param \rmatil\cms\Entities\User $author the author
      */
     public function setAuthor(User $author = null) {
         $this->author = $author;
@@ -209,7 +212,7 @@ class Location {
     /**
      * Sets the user which locks this article
      *
-     * @param \rmatil\cms\Entities\User $isLocked the user which locks the article
+     * @param \rmatil\cms\Entities\User $isLockedBy the user which locks the article
      */
     public function setIsLockedBy($isLockedBy) {
         $this->isLockedBy = $isLockedBy;

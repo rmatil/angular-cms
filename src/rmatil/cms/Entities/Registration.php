@@ -31,7 +31,7 @@ class Registration {
      *
      * @Type("rmatil\cms\Entities\User")
      * 
-     * @var rmatil\cms\Entities\User
+     * @var \rmatil\cms\Entities\User
      */
     protected $user;
 

@@ -4,6 +4,7 @@ namespace rmatil\cms\Entities;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\MaxDepth;
 use JMS\Serializer\Annotation\Type;
 
 /**
@@ -42,6 +43,7 @@ class Page {
      * @ORM\ManyToOne(targetEntity="PageCategory", cascade="persist")
      *
      * @Type("rmatil\cms\Entities\PageCategory")
+     * @MaxDepth(1)
      *
      * @var \rmatil\cms\Entities\PageCategory
      */
@@ -53,6 +55,7 @@ class Page {
      * @ORM\ManyToOne(targetEntity="User", cascade="persist")
      *
      * @Type("rmatil\cms\Entities\User")
+     * @MaxDepth(1)
      *
      * @var \rmatil\cms\Entities\User
      */
@@ -64,6 +67,7 @@ class Page {
      * @ORM\ManyToOne(targetEntity="Language", cascade="persist")
      *
      * @Type("rmatil\cms\Entities\Language")
+     * @MaxDepth(2)
      *
      * @var \rmatil\cms\Entities\Language
      */
@@ -86,6 +90,7 @@ class Page {
      * @ORM\ManyToOne(targetEntity="Page", cascade="persist")
      *
      * @Type("rmatil\cms\Entities\Page")
+     * @MaxDepth(2)
      *
      * @var \rmatil\cms\Entities\Page
      */
@@ -97,6 +102,7 @@ class Page {
      * @ORM\OneToMany(targetEntity="Article", mappedBy="page")
      *
      * @Type("ArrayCollection<rmatil\cms\Entities\Article>")
+     * @MaxDepth(2)
      *
      * @var array
      */
@@ -121,6 +127,7 @@ class Page {
      * @ORM\ManyToOne(targetEntity="User", cascade="persist")
      *
      * @Type("rmatil\cms\Entities\User")
+     * @MaxDepth(1)
      *
      * @var \rmatil\cms\Entities\User
      */
@@ -170,6 +177,7 @@ class Page {
      * @ORM\JoinTable(name="usergroup_pages")
      *
      * @Type("ArrayCollection<rmatil\cms\Entities\UserGroup>")
+     * @MaxDepth(1)
      *
      * @var ArrayCollection[rmatil\cms\Entities\UserGroup]
      */
