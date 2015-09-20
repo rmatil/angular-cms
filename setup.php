@@ -77,6 +77,8 @@ $view->parserExtensions = array(
 $app->container->singleton('serializer', function () {
     $namingStrategy = new \JMS\Serializer\Naming\CamelCaseNamingStrategy();
     return SerializerBuilder::create()
+        ->addDefaultDeserializationVisitors()
+        ->addDefaultSerializationVisitors()
         ->setSerializationVisitor('json', new \rmatil\cms\Serializer\JsonSerializationVisitor($namingStrategy))
         ->build();
 });
