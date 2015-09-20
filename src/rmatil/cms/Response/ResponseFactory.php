@@ -3,6 +3,7 @@
 
 namespace rmatil\cms\Response;
 
+use JMS\Serializer\SerializationContext;
 use rmatil\cms\Constants\HttpStatusCodes;
 
 /**
@@ -24,7 +25,7 @@ class ResponseFactory {
         $app->expires(0);
         $app->response->header('Content-Type', 'application/json');
         $app->response->setStatus(HttpStatusCodes::OK);
-        $app->response->setBody($app->serializer->serialize($data, 'json'));
+        $app->response->setBody($app->serializer->serialize($data, 'json', SerializationContext::create()->enableMaxDepthChecks()));
     }
 
     /**
@@ -41,7 +42,7 @@ class ResponseFactory {
         $app->expires(0);
         $app->response->header('Content-Type', 'application/json');
         $app->response->setStatus($code);
-        $app->response->setBody($app->serializer->serialize($data, 'json'));
+        $app->response->setBody($app->serializer->serialize($data, 'json', SerializationContext::create()->enableMaxDepthChecks()));
     }
 
     /**
