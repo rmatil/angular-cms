@@ -75,7 +75,10 @@ $view->parserExtensions = array(
 
 // Add JMS Serializer to app
 $app->container->singleton('serializer', function () {
-    return SerializerBuilder::create()->build();
+    $namingStrategy = new \JMS\Serializer\Naming\CamelCaseNamingStrategy();
+    return SerializerBuilder::create()
+        ->setSerializationVisitor('json', new \rmatil\cms\Serializer\JsonSerializationVisitor($namingStrategy))
+        ->build();
 });
 
 HandlerSingleton::setEntityManager($entityManager);
