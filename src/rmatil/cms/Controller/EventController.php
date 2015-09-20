@@ -45,14 +45,7 @@ class EventController extends SlimController {
             $event->setIsLockedBy(null);
         }
 
-        $userRepository = $this->app->entityManager->getRepository(EntityNames::USER);
-        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
-        $event->setAuthor($origUser);
-
         ResponseFactory::createJsonResponse($this->app, $event);
-
-        // set requesting user as lock
-        $event->setIsLockedBy($origUser);
 
         // force update
         try {
@@ -237,6 +230,17 @@ class EventController extends SlimController {
                     break;
                 }
             }
+        }
+
+        // we get the correct timezone in the request,
+        // therefore we only have to apply the utc as timezone
+        $utc = new DateTimeZone("UTC");
+        if ($eventObject->getStartDate() instanceof DateTime) {
+            $eventObject->getStartDate()->setTimezone($utc);
+        }
+
+        if ($eventObject->getEndDate() instanceof DateTime) {
+            $eventObject->getEndDate()->setTimezone($utc);
         }
 
         $entityManager->persist($eventObject);
