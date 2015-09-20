@@ -281,7 +281,7 @@ class File {
     /**
      * Sets the File category.
      *
-     * @param\ rmatil\cms\Entities\FileCategory $category the category
+     * @param \rmatil\cms\Entities\FileCategory $category the category
      */
     public function setCategory(FileCategory $category = null) {
         $this->category = $category;
