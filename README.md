@@ -10,29 +10,18 @@ Angular CMS is a simple Content Management System (CMS) which is based on the st
 
 Installation
 ============
-As of now, you have to clone the repo via git.
 
-Once downloaded, use composer in the root folder to install required dependencies: `composer install`.
-In `web/cms/` run `bower install` to download all required frontend packages.
+## Dependencies
 
-To minify all assets, run `gulp` in the project root folder.
+* Clone the repo: `git clone git@github.com:rmatil/angular-cms.git`
+* `cd angular-cms`
+* run `composer install` to install dependencies
+* `cd web/cms` and run `bower install`
+* finally invoke `gulp` in `web/cms`
 
-After download, set up the connection to your database in `config/yaml/parameters.yml`. Furthermore, you can setup the credentials for a mailserver which gets used for sending emails for user registration purposes.
+## Database
 
-Generate the database schema using `vendor/bin/doctrine orm:schema-tool:create` in the root folder of this application.
-
-You also may want to change the locale used for this application, which you can do in this file 
-[here](https://github.com/rmatil/angular-cms/tree/v0.1/setup.php#L39). 
-Additionally, you can change the path to the media directory for uploaded files [here](https://github.com/rmatil/angular-cms/tree/v0.1/setup.php#L35) and [here](https://github.com/rmatil/angular-cms/tree/v0.1/setup.php#L36). It might be necessary to give your webserver write permissions on this folder.
-
-Login to backend
-================
-As of now, you have to generate a user entry in the database. Use `sha512` as hash algorithm for field `passwordHash`.
-Navigate in your browser to `your-webserver/login` to login with specified username and password.
-
-Registration Endpoint
-=====================
-Registration endpoint is specified at `api/registration/:token`
-
+* Navigate to `app/config/parameters.yml` and adjust the parameters in the section `database`. Currently, only `pdo_mysql` is supported as driver.
+* Then, invoke the URL `/install` and follow the instructions
 
 
