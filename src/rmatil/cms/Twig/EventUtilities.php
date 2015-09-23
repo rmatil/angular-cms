@@ -43,7 +43,9 @@ class EventUtilities extends Twig_Extension {
             $qb->where('e.allowedUserGroups IS EMPTY');
         }
 
-        $events = $qb->getQuery()
+        $events = $qb
+            ->orderBy('e.startDate', 'ASC')
+            ->getQuery()
             ->getResult();
 
         return $events;
