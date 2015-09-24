@@ -120,7 +120,7 @@ class UserController extends SlimController {
             return;
         }
 
-        $origUserGroup = $userGroupRepository->findOneBy(array('id' => $userObject->getUserGroup()->getId()));
+        $origUserGroup = $userGroupRepository->findOneBy(array('name' => $userObject->getUserGroup()->getName()));
         $userObject->setUserGroup($origUserGroup);
 
         $now = new DateTime();
@@ -190,7 +190,9 @@ class UserController extends SlimController {
     }
 
     public function getEmptyUserAction() {
+        $userGroup = $this->app->entityManager->getRepository(EntityNames::USER_GROUP)->findOneBy(array('name' => 'ROLE_USER'));
         $user = new User();
+        $user->setUserGroup($userGroup);
 
         ResponseFactory::createJsonResponse($this->app, $user);
     }
