@@ -15,8 +15,10 @@ Installation
 
 * Clone the repo: `git clone git@github.com:rmatil/angular-cms.git`
 * `cd angular-cms`
+* `git submodule init && git submodule update`
 * run `composer install` to install dependencies
 * `cd web/cms` and run `bower install`
+* `npm install`
 * finally invoke `gulp` in `web/cms`
 
 ## Database
