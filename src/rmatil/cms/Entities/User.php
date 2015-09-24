@@ -49,7 +49,7 @@ class User {
      * 
      * @var string
      */
-    protected $userName;
+    protected $userName = '';
 
     /**
      * Firstname of the user
@@ -60,7 +60,7 @@ class User {
      * 
      * @var string
      */
-    protected $firstName;
+    protected $firstName = '';
 
     /**
      * Lastname of the user
@@ -71,7 +71,7 @@ class User {
      * 
      * @var string
      */
-    protected $lastName;
+    protected $lastName = '';
 
     /**
      * Email of the user
@@ -82,7 +82,7 @@ class User {
      * 
      * @var string
      */
-    protected $email;
+    protected $email = '';
 
     /**
      * Phone number of the user
