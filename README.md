@@ -19,7 +19,8 @@ Installation
 * run `composer install` to install dependencies
 * `cd web/cms` and run `bower install`
 * `npm install`
-* finally invoke `gulp` in `web/cms`
+* invoke `gulp` in `web/cms`
+* Finally, open `web/cms/index.html` and adjust `<base href="/" />` to match the subdirectory to the cms in the webservers document root, i.e. `<base href="/cms/" />` to resolve the links to the assets correctly as well as to allow Angular to use html5 history
 
 ## Database
 
