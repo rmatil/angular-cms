@@ -27,8 +27,8 @@ class ArticleDataAccessor extends DataAccessor {
     }
 
     public function update($article) {
-        if (! ($article instanceof Article)) {
-            throw new EntityInvalidException('Required object of type "%s" but got "%s"', EntityNames::ARTICLE, get_class($article));
+        if ( ! ($article instanceof Article)) {
+            throw new EntityInvalidException(sprintf('Required object of type "%s" but got "%s"', EntityNames::ARTICLE, get_class($article)));
         }
 
         $dbArticle = $this->em->getRepository($this->entityName)->find($article->getId());
@@ -71,7 +71,6 @@ class ArticleDataAccessor extends DataAccessor {
 
 
         $now = new DateTime('now', new DateTimeZone("UTC"));
-
         $dbArticle->setLastEditDate($now);
 
         try {
@@ -86,7 +85,7 @@ class ArticleDataAccessor extends DataAccessor {
     }
 
     public function insert($article) {
-        if (! ($article instanceof Article)) {
+        if ( ! ($article instanceof Article)) {
             throw new EntityInvalidException('Required object of type "%s" but got "%s"', EntityNames::ARTICLE, get_class($article));
         }
 
@@ -109,11 +108,9 @@ class ArticleDataAccessor extends DataAccessor {
         }
 
         $allUserGroups = $this->em->getRepository(EntityNames::USER_GROUP)->findAll();
-
         $this->insertUserGroups($allUserGroups, $article);
 
         $now = new DateTime('now', new DateTimeZone('UTC'));
-
         $article->setLastEditDate($now);
         $article->setCreationDate($now);
 

@@ -39,7 +39,10 @@ class ArticleController extends SlimController {
                     ->getById($id)
             );
         } catch (EntityNotFoundException $enfe) {
-            ResponseFactory::createNotFoundResponse($this->app, $enfe->getMessage());
+            ResponseFactory::createNotFoundResponse(
+                $this->app,
+                $enfe->getMessage()
+            );
         }
     }
 
