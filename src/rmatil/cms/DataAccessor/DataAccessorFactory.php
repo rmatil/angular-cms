@@ -29,6 +29,10 @@ class DataAccessorFactory {
                 return new ArticleDataAccessor($this->em, $this->logger);
                 break;
 
+            case EntityNames::EVENT:
+                return new EventDataAccessor($this->em, $this->logger);
+                break;
+
             default:
                 return new DataAccessor($entityName, $this->em, $this->logger);
             break;
