@@ -37,6 +37,8 @@ class DataAccessorFactory {
             case EntityNames::FILE:
                 return new FileDataAccessor($this->fileHandler, $this->em, $this->logger);
 
+            case EntityNames::LOCATION:
+                return new LocationDataAccessor($this->em, $this->logger);
             default:
                 return new DataAccessor($entityName, $this->em, $this->logger);
             break;
