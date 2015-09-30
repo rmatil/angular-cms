@@ -130,7 +130,7 @@ class EventDataAccessor extends DataAccessor {
         } catch (DBALException $dbalex) {
             $this->log->error($dbalex);
 
-            throw new EntityNotInsertedException(sprintf('Could not insert entity "%s" with id "%s"', $this->entityName, $event->getId()));
+            throw new EntityNotInsertedException(sprintf('Could not insert entity "%s"', $this->entityName));
         }
 
         return $event;

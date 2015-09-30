@@ -121,7 +121,7 @@ class ArticleDataAccessor extends DataAccessor {
         } catch (DBALException $dbalex) {
             $this->log->error($dbalex);
 
-            throw new EntityNotInsertedException(sprintf('Could not insert entity "%s" with id "%s"', $this->entityName, $article->getId()));
+            throw new EntityNotInsertedException(sprintf('Could not insert entity "%s"', $this->entityName));
         }
 
         return $article;
