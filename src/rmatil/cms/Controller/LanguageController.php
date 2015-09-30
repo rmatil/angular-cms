@@ -7,8 +7,13 @@ use Doctrine\DBAL\DBALException;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Entities\Language;
+use rmatil\cms\Exceptions\EntityInvalidException;
+use rmatil\cms\Exceptions\EntityNotFoundException;
+use rmatil\cms\Exceptions\EntityNotInsertedException;
+use rmatil\cms\Exceptions\EntityNotUpdatedException;
 use rmatil\cms\Response\ResponseFactory;
 use SlimController\SlimController;
+use Symfony\Component\Validator\Tests\Fixtures\Entity;
 
 /**
  * @package rmatil\cms\Controller
@@ -16,90 +21,78 @@ use SlimController\SlimController;
 class LanguageController extends SlimController {
 
     public function getLanguagesAction() {
-        $entityManager = $this->app->entityManager;
-        $languageRepository = $entityManager->getRepository(EntityNames::LANGUAGE);
-        $languages = $languageRepository->findAll();
-
-        ResponseFactory::createJsonResponse($this->app, $languages);
+        ResponseFactory::createJsonResponse(
+            $this->app,
+            $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::LANGUAGE)
+                ->getAll()
+        );
     }
 
     public function getLanguageByIdAction($id) {
-        $entityManager = $this->app->entityManager;
-        $languageRepository = $entityManager->getRepository(EntityNames::LANGUAGE);
-        $language = $languageRepository->findOneBy(array('id' => $id));
+        try {
+            ResponseFactory::createJsonResponse(
+                $this->app,
+                $this->app
+                    ->dataAccessorFactory
+                    ->getDataAccessor(EntityNames::LANGUAGE)
+                    ->getById($id)
+            );
+        } catch (EntityNotFoundException $enfe) {
+            ResponseFactory::createNotFoundResponse($this->app, $enfe->getMessage());
+        }
+    }
 
-        if ( ! ($language instanceof Language)) {
-            ResponseFactory::createNotFoundResponse($this->app, 'Could not find language');
+    public function updateLanguageAction($languageId) {
+        /** @var \rmatil\cms\Entities\Language $language */
+        $language = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::LANGUAGE, 'json');
+        $language->setId($languageId);
+
+        try {
+            $language = $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::LANGUAGE)
+                ->update($language);
+        }  catch (EntityInvalidException $eie) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::BAD_REQUEST, $eie->getMessage());
+            return;
+        } catch (EntityNotFoundException $enfe) {
+            ResponseFactory::createNotFoundResponse($this->app, $enfe->getMessage());
+            return;
+        } catch (EntityNotUpdatedException $enue) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $enue->getMessage());
             return;
         }
 
         ResponseFactory::createJsonResponse($this->app, $language);
     }
 
-    public function updateLanguageAction($languageId) {
-        $languageObject = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::LANGUAGE, 'json');
-
-        // get original article
-        $entityManager = $this->app->entityManager;
-        $languageRepository = $entityManager->getRepository(EntityNames::LANGUAGE);
-        $origLanguage = $languageRepository->findOneBy(array('id' => $languageId));
-
-        if ( ! ($origLanguage instanceof Language)) {
-            ResponseFactory::createNotFoundResponse($this->app, 'Could not find language');
-            return;
-        }
-
-        $origLanguage->update($languageObject);
-
-        // force update
-        try {
-            $entityManager->flush();
-        } catch (DBALException $dbalex) {
-            $now = new DateTime();
-            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
-            return;
-        }
-
-        ResponseFactory::createJsonResponse($this->app, $origLanguage);
-    }
-
     public function insertLanguageAction() {
-        $languageObject = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::LANGUAGE, 'json');
-
-        $entityManager = $this->app->entityManager;
-        $entityManager->persist($languageObject);
+        /** @var \rmatil\cms\Entities\Language $language */
+        $language = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::LANGUAGE, 'json');
 
         try {
-            $entityManager->flush();
-        } catch (DBALException $dbalex) {
-            $now = new DateTime();
-            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
-            return;
+            $language = $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::LANGUAGE)
+                ->insert($language);
+        } catch (EntityNotInsertedException $enie) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $enie->getMessage());
         }
 
-        ResponseFactory::createJsonResponseWithCode($this->app, HttpStatusCodes::CREATED, $languageObject);
+        ResponseFactory::createJsonResponseWithCode($this->app, HttpStatusCodes::CREATED, $language);
     }
 
     public function deleteLanguageByIdAction($id) {
-        $entityManager = $this->app->entityManager;
-        $languageRepository = $entityManager->getRepository(EntityNames::LANGUAGE);
-        $language = $languageRepository->findOneBy(array('id' => $id));
-
-        if ( ! ($language instanceof Language)) {
+        try {
+            $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::LANGUAGE)
+                ->delete($id);
+        } catch (EntityNotFoundException $enfe) {
             ResponseFactory::createNotFoundResponse($this->app, 'Could not find language');
             return;
-        }
-
-        $entityManager->remove($language);
-
-        try {
-            $entityManager->flush();
-        } catch (DBALException $dbalex) {
-            $now = new DateTime();
-            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
         }
 
         $this->app->response->setStatus(HttpStatusCodes::NO_CONTENT);
