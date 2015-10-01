@@ -18,10 +18,19 @@ class DataAccessorFactory {
      */
     protected $logger;
 
-    public function __construct($em, $logger, $fileHandler) {
+    /**
+     * @var \rmatil\cms\Handler\FileHandler
+     */
+    protected $fileHandler;
+
+    /** @var  \rmatil\cms\Handler\RegistrationHandler */
+    protected $registrationHandler;
+
+    public function __construct($em, $logger, $fileHandler, $registrationHandler) {
         $this->em = $em;
         $this->logger = $logger;
         $this->fileHandler = $fileHandler;
+        $this->registrationHandler = $registrationHandler;
     }
 
     public function getDataAccessor($entityName) {
@@ -48,6 +57,10 @@ class DataAccessorFactory {
 
             case EntityNames::SETTING:
                 return new SettingDataAccessor($this->em, $this->logger);
+                break;
+
+            case EntityNames::USER:
+                return new UserDataAccessor($this->registrationHandler, $this->em, $this->logger);
                 break;
 
             default:
