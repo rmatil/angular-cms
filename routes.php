@@ -63,11 +63,11 @@ $app->addRoutes(array(
                                                  'delete'  => 'Event:deleteEventById'),
 
     // events
-    '/api/repeatOptions'               => array('get'     => 'RepeatOption:getRepeatOptions',
-                                                'post'    => 'RepeatOption:insertRepeatOption'),
-    '/api/repeatOptions/:id'           => array('get'     => 'RepeatOption:getRepeatOptionById',
-                                                'delete'  => 'RepeatOption:deleteRepeatOptionById'),
-    '/api/repeatOptions/update/:id'    => array('post'    => 'RepeatOption:updateRepeatOption'),
+    '/api/repeat-options'               => array('get'     => 'RepeatOption:getRepeatOptions',
+                                                 'post'    => 'RepeatOption:insertRepeatOption'),
+    '/api/repeat-options/:id'           => array('get'     => 'RepeatOption:getRepeatOptionById',
+                                                 'put'     => 'RepeatOption:updateRepeatOption',
+                                                 'delete'  => 'RepeatOption:deleteRepeatOptionById'),
 
     // files
     '/api/files'                       => array('get'     => 'File:getFiles',

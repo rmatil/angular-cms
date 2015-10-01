@@ -7,6 +7,7 @@ namespace rmatil\cms\DataAccessor;
 use Doctrine\DBAL\DBALException;
 use rmatil\cms\Exceptions\EntityInvalidException;
 use rmatil\cms\Exceptions\EntityNotFoundException;
+use rmatil\cms\Exceptions\EntityNotInsertedException;
 use rmatil\cms\Exceptions\EntityNotUpdatedException;
 use RuntimeException;
 
@@ -83,7 +84,7 @@ class DataAccessor implements DataAccessorInterface {
         } catch (DBALException $dbalex) {
             $this->log->error($dbalex);
 
-            throw new EntityNotUpdatedException(sprintf('Could not insert entity "%s" with id "%s"', get_class($object), $object->getId()));
+            throw new EntityNotInsertedException(sprintf('Could not insert entity "%s" with id "%s"', get_class($object), $object->getId()));
         }
 
         return $object;
