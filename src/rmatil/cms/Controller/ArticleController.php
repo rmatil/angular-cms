@@ -8,6 +8,7 @@ use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Entities\Article;
 use rmatil\cms\Exceptions\EntityInvalidException;
+use rmatil\cms\Exceptions\EntityNotDeletedException;
 use rmatil\cms\Exceptions\EntityNotFoundException;
 use rmatil\cms\Exceptions\EntityNotInsertedException;
 use rmatil\cms\Exceptions\EntityNotUpdatedException;
@@ -108,7 +109,11 @@ class ArticleController extends SlimController {
         } catch (EntityNotFoundException $enfe) {
             ResponseFactory::createNotFoundResponse($this->app, 'Could not find article');
             return;
+        } catch (EntityNotDeletedException $ende) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $ende->getMessage());
+            return;
         }
+
 
         $this->app->response->setStatus(HttpStatusCodes::NO_CONTENT);
     }
