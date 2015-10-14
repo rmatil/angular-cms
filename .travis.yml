@@ -9,6 +9,7 @@ install:
 branches:
   only:
     - master
+    - integration
 cache:
   directories:
   - vendor
