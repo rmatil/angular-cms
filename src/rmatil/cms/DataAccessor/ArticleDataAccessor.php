@@ -69,10 +69,6 @@ class ArticleDataAccessor extends DataAccessor {
         $dbArticle->setLastEditDate($article->getLastEditDate());
         $dbArticle->setCreationDate($article->getCreationDate());
 
-
-        $now = new DateTime('now', new DateTimeZone("UTC"));
-        $dbArticle->setLastEditDate($now);
-
         try {
             $this->em->flush();
         } catch (DBALException $dbalex) {

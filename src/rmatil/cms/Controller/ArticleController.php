@@ -48,9 +48,11 @@ class ArticleController extends SlimController {
     }
 
     public function updateArticleAction($articleId) {
+        $now = new DateTime('now', new DateTimeZone("UTC"));
         /** @var \rmatil\cms\Entities\Article $articleObject */
         $articleObject = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::ARTICLE, 'json');
         $articleObject->setId($articleId);
+        $articleObject->setLastEditDate($now);
         $articleObject->setAuthor(
             $this->app
                 ->entityManager
