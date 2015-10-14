@@ -57,7 +57,19 @@ class Registration {
      */
     protected $token;
 
-    
+    /**
+     * @return int
+     */
+    public function getId() {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId($id) {
+        $this->id = $id;
+    }
 
     /**
      * Gets the The user of this registration.
