@@ -121,19 +121,6 @@ class Article {
     protected $creationDate;
 
     /**
-     * Indicates whether this article is locked
-     * for editing or not
-     *
-     * @ORM\ManyToOne(targetEntity="User", cascade="persist")
-     *
-     * @Type("rmatil\cms\Entities\User")
-     * @MaxDepth(1)
-     *
-     * @var \rmatil\cms\Entities\User
-     */
-    protected $isLockedBy;
-
-    /**
      * Indicates whether the article should be published or not
      *
      * @ORM\Column(type="boolean")
@@ -167,7 +154,7 @@ class Article {
      * @ORM\JoinTable(name="usergroup_articles")
      *
      * @Type("ArrayCollection<rmatil\cms\Entities\UserGroup>")
-     * @MaxDepth(1)
+     * @MaxDepth(2)
      *
      * @var ArrayCollection[rmatil\cms\Entities\UserGroup]
      */
@@ -352,24 +339,6 @@ class Article {
     }
 
     /**
-     * Gets the user which locks this user
-     *
-     * @return \rmatil\cms\Entities\User
-     */
-    public function getIsLockedBy() {
-        return $this->isLockedBy;
-    }
-
-    /**
-     * Sets the user which locks this article
-     *
-     * @param \rmatil\cms\Entities\User $isLocked the user which locks the article
-     */
-    public function setIsLockedBy($isLockedBy) {
-        $this->isLockedBy = $isLockedBy;
-    }
-
-    /**
      * Gets the Indicates whether the article should be published or not.
      *
      * @return boolean
@@ -450,4 +419,7 @@ class Article {
         $this->allowedUserGroups->removeElement($userGroup);
     }
 
+    public function update(Article $article) {
+
+    }
 }

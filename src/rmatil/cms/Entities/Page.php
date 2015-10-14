@@ -177,7 +177,7 @@ class Page {
      * @ORM\JoinTable(name="usergroup_pages")
      *
      * @Type("ArrayCollection<rmatil\cms\Entities\UserGroup>")
-     * @MaxDepth(1)
+     * @MaxDepth(2)
      *
      * @var ArrayCollection[rmatil\cms\Entities\UserGroup]
      */

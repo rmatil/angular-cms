@@ -79,7 +79,7 @@ class RepeatOption {
     }
 
     public function update(RepeatOption $repeatOption) {
-        $this->setOption($repeatOption->getValue());
+        $this->setOption($repeatOption->getOption());
     }
 
 }
