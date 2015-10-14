@@ -18,4 +18,3 @@ git:
   submodules: false
 before_script:
   - "mysql -e 'create database angular_cms_test;'"
-  - "cp ./.travis.database.yml ./config/database.yml"

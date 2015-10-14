@@ -1,0 +1,6 @@
+database:
+  driver: pdo_mysql
+  user: root
+  password:
+  dbname: angular_cms_test
+  host: localhost
