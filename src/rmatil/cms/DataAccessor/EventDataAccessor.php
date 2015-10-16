@@ -79,9 +79,6 @@ class EventDataAccessor extends DataAccessor {
             $dbEvent->setEndDate($event->getEndDate());
         }
 
-        $now = new DateTime('now', new DateTimeZone("UTC"));
-        $dbEvent->setLastEditDate($now);
-
         try {
             $this->em->flush();
         } catch (DBALException $dbalex) {

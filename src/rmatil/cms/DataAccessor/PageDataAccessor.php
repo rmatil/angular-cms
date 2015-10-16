@@ -70,14 +70,16 @@ class PageDataAccessor extends DataAccessor {
             throw new EntityNotUpdatedException($dbalex->getMessage());
         }
 
-        $dbArticles = new ArrayCollection();
-        foreach ($page->getArticles()->toArray() as $article) {
-            $dbArticle = $this->em->getRepository(EntityNames::ARTICLE)->find($article->getId());
+        if (null !== $page->getArticles()) {
+            $dbArticles = new ArrayCollection();
+            foreach ($page->getArticles()->toArray() as $article) {
+                $dbArticle = $this->em->getRepository(EntityNames::ARTICLE)->find($article->getId());
 
-            $dbArticle->setPage($dbPage);
-            $dbArticles->add($dbArticle);
+                $dbArticle->setPage($dbPage);
+                $dbArticles->add($dbArticle);
+            }
+            $dbPage->setArticles($dbArticles);
         }
-        $dbPage->setArticles($dbArticles);
 
         $dbPage->setAuthor($page->getAuthor());
         $dbPage->setCategory($page->getCategory());

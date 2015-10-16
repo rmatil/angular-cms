@@ -53,9 +53,11 @@ class EventController extends SlimController {
     }
 
     public function updateEventAction($id) {
+        $now = new DateTime('now', new DateTimeZone("UTC"));
         /** @var \rmatil\cms\Entities\Event $eventObject */
         $eventObject = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::EVENT, 'json');
         $eventObject->setId($id);
+        $eventObject->setLastEditDate($now);
         $eventObject->setAuthor(
             $this->app
                 ->entityManager

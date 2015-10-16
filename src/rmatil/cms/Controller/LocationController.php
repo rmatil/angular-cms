@@ -45,9 +45,11 @@ class LocationController extends SlimController {
     }
 
     public function updateLocationAction($locationId) {
+        $now = new DateTime('now');
         /** @var \rmatil\cms\Entities\Location $location */
         $location = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::LOCATION, 'json');
         $location->setId($locationId);
+        $location->setLastEditDate($now);
         $location->setAuthor(
             $this->app
                 ->entityManager
