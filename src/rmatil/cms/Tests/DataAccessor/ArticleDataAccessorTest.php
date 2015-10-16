@@ -109,6 +109,9 @@ class ArticleDataAccessorTest extends ADatabaseTestCase {
         return $article;
     }
 
+    /**
+     * @param $article Article
+     */
     protected function assignValues($article) {
         $article->setContent(self::$CONTENT);
         $article->setTitle(self::$TITLE);
@@ -118,6 +121,9 @@ class ArticleDataAccessorTest extends ADatabaseTestCase {
         $article->setIsPublished(self::$IS_PUBLISHED);
     }
 
+    /**
+     * @param $article Article
+     */
     protected function assignDifferentValues($article) {
         $article->setContent(self::$CONTENT_2);
         $article->setTitle(self::$TITLE_2);
