@@ -11,7 +11,12 @@ use rmatil\cms\Entities\Event;
 use rmatil\cms\Entities\Location;
 use rmatil\cms\Entities\RepeatOption;
 use rmatil\cms\Entities\User;
+use rmatil\cms\Exceptions\EntityInvalidException;
+use rmatil\cms\Exceptions\EntityNotFoundException;
+use rmatil\cms\Exceptions\EntityNotInsertedException;
+use rmatil\cms\Exceptions\EntityNotUpdatedException;
 use rmatil\cms\Response\ResponseFactory;
+use Slim\Http\Response;
 use SlimController\SlimController;
 use Symfony\Component\Validator\Constraints\Date;
 
@@ -21,263 +26,96 @@ use Symfony\Component\Validator\Constraints\Date;
 class EventController extends SlimController {
 
     public function getEventsAction() {
-        $entityManager = $this->app->entityManager;
-        $eventRepository = $entityManager->getRepository(EntityNames::EVENT);
-        $events = $eventRepository->findAll();
-
-        ResponseFactory::createJsonResponse($this->app, $events);
+        ResponseFactory::createJsonResponse(
+            $this->app,
+            $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::EVENT)
+                ->getAll()
+        );
     }
 
     public function getEventByIdAction($id) {
-        $entityManager = $this->app->entityManager;
-        $eventRepository = $entityManager->getRepository(EntityNames::EVENT);
-        $event = $eventRepository->findOneBy(array('id' => $id));
-
-        if ( ! ($event instanceof Event)) {
-            ResponseFactory::createNotFoundResponse($this->app, 'Could not find event');
-            return;
-        }
-
-        // do not show lock if requested by the same user as currently locked
-        if (($event->getIsLockedBy() instanceof User) &&
-            $event->getIsLockedBy()->getId() === $_SESSION['user_id']
-        ) {
-            $event->setIsLockedBy(null);
-        }
-
-        ResponseFactory::createJsonResponse($this->app, $event);
-
-        // force update
         try {
-            $entityManager->flush();
-        } catch (DBALException $dbalex) {
-            $now = new DateTime();
-            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
-            return;
+            ResponseFactory::createJsonResponse(
+                $this->app,
+                $this->app
+                    ->dataAccessorFactory
+                    ->getDataAccessor(EntityNames::EVENT)
+                    ->getById($id)
+            );
+        } catch (EntityNotFoundException $enfe) {
+            ResponseFactory::createNotFoundResponse(
+                $this->app,
+                $enfe->getMessage()
+            );
         }
     }
 
-    public function updateEventAction($eventId) {
+    public function updateEventAction($id) {
+        $now = new DateTime('now', new DateTimeZone("UTC"));
         /** @var \rmatil\cms\Entities\Event $eventObject */
         $eventObject = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::EVENT, 'json');
+        $eventObject->setId($id);
+        $eventObject->setLastEditDate($now);
+        $eventObject->setAuthor(
+            $this->app
+                ->entityManager
+                ->getRepository(EntityNames::USER)
+                ->find($_SESSION['user_id'])
+        );
 
-        // get original event
-        $entityManager = $this->app->entityManager;
-        $eventRepository = $entityManager->getRepository(EntityNames::EVENT);
-        $origEvent = $eventRepository->findOneBy(array('id' => $eventId));
-
-        if ( ! ($origEvent instanceof Event)) {
-            ResponseFactory::createNotFoundResponse($this->app, 'Could not find event');
-            return;
-        }
-
-        // update author
-        $userRepository = $entityManager->getRepository(EntityNames::USER);
-        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
-        $eventObject->setAuthor($origUser);
-
-        if ($eventObject->getLocation() instanceof Location) {
-            $locationRepository = $entityManager->getRepository(EntityNames::LOCATION);
-            $origLocation = $locationRepository->findOneBy(array('id' => $eventObject->getLocation()->getId()));
-            $eventObject->setLocation($origLocation);
-        }
-
-        if ($eventObject->getRepeatOption() instanceof RepeatOption) {
-            $repeatOptionRepository = $entityManager->getRepository(EntityNames::REPEAT_OPTION);
-            $origRepeatOption = $repeatOptionRepository->findOneBy(array('id' => $eventObject->getRepeatOption()->getId()));
-            $eventObject->setRepeatOption($origRepeatOption);
-        }
-
-        $fileRepository = $entityManager->getRepository(EntityNames::FILE);
-        $origFile = $fileRepository->findOneBy(array('id' => $eventObject->getFile()));
-        $eventObject->setFile($origFile);
-
-        // get all allowed usergroups
-        $userGroupRepo = $entityManager->getRepository(EntityNames::USER_GROUP);
-        $allUserGroups = $userGroupRepo->findAll();
-
-        foreach ($allUserGroups as $userGroup) {
-            if ($userGroup->getAccessibleEvents()->contains($origEvent) &&
-                ! $origEvent->getAllowedUserGroups()->contains($userGroup)
-            ) {
-                // maintain inverse side
-                $origEvent->addAllowedUserGroup($userGroup);
-            } else if ( ! $userGroup->getAccessibleEvents()->contains($origEvent) &&
-                $origEvent->getAllowedUserGroups()->contains($userGroup)
-            ) {
-                // maintain inverse side
-                $origEvent->removeAllowedUserGroup($userGroup);
-            }
-
-            if ( ! $userGroup->getAccessibleEvents()->contains($origEvent) &&
-                ! $origEvent->getAllowedUserGroups()->contains($userGroup)
-            ) {
-                // use this loop here, as contains() does not
-                // consider a proxy object as a equally object. Basically, it isn't...
-                foreach ($eventObject->getAllowedUserGroups() as $userGroupObj) {
-                    if ($userGroupObj->getId() === $userGroup->getId()) {
-                        // usergroup was selected and we can add the event to the accessible usergroups
-                        // and the usergroup as allowedUserGroup to the event (inside addAccessibleEvent-Method)
-                        $userGroup->addAccessibleEvent($origEvent);
-                        break;
-                    }
-                }
-
-            } else if ($userGroup->getAccessibleEvents()->contains($origEvent) &&
-                $origEvent->getAllowedUserGroups()->contains($userGroup) &&
-                ! $eventObject->getAllowedUserGroups()->contains($userGroup)
-            ) {
-                $doesContainObj = false;
-                foreach ($eventObject->getAllowedUserGroups() as $userGroupObj) {
-                    if ($userGroupObj->getId() === $userGroup->getId()) {
-                        $doesContainObj = true;
-                        break;
-                    }
-                }
-
-                if ( ! $doesContainObj) {
-                    // usegroup was unselected and we can remove the event from the accessible usergroups
-                    // and the usergroup as the allowedUserGroup from the event (inside removeAccessibleEvent)
-                    $userGroup->removeAccessibleEvent($origEvent);
-                }
-            }
-        }
-
-        $origEvent->setAuthor($eventObject->getAuthor());
-        $origEvent->setLocation($eventObject->getLocation());
-        $origEvent->setFile($eventObject->getFile());
-        $origEvent->setUrlName($eventObject->getUrlName());
-        $origEvent->setName($eventObject->getName());
-        $origEvent->setRepeatOption($eventObject->getRepeatOption());
-
-        // we get the correct timezone in the request,
-        // therefore we only have to apply the utc as timezone
-        $utc = new DateTimeZone("UTC");
-        if ($eventObject->getStartDate() instanceof DateTime) {
-            $eventObject->getStartDate()->setTimezone($utc);
-        }
-
-        if ($eventObject->getEndDate() instanceof DateTime) {
-            $eventObject->getEndDate()->setTimezone($utc);
-        }
-
-        $origEvent->setStartDate($eventObject->getStartDate());
-        $origEvent->setEndDate($eventObject->getEndDate());
-        $origEvent->setDescription($eventObject->getDescription());
-        $origEvent->setLastEditDate($eventObject->getLastEditDate());
-        $origEvent->setCreationDate($eventObject->getCreationDate());
-
-        // release lock on editing
-        $origEvent->setIsLockedBy(null);
-
-        // force update
         try {
-            $entityManager->flush();
-        } catch (DBALException $dbalex) {
-            $now = new DateTime();
-            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
+            $obj = $this->app
+                    ->dataAccessorFactory
+                    ->getDataAccessor(EntityNames::EVENT)
+                    ->update($eventObject);
+        } catch (EntityInvalidException $eie) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::BAD_REQUEST, $eie->getMessage());
+            return;
+        } catch (EntityNotFoundException $enfe) {
+            ResponseFactory::createNotFoundResponse($this->app, $enfe->getMessage());
+            return;
+        } catch (EntityNotUpdatedException $enue) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $enue->getMessage());
             return;
         }
 
-        ResponseFactory::createJsonResponse($this->app, $origEvent);
+        ResponseFactory::createJsonResponse($this->app, $obj);
     }
 
     public function insertEventAction() {
         /** @var \rmatil\cms\Entities\Event $eventObject */
         $eventObject = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::EVENT, 'json');
-
-        // set now as creation date
-        $now = new DateTime();
-        $eventObject->setLastEditDate($now);
-        $eventObject->setCreationDate($now);
-
-        $entityManager = $this->app->entityManager;
-
-        $userRepository = $entityManager->getRepository(EntityNames::USER);
-        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
-        $eventObject->setAuthor($origUser);
-
-        if ($eventObject->getLocation() instanceof Location) {
-            $locationRepository = $entityManager->getRepository(EntityNames::LOCATION);
-            $origLocation = $locationRepository->findOneBy(array('id' => $eventObject->getLocation()->getId()));
-            $eventObject->setLocation($origLocation);
-        }
-
-        if ($eventObject->getRepeatOption() instanceof RepeatOption) {
-            $repeatOptionRepository = $entityManager->getRepository(EntityNames::REPEAT_OPTION);
-            $origRepeatOption = $repeatOptionRepository->findOneBy(array('id' => $eventObject->getRepeatOption()->getId()));
-            $eventObject->setRepeatOption($origRepeatOption);
-        }
-
-        $fileRepository = $entityManager->getRepository(EntityNames::FILE);
-        $origFile = $fileRepository->findOneBy(array('id' => $eventObject->getFile()));
-        $eventObject->setFile($origFile);
-
-        // get all allowed usergroups
-        $userGroupObjs = $eventObject->getAllowedUserGroups()->toArray(); // use array here, otherwise this reference will also be empty after clear()
-        $eventObject->getAllowedUserGroups()->clear();
-        $userGroupRepo = $entityManager->getRepository(EntityNames::USER_GROUP);
-        $allUserGroups = $userGroupRepo->findAll();
-
-        foreach ($allUserGroups as $userGroup) {
-            foreach ($userGroupObjs as $userGroupObj) {
-                if ($userGroupObj->getId() === $userGroup->getId()) {
-                    // usergroup was selected and we can add the article to the accessible usergroups
-                    // and the usergroup as allowedUserGroup to the article (inside addAccessibleArticle-Method)
-                    $userGroup->addAccessibleEvent($eventObject);
-                    break;
-                }
-            }
-        }
-
-        // we get the correct timezone in the request,
-        // therefore we only have to apply the utc as timezone
-        $utc = new DateTimeZone("UTC");
-        if ($eventObject->getStartDate() instanceof DateTime) {
-            $eventObject->getStartDate()->setTimezone($utc);
-        }
-
-        if ($eventObject->getEndDate() instanceof DateTime) {
-            $eventObject->getEndDate()->setTimezone($utc);
-        }
-
-        $entityManager->persist($eventObject);
+        $eventObject->setAuthor(
+            $this->app
+                ->entityManager
+                ->getRepository(EntityNames::USER)
+                ->find($_SESSION['user_id'])
+        );
 
         try {
-            $entityManager->flush();
-        } catch (DBALException $dbalex) {
-            $now = new DateTime();
-            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
+            $event = $this->app
+                    ->dataAccessorFactory
+                    ->getDataAccessor(EntityNames::EVENT)
+                    ->insert($eventObject);
+        } catch (EntityNotInsertedException $enie) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $enie->getMessage());
             return;
         }
 
-        ResponseFactory::createJsonResponseWithCode($this->app, HttpStatusCodes::CREATED, $eventObject);
+        ResponseFactory::createJsonResponseWithCode($this->app, HttpStatusCodes::CREATED, $event);
     }
 
     public function deleteEventByIdAction($id) {
-        $entityManager = $this->app->entityManager;
-        $eventRepository = $entityManager->getRepository(EntityNames::EVENT);
-        $event = $eventRepository->findOneBy(array('id' => $id));
-
-        if ( ! ($event instanceof Event)) {
-            ResponseFactory::createNotFoundResponse($this->app, 'Could not find event');
-            return;
-        }
-
-        // prevent conflict on foreign key constraint
-        $event->setIsLockedBy(null);
-
-        $entityManager->remove($event);
-
         try {
-            $entityManager->flush();
-        } catch (DBALException $dbalex) {
-            $now = new DateTime();
-            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
+            $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::EVENT)
+                ->delete($id);
+        } catch (EntityNotFoundException $enfe) {
+            ResponseFactory::createNotFoundResponse($this->app, 'Could not find eventt');
+            return;
         }
 
         $this->app->response->setStatus(HttpStatusCodes::NO_CONTENT);
@@ -286,11 +124,11 @@ class EventController extends SlimController {
     public function getEmptyEventAction() {
         $event = new Event();
 
-        $userRepository = $this->app->entityManager->getRepository(EntityNames::USER);
-        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
-        $event->setAuthor($origUser);
+        $event->setAuthor(
+            $this->app->entityManager->getRepository(EntityNames::USER)->find($_SESSION['user_id'])
+        );
 
-        $now = new DateTime();
+        $now = new DateTime('now', new DateTimeZone('UTC'));
         $event->setLastEditDate($now);
         $event->setCreationDate($now);
 

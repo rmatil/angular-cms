@@ -7,6 +7,10 @@ use Doctrine\DBAL\DBALException;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Entities\User;
+use rmatil\cms\Exceptions\EntityNotDeletedException;
+use rmatil\cms\Exceptions\EntityNotFoundException;
+use rmatil\cms\Exceptions\EntityNotInsertedException;
+use rmatil\cms\Exceptions\EntityNotUpdatedException;
 use rmatil\cms\Exceptions\PasswordInvalidException;
 use rmatil\cms\Exceptions\RegistrationMailNotSentException;
 use rmatil\cms\Login\PasswordHandler;
@@ -21,168 +25,82 @@ use SlimController\SlimController;
 class UserController extends SlimController {
 
     public function getUsersAction() {
-        $userRepository = $this->app->entityManager->getRepository(EntityNames::USER);
-        $users = $userRepository->findAll();
-
-        ResponseFactory::createJsonResponse($this->app, $users);
+        ResponseFactory::createJsonResponse(
+            $this->app,
+            $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::USER)
+                ->getAll()
+        );
     }
 
     public function getUserByIdAction($id) {
-        $entityManager = $this->app->entityManager;
-        $userRepository = $entityManager->getRepository(EntityNames::USER);
-        $user = $userRepository->findOneBy(array('id' => $id));
-
-        if ( ! ($user instanceof User)) {
-            ResponseFactory::createNotFoundResponse($this->app, 'Could not find user');
-            return;
-        }
-
-        // do not show lock if requested by the same user as currently locked
-        if (($user->getIsLockedBy() instanceof User) &&
-            $user->getIsLockedBy()->getId() === $_SESSION['user_id']
-        ) {
-            $user->setIsLockedBy(null);
-        }
-
-        ResponseFactory::createJsonResponse($this->app, $user);
-
-        $userRepository = $entityManager->getRepository(EntityNames::USER);
-        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
-        // set requesting user as lock
-        $user->setIsLockedBy($origUser);
-
-        // force update
         try {
-            $entityManager->flush();
-        } catch (DBALException $dbalex) {
-            $now = new DateTime();
-            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
+            ResponseFactory::createJsonResponse(
+                $this->app,
+                $this->app
+                    ->dataAccessorFactory
+                    ->getDataAccessor(EntityNames::USER)
+                    ->getById($id)
+            );
+        } catch (EntityNotFoundException $enfe) {
+            ResponseFactory::createNotFoundResponse($this->app, $enfe->getMessage());
             return;
         }
     }
 
     public function updateUserAction($userId) {
-        /** @var \rmatil\cms\Entities\User $userObject */
-        $userObject = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::USER, 'json');
+        /** @var \rmatil\cms\Entities\User $user */
+        $user = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::USER, 'json');
+        $user->setId($userId);
 
-        $entityManager = $this->app->entityManager;
-        $userRepository = $entityManager->getRepository(EntityNames::USER);
-        $origUser = $userRepository->findOneBy(array('id' => $userId));
-
-        if ( ! ($origUser instanceof User)) {
-            ResponseFactory::createNotFoundResponse($this->app, 'Could not find user');
-            return;
-        }
-
-        $userGroupRepository = $entityManager->getRepository(EntityNames::USER_GROUP);
-        $origUserGroup = $userGroupRepository->findOneBy(array('id' => $origUser->getUserGroup()->getId()));
-        $userObject->setUserGroup($origUserGroup);
-
-        if ($userObject->getPlainPassword() === null ||
-            $userObject->getPlainPassword() === ''
-        ) {
-            // user has not set a new password
-            $userObject->setPasswordHash($origUser->getPasswordHash());
-        } else {
-            // hash provided plaintext password
-            $userObject->setPasswordHash(PasswordHandler::hash($userObject->getPlainPassword()));
-        }
-
-        $origUser->update($userObject);
-        // release lock on editing
-        $origUser->setIsLockedBy(null);
-
-        // force update
         try {
-            $entityManager->flush();
-        } catch (DBALException $dbalex) {
-            $now = new DateTime();
-            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
+            $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::USER)
+                ->update($user);
+        } catch (EntityNotFoundException $enfe) {
+            ResponseFactory::createNotFoundResponse($this->app, $enfe);
+            return;
+        } catch (EntityNotUpdatedException $enue) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $enue->getMessage());
             return;
         }
 
-        ResponseFactory::createJsonResponse($this->app, $origUser);
+        ResponseFactory::createJsonResponse($this->app, $user);
     }
 
     public function insertUserAction() {
-        /** @var \Doctrine\ORM\EntityManager $em */
-        $em = $this->app->entityManager;
-        $userGroupRepository = $em->getRepository(EntityNames::USER_GROUP);
-        /** @var \rmatil\cms\Entities\User $userObject */
-        $userObject = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::USER, 'json');
-
-
-        $dbUser = $em->getRepository(EntityNames::USER)->findOneBy(array('userName' => $userObject->getUserName()));
-        if ($dbUser instanceof User) {
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, sprintf('User with username %s already exists', $userObject->getUserName()));
-            return;
-        }
-
-        $origUserGroup = $userGroupRepository->findOneBy(array('name' => $userObject->getUserGroup()->getName()));
-        $userObject->setUserGroup($origUserGroup);
-
-        $now = new DateTime();
-        $userObject->setLastLoginDate($now);
-        $userObject->setRegistrationDate($now);
-        $userObject->setHasEmailValidated(false);
-        $userObject->setIsLocked(true);
-
-        // we do not set a password here, since the user
-        // has to create one by himself
-
-        $em->persist($userObject);
+        /** @var \rmatil\cms\Entities\User $user */
+        $user = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::USER, 'json');
 
         try {
-            $em->flush();
-        } catch (DBALException $dbalex) {
-            $now = new DateTime();
-            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
+            $user = $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::USER)
+                ->insert($user);
+        } catch (EntityNotInsertedException $enie) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $enie->getMessage());
             return;
-        }
-
-        try {
-            // sends registration email and persists the user in the db
-            $this->app->registrationHandler->registerUser($userObject);
         } catch (RegistrationMailNotSentException $rmnse) {
             ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, sprintf('Could not sent registration email: %s', $rmnse->getMessage()));
             return;
         }
 
-        ResponseFactory::createJsonResponseWithCode($this->app, HttpStatusCodes::CREATED, $userObject);
+        ResponseFactory::createJsonResponseWithCode($this->app, HttpStatusCodes::CREATED, $user);
     }
 
     public function deleteUserByIdAction($id) {
-        $entityManager = $this->app->entityManager;
-        $userRepository = $entityManager->getRepository(EntityNames::USER);
-        $user = $userRepository->findOneBy(array('id' => $id));
-
-        if ( ! ($user instanceof User)) {
-            ResponseFactory::createNotFoundResponse($this->app, 'Could not find user');
-            return;
-        }
-
-        $registrationRepository = $entityManager->getRepository(EntityNames::REGISTRATION);
-        $registration = $registrationRepository->findOneBy(array('user' => $user));
-
-        if ($registration !== null) {
-            $entityManager->remove($registration);
-        }
-
-        // prevent conflict on foreign key constraint
-        $user->setIsLockedBy(null);
-        $user->setUserGroup(null);
-
-        $entityManager->remove($user);
-
         try {
-            $entityManager->flush();
-        } catch (DBALException $dbalex) {
-            $now = new DateTime();
-            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
+            $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::USER)
+                ->delete($id);
+        } catch (EntityNotFoundException $enfe) {
+            ResponseFactory::createNotFoundResponse($this->app, $enfe->getMessage());
+            return;
+        } catch (EntityNotDeletedException $ende) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $ende->getMessage());
             return;
         }
 

@@ -2,7 +2,7 @@
 
 <phpunit bootstrap="src/rmatil/cms/Tests/bootstrap.php" colors="true">
     <testsuites>
-        <testsuite name="Default Test Suite">
+        <testsuite name="the-whole-be-it-should">
             <directory>./src/rmatil/cms/Tests/</directory>
         </testsuite>
     </testsuites>
