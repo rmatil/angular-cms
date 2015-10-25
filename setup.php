@@ -120,6 +120,11 @@ $app->container->singleton('loginHandler', function () use ($loginHandler) {
     return $loginHandler;
 });
 
+$dataAccessorFactory = new \rmatil\cms\DataAccessor\DataAccessorFactory($entityManager, $app->getLog(), $fileHandler, $registrationHandler);
+$app->container->singleton('dataAccessorFactory', function () use ($dataAccessorFactory) {
+    return $dataAccessorFactory;
+});
+
 // Add Basic Auth Security
 $app->add(new BasicAuthMiddleware($entityManager, 'Secured Area'));
 

@@ -8,6 +8,10 @@ use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Entities\Location;
 use rmatil\cms\Entities\User;
+use rmatil\cms\Exceptions\EntityNotDeletedException;
+use rmatil\cms\Exceptions\EntityNotFoundException;
+use rmatil\cms\Exceptions\EntityNotInsertedException;
+use rmatil\cms\Exceptions\EntityNotUpdatedException;
 use rmatil\cms\Response\ResponseFactory;
 use SlimController\SlimController;
 
@@ -17,141 +21,93 @@ use SlimController\SlimController;
 class LocationController extends SlimController {
 
     public function getlocationsAction() {
-        $entityManager = $this->app->entityManager;
-        $locationRepository = $entityManager->getRepository(EntityNames::LOCATION);
-        $locations = $locationRepository->findAll();
-
-        ResponseFactory::createJsonResponse($this->app, $locations);
+        ResponseFactory::createJsonResponse(
+            $this->app,
+            $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::LOCATION)
+                ->getAll()
+        );
     }
 
     public function getLocationByIdAction($id) {
-        $entityManager = $this->app->entityManager;
-        $locationRepository = $entityManager->getRepository(EntityNames::LOCATION);
-        $location = $locationRepository->findOneBy(array('id' => $id));
-
-        if ( ! ($location instanceof Location)) {
-            ResponseFactory::createNotFoundResponse($this->app, 'Could not find location');
-            return;
-        }
-
-        // do not show lock if requested by the same user as currently locked
-        if (($location->getIsLockedBy() instanceof User) &&
-            $location->getIsLockedBy()->getId() === $_SESSION['user_id']
-        ) {
-            $location->setIsLockedBy(null);
-        }
-
-        $userRepository = $entityManager->getRepository(EntityNames::USER);
-        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
-        $location->setAuthor($origUser);
-
-        ResponseFactory::createJsonResponse($this->app, $location);
-
-        // set requesting user as lock
-        $location->setIsLockedBy($origUser);
-
-        // force update
         try {
-            $entityManager->flush();
-        } catch (DBALException $dbalex) {
-            $now = new DateTime();
-            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
-            return;
+            ResponseFactory::createJsonResponse(
+                $this->app,
+                $this->app
+                    ->dataAccessorFactory
+                    ->getDataAccessor(EntityNames::LOCATION)
+                    ->getById($id)
+            );
+        } catch (EntityNotFoundException $enfe) {
+            ResponseFactory::createNotFoundResponse($this->app, $enfe->getMessage());
         }
     }
 
     public function updateLocationAction($locationId) {
-        /** @var \rmatil\cms\Entities\Location $locationObject */
-        $locationObject = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::LOCATION, 'json');
+        $now = new DateTime('now');
+        /** @var \rmatil\cms\Entities\Location $location */
+        $location = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::LOCATION, 'json');
+        $location->setId($locationId);
+        $location->setLastEditDate($now);
+        $location->setAuthor(
+            $this->app
+                ->entityManager
+                ->getRepository(EntityNames::USER)
+                ->find($_SESSION['user_id'])
+        );
 
-        // get original location
-        $entityManager = $this->app->entityManager;
-        $locationRepository = $entityManager->getRepository(EntityNames::LOCATION);
-        $origLocation = $locationRepository->findOneBy(array('id' => $locationId));
-
-        if ( ! ($origLocation instanceof Location)) {
-            ResponseFactory::createNotFoundResponse($this->app, 'Could not find location');
-            return;
-        }
-
-        $userRepository = $entityManager->getRepository(EntityNames::USER);
-        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
-        $locationObject->setAuthor($origUser);
-
-        $origLocation->update($locationObject);
-        // release lock on editing
-        $origLocation->setIsLockedBy(null);
-
-        // force update
         try {
-            $entityManager->flush();
-        } catch (DBALException $dbalex) {
-            $now = new DateTime();
-            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
+            $location = $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::LOCATION)
+                ->update($location);
+        } catch (EntityNotFoundException $enfe) {
+            ResponseFactory::createNotFoundResponse($this->app, $enfe->getMessage());
+            return;
+        } catch (EntityNotUpdatedException $enue) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $enue->getMessage());
             return;
         }
 
-        ResponseFactory::createJsonResponse($this->app, $origLocation);
+        ResponseFactory::createJsonResponse($this->app, $location);
     }
 
     public function insertLocationAction() {
-        /** @var \rmatil\cms\Entities\Location $locationObject */
-        $locationObject = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::LOCATION, 'json');
-
-        // set now as creation date
-        $now = new DateTime();
-        $locationObject->setLastEditDate($now);
-        $locationObject->setCreationDate($now);
-
-        $entityManager = $this->app->entityManager;
-
-        $userRepository = $entityManager->getRepository(EntityNames::USER);
-        $origUser = $userRepository->findOneBy(array('id' => $_SESSION['user_id']));
-        $locationObject->setAuthor($origUser);
-
-        $entityManager->persist($locationObject);
+        /** @var \rmatil\cms\Entities\Location $location */
+        $location = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::LOCATION, 'json');
+        $location->setAuthor(
+            $this->app
+                ->entityManager
+                ->getRepository(EntityNames::USER)
+                ->find($_SESSION['user_id'])
+        );
 
         try {
-            $entityManager->flush();
-        } catch (DBALException $dbalex) {
-            $now = new DateTime();
-            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
+            $location = $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::LOCATION)
+                ->insert($location);
+        } catch (EntityNotInsertedException $enie) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $enie->getMessage());
             return;
         }
 
-        ResponseFactory::createJsonResponseWithCode($this->app, HttpStatusCodes::CREATED, $locationObject);
+        ResponseFactory::createJsonResponseWithCode($this->app, HttpStatusCodes::CREATED, $location);
     }
 
     public function deleteLocationByIdAction($id) {
-        $entityManager = $this->app->entityManager;
-        $locationRepository = $entityManager->getRepository(EntityNames::LOCATION);
-        $location = $locationRepository->findOneBy(array('id' => $id));
-
-        if ( ! ($location instanceof Location)) {
-            ResponseFactory::createNotFoundResponse($this->app, 'Could not find location');
-            return;
-        }
-
-        /** @var \rmatil\cms\Entities\Event[] $attachedEvents */
-        $attachedEvents = $entityManager->getRepository(EntityNames::EVENT)->findBy(array(
-            'location' => $location->getId()
-        ));
-
-        foreach ($attachedEvents as $event) {
-            $event->setLocation(null);
-        }
-
-        $entityManager->remove($location);
-
         try {
-            $entityManager->flush();
-        } catch (DBALException $dbalex) {
-            $now = new DateTime();
-            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
+            $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::LOCATION)
+                ->delete($id);
+        } catch (EntityNotFoundException $enfe ) {
+            ResponseFactory::createNotFoundResponse($this->app, $enfe->getMessage());
+            return;
+        } catch (EntityNotDeletedException $ende) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $ende->getMessage());
+            return;
         }
 
         $this->app->response->setStatus(HttpStatusCodes::NO_CONTENT);

@@ -7,7 +7,12 @@ use Doctrine\DBAL\DBALException;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Entities\RepeatOption;
+use rmatil\cms\Exceptions\EntityNotDeletedException;
+use rmatil\cms\Exceptions\EntityNotFoundException;
+use rmatil\cms\Exceptions\EntityNotInsertedException;
+use rmatil\cms\Exceptions\EntityNotUpdatedException;
 use rmatil\cms\Response\ResponseFactory;
+use Slim\Http\Response;
 use SlimController\SlimController;
 
 /**
@@ -16,91 +21,80 @@ use SlimController\SlimController;
 class RepeatOptionController extends SlimController {
 
     public function getRepeatOptionsAction() {
-        $entityManager = $this->app->entityManager;
-        $repeatOptionRepository = $entityManager->getRepository(EntityNames::REPEAT_OPTION);
-        $repeatOptions = $repeatOptionRepository->findAll();
-
-        ResponseFactory::createJsonResponse($this->app, $repeatOptions);
+        ResponseFactory::createJsonResponse(
+            $this->app,
+            $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::REPEAT_OPTION)
+                ->getAll()
+        );
     }
 
     public function getRepeatOptionByIdAction($id) {
-        $entityManager = $this->app->entityManager;
-        $repeatOptionRepository = $entityManager->getRepository(EntityNames::REPEAT_OPTION);
-        $repeatOption = $repeatOptionRepository->findOneBy(array('id' => $id));
+        try {
+            ResponseFactory::createJsonResponse(
+                $this->app,
+                $this->app
+                    ->dataAccessorFactory
+                    ->getDataAccessor(EntityNames::REPEAT_OPTION)
+                    ->getById($id)
+            );
+        } catch (EntityNotFoundException $enfe) {
+            ResponseFactory::createNotFoundResponse($this->app, $enfe->getMessage());
+            return;
+        }
+    }
 
-        if ( ! ($repeatOption instanceof RepeatOption)) {
-            ResponseFactory::createNotFoundResponse($this->app, 'Could not find repeat option');
+    public function updateRepeatOptionAction($repeatOptionId) {
+        /** @var \rmatil\cms\Entities\RepeatOption $repeatOption */
+        $repeatOption = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::REPEAT_OPTION, 'json');
+        $repeatOption->setId($repeatOptionId);
+
+        try {
+            $repeatOption = $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::REPEAT_OPTION)
+                ->update($repeatOption);
+        } catch (EntityNotFoundException $enfe) {
+            ResponseFactory::createNotFoundResponse($this->app, $enfe->getMessage());
+            return;
+        } catch (EntityNotUpdatedException $enue) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $enue->getMessage());
+            return;
         }
 
         ResponseFactory::createJsonResponse($this->app, $repeatOption);
     }
 
-    public function updateRepeatOptionAction($repeatOptionId) {
-        /** @var \rmatil\cms\Entities\RepeatOption $repeatOptionObj */
-        $repeatOptionObj = $this->app->serializer->serialize($this->app->request->getBody(), EntityNames::REPEAT_OPTION, 'json');
-
-        // get original repeat option
-        $entityManager = $this->app->entityManager;
-        $repeatOptionRepository = $entityManager->getRepository(EntityNames::REPEAT_OPTION);
-        $origRepeatOption = $repeatOptionRepository->findOneBy(array('id' => $repeatOptionId));
-
-        if ( ! ($origRepeatOption instanceof RepeatOption)) {
-            ResponseFactory::createNotFoundResponse($this->app, 'Could not find repeat option');
-            return;
-        }
-
-        $origRepeatOption->update($repeatOptionObj);
-
-        // force update
-        try {
-            $entityManager->flush();
-        } catch (DBALException $dbalex) {
-            $now = new DateTime();
-            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
-            return;
-        }
-
-        ResponseFactory::createJsonResponse($this->app, $origRepeatOption);
-    }
-
     public function insertRepeatOptionAction() {
-        /** @var \rmatil\cms\Entities\RepeatOption $repeatOptionObj */
-        $repeatOptionObj = $this->app->serializer->serialize($this->app->request->getBody(), EntityNames::REPEAT_OPTION, 'json');
-
-        $entityManager = $this->app->entityManager;
-        $entityManager->persist($repeatOptionObj);
+        /** @var \rmatil\cms\Entities\RepeatOption $repeatOption */
+        $repeatOption = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::REPEAT_OPTION, 'json');
 
         try {
-            $entityManager->flush();
-        } catch (DBALException $dbalex) {
-            $now = new DateTime();
-            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
+            $repeatOption = $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::REPEAT_OPTION)
+                ->insert($repeatOption);
+        } catch (EntityNotInsertedException $enie) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $enie->getMessage());
             return;
         }
 
-        ResponseFactory::createJsonResponseWithCode($this->app, HttpStatusCodes::CREATED, $repeatOptionObj);
+        ResponseFactory::createJsonResponseWithCode($this->app, HttpStatusCodes::CREATED, $repeatOption);
     }
 
     public function deleteRepeatOptionByIdAction($id) {
-        $entityManager = $this->app->entityManager;
-        $repeatOptionRepository = $entityManager->getRepository(EntityNames::REPEAT_OPTION);
-        $repeatOption = $repeatOptionRepository->findOneBy(array('id' => $id));
-
-        if ($repeatOption === null) {
-            ResponseFactory::createNotFoundResponse($this->app, 'Could not find repeat option');
-            return;
-        }
-
-        $entityManager->remove($repeatOption);
-
         try {
-            $entityManager->flush();
-        } catch (DBALException $dbalex) {
-            $now = new DateTime();
-            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
+            $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::REPEAT_OPTION)
+                ->delete($id);
+        } catch (EntityNotFoundException $enfe) {
+            ResponseFactory::createNotFoundResponse($this->app, $enfe->getMessage());
+            return;
+        } catch (EntityNotDeletedException $ende) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $ende->getMessage());
+            return;
         }
 
         $this->app->response->setStatus(HttpStatusCodes::NO_CONTENT);

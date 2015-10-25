@@ -160,6 +160,23 @@ class File {
      */
     protected $creationDate;
 
+    /**
+     * Gets the The id of the File.
+     *
+     * @return string
+     */
+    public function getId() {
+        return $this->id;
+    }
+
+    /**
+     * Sets the The id of the File.
+     *
+     * @return string
+     */
+    public function setId($id) {
+        $this->id = $id;
+    }
 
     /**
      * Gets the The name of the File.

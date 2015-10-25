@@ -7,6 +7,10 @@ use Doctrine\DBAL\DBALException;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Constants\HttpStatusCodes;
 use rmatil\cms\Entities\ArticleCategory;
+use rmatil\cms\Exceptions\EntityInvalidException;
+use rmatil\cms\Exceptions\EntityNotFoundException;
+use rmatil\cms\Exceptions\EntityNotInsertedException;
+use rmatil\cms\Exceptions\EntityNotUpdatedException;
 use rmatil\cms\Response\ResponseFactory;
 use Slim\Http\Response;
 use SlimController\SlimController;
@@ -17,89 +21,76 @@ use SlimController\SlimController;
 class ArticleCategoryController extends SlimController {
 
     public function getArticleCategoriesAction() {
-        $articleCategoryRepository = $this->app->entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
-        $articleCategories = $articleCategoryRepository->findAll();
-
-        ResponseFactory::createJsonResponse($this->app, $articleCategories);
+        ResponseFactory::createJsonResponse(
+            $this->app,
+            $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::ARTICLE_CATEGORY)
+                ->getAll());
     }
 
     public function getArticleCategoryByIdAction($id) {
-        $articleCategoryRepository = $this->app->entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
-        $articleCategory = $articleCategoryRepository->findOneBy(array('id' => $id));
-
-        if ( ! ($articleCategory instanceof ArticleCategory)) {
-            ResponseFactory::createNotFoundResponse($this->app, 'Could not find article category');
-            return;
+        try {
+            ResponseFactory::createJsonResponse(
+                $this->app,
+                $this->app
+                    ->dataAccessorFactory
+                    ->getDataAccessor(EntityNames::ARTICLE_CATEGORY)
+                    ->getById($id));
+        } catch (EntityNotFoundException $enfe) {
+            ResponseFactory::createNotFoundResponse($this->app, $enfe->getMessage());
         }
-
-        ResponseFactory::createJsonResponse($this->app, $articleCategory);
     }
 
     public function updateArticleCategoryAction($articleCategoryId) {
-        $entityManager = $this->app->entityManager;
-        /** @var \rmatil\cms\Entities\ArticleCategory $articleCategoryObj */
-        $articleCategoryObj = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::ARTICLE_CATEGORY, 'json');
+        /** @var \rmatil\cms\Entities\ArticleCategory $articleCategory */
+        $articleCategory = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::ARTICLE_CATEGORY, 'json');
+        $articleCategory->setId($articleCategoryId);
 
-        // get original article
-        $articleCategoryRepository = $entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
-        $origArticleCategory = $articleCategoryRepository->findOneBy(array('id' => $articleCategoryId));
-
-        if ( ! ($origArticleCategory instanceof ArticleCategory)) {
-            ResponseFactory::createNotFoundResponse($this->app, 'Could not find article category');
-            return;
-        }
-
-        $origArticleCategory->update($articleCategoryObj);
-
-        // force update
         try {
-            $entityManager->flush();
-        } catch (DBALException $dbalex) {
-            $now = new DateTime();
-            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
+            $obj = $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::ARTICLE_CATEGORY)
+                ->update($articleCategory);
+        } catch (EntityInvalidException $eie) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::BAD_REQUEST, $eie->getMessage());
+            return;
+        } catch (EntityNotFoundException $enfe) {
+            ResponseFactory::createNotFoundResponse($this->app, $enfe->getMessage());
+            return;
+        } catch (EntityNotUpdatedException $enue) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $enue->getMessage());
             return;
         }
 
-        ResponseFactory::createJsonResponse($this->app, $origArticleCategory);
+        ResponseFactory::createJsonResponse($this->app, $obj);
     }
 
-    public function insertArticleAction() {
-        $articleCategoryObj = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::ARTICLE_CATEGORY, 'json');
-
-        $entityManager = $this->app->entityManager;
-        $entityManager->persist($articleCategoryObj);
+    public function insertArticleCategoryAction() {
+        $articleCategory = $this->app->serializer->deserialize($this->app->request->getBody(), EntityNames::ARTICLE_CATEGORY, 'json');
 
         try {
-            $entityManager->flush();
-        } catch (DBALException $dbalex) {
-            $now = new DateTime();
-            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
+            $articleCategory = $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::ARTICLE_CATEGORY)
+                ->insert($articleCategory);
+        } catch (EntityNotInsertedException $enie) {
+            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $enie->getMessage());
             return;
         }
 
-        ResponseFactory::createJsonResponseWithCode($this->app, HttpStatusCodes::CREATED, $articleCategoryObj);
+        ResponseFactory::createJsonResponseWithCode($this->app, HttpStatusCodes::CREATED, $articleCategory);
     }
 
     public function deleteArticleCategoryByIdAction($id) {
-        $entityManager = $this->app->entityManager;
-        $articleCategoryRepository = $entityManager->getRepository(EntityNames::ARTICLE_CATEGORY);
-        $articleCategory = $articleCategoryRepository->findOneBy(array('id' => $id));
-
-        if ( ! ($articleCategory instanceof ArticleCategory)) {
+        try {
+            $this->app
+                ->dataAccessorFactory
+                ->getDataAccessor(EntityNames::ARTICLE_CATEGORY)
+                ->delete($id);
+        } catch (EntityNotFoundException $enfe) {
             ResponseFactory::createNotFoundResponse($this->app, 'Could not find article category');
             return;
-        }
-
-        $entityManager->remove($articleCategory);
-
-        try {
-            $entityManager->flush();
-        } catch (DBALException $dbalex) {
-            $now = new DateTime();
-            $this->app->log->error(sprintf('[%s]: %s', $now->format('d-m-Y H:i:s'), $dbalex->getMessage()));
-            ResponseFactory::createErrorJsonResponse($this->app, HttpStatusCodes::CONFLICT, $dbalex->getMessage());
         }
 
         $this->app->response->setStatus(HttpStatusCodes::NO_CONTENT);
