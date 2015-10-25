@@ -59,9 +59,9 @@ class ArticleDataAccessor extends DataAccessor {
 
         $this->updateUserGroups($allUserGroups, $article, $dbArticle);
 
-        $dbArticle->setTitle($article->getTitle());
+        // Note: we prevent updating title and url name due to the uniqid
+        // stored in url-name. Otherwise, permanent links would fail
         $dbArticle->setContent($article->getContent());
-        $dbArticle->setUrlName($article->getUrlName());
         $dbArticle->setIsPublished($article->getIsPublished());
         $dbArticle->setCategory($article->getCategory());
         $dbArticle->setAuthor($article->getAuthor());
@@ -109,6 +109,9 @@ class ArticleDataAccessor extends DataAccessor {
         $now = new DateTime('now', new DateTimeZone('UTC'));
         $article->setLastEditDate($now);
         $article->setCreationDate($now);
+
+        $uniqid = uniqid();
+        $article->setUrlName(sprintf('%s-%s', $article->getUrlName(), $uniqid));
 
         $this->em->persist($article);
 

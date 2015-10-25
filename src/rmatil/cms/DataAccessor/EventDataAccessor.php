@@ -10,6 +10,7 @@ use Doctrine\DBAL\DBALException;
 use rmatil\cms\Constants\EntityNames;
 use rmatil\cms\Controller\UpdateUserGroupTrait;
 use rmatil\cms\Entities\Event;
+use rmatil\cms\Entities\File;
 use rmatil\cms\Entities\Location;
 use rmatil\cms\Entities\RepeatOption;
 use rmatil\cms\Entities\User;
@@ -50,6 +51,12 @@ class EventDataAccessor extends DataAccessor {
             );
         }
 
+        if ($event->getFile() instanceof File) {
+            $event->setFile(
+                $this->em->getRepository(EntityNames::FILE)->find($event->getFile()->getId())
+            );
+        }
+
         if ($event->getRepeatOption() instanceof RepeatOption) {
             $event->setRepeatOption(
                 $this->em->getRepository(EntityNames::REPEAT_OPTION)->find($event->getRepeatOption()->getId())
@@ -60,9 +67,9 @@ class EventDataAccessor extends DataAccessor {
 
         $this->updateUserGroups($allUserGroups, $event, $dbEvent);
 
+        // Note: we prevent updating title and url name due to the uniqid
+        // stored in url-name. Otherwise, permanent links would fail
         $dbEvent->setFile($event->getFile());
-        $dbEvent->setUrlName($event->getUrlName());
-        $dbEvent->setName($event->getName());
         $dbEvent->setDescription($event->getDescription());
 
 
@@ -84,7 +91,7 @@ class EventDataAccessor extends DataAccessor {
         } catch (DBALException $dbalex) {
             $this->log->error($dbalex);
 
-            throw new EntityNotUpdatedException(sprintf('Could not update entity "%s" with id "%s"', $this->entityName, $article->getId()));
+            throw new EntityNotUpdatedException(sprintf('Could not update entity "%s" with id "%s"', $this->entityName, $event->getId()));
         }
 
         return $event;
@@ -107,6 +114,12 @@ class EventDataAccessor extends DataAccessor {
             );
         }
 
+        if ($event->getFile() instanceof File) {
+            $event->setFile(
+                $this->em->getRepository(EntityNames::FILE)->find($event->getFile()->getId())
+            );
+        }
+
         if ($event->getRepeatOption() instanceof RepeatOption) {
             $event->setRepeatOption(
                 $this->em->getRepository(EntityNames::REPEAT_OPTION)->find($event->getRepeatOption()->getId())
@@ -119,6 +132,9 @@ class EventDataAccessor extends DataAccessor {
         $now = new DateTime('now', new DateTimeZone('UTC'));
         $event->setLastEditDate($now);
         $event->setCreationDate($now);
+
+        $uniqid = uniqid();
+        $event->setUrlName(sprintf('%s-%s', $event->getUrlName(), $uniqid));
 
         $this->em->persist($event);
 

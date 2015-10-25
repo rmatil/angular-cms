@@ -81,15 +81,15 @@ class PageDataAccessor extends DataAccessor {
             $dbPage->setArticles($dbArticles);
         }
 
+        // Note: we prevent updating title and url name due to the uniqid
+        // stored in url-name. Otherwise, permanent links would fail
         $dbPage->setAuthor($page->getAuthor());
         $dbPage->setCategory($page->getCategory());
         $dbPage->setLanguage($page->getLanguage());
         $dbPage->setParent($page->getParent());
-        $dbPage->setTitle($page->getTitle());
         $dbPage->setCreationDate($page->getCreationDate());
         $dbPage->setHasSubnavigation($page->getHasSubnavigation());
         $dbPage->setIsPublished($page->getIsPublished());
-        $dbPage->setUrlName($page->getUrlName());
         $dbPage->setLastEditDate($page->getLastEditDate());
         $dbPage->setIsStartPage($page->getIsStartPage());
 
@@ -141,6 +141,9 @@ class PageDataAccessor extends DataAccessor {
         $now = new DateTime('now', new DateTimeZone('UTC'));
         $page->setLastEditDate($now);
         $page->setCreationDate($now);
+
+        $uniqid = uniqid();
+        $page->setUrlName(sprintf('%s-%s', $page->getUrlName(), $uniqid));
 
         $this->em->persist($page);
 
