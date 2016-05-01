@@ -10,7 +10,6 @@ class RegistrationMail extends AMail {
 
     protected $homepageName;
 
-    protected $fromName;
 
     protected $registrationLink;
 
@@ -18,7 +17,6 @@ class RegistrationMail extends AMail {
         $this->user = $user;
         $this->homepageName = $homepageName;
         $this->registrationLink = $registrationLink;
-        $this->fromName = $fromName;
 
         parent::__construct($this->getSubject(), $fromAddress, $fromName, array('email' => $this->user->getEmail(), 'name' => $this->getReceiverName()));
     }
@@ -92,6 +90,5 @@ class RegistrationMail extends AMail {
     public function setRegistrationLink($registrationLink) {
         $this->registrationLink = $registrationLink;
     }
-
 
 }

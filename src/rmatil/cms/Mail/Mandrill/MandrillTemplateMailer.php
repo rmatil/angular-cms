@@ -5,11 +5,15 @@ namespace rmatil\cms\Mail\Mandrill;
 
 
 use Mandrill;
+use rmatil\cms\Handler\ConfigurationHandler;
 use rmatil\cms\Mail\MailerInterface;
 use rmatil\cms\Mail\MailInterface;
 use RuntimeException;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 class MandrillTemplateMailer implements MailerInterface {
+
+    const MAILER_NAME = 'mandrill';
 
     /**
      * @var Mandrill Mandrill instance
@@ -31,10 +35,27 @@ class MandrillTemplateMailer implements MailerInterface {
      */
     protected $globalMergeVars;
 
-    public function __construct($apiToken, $templateName, array $templateContent, array $globalMergeVars) {
-        $this->mandrill = new Mandrill($apiToken);
-        $this->templateName = $templateName;
-        $this->templateContent = $templateContent;
+    public function __construct() {
+        $config = ConfigurationHandler::readConfiguration(CONFIG_FILE);
+
+        if (! array_key_exists('mail', $config) ||
+            ! array_key_exists(MandrillTemplateMailer::MAILER_NAME, $config['mail'])) {
+            throw new InvalidConfigurationException(sprintf('Expected a mail configuration for %s', MandrillTemplateMailer::MAILER_NAME));
+        }
+
+        $mailChimpConfig = $config['mail'][MandrillTemplateMailer::MAILER_NAME];
+
+        $globalMergeVars = array();
+        foreach ($mailChimpConfig['globalMergeVars'] as $key => $val) {
+            $globalMergeVars[] = array(
+                'name' => $key,
+                'content' => $val
+            );
+        }
+
+        $this->mandrill = new Mandrill($mailChimpConfig['apiKey']);
+        $this->templateName = $mailChimpConfig['templateName'];
+        $this->templateContent = $mailChimpConfig['templateContent'];
         $this->globalMergeVars = $globalMergeVars;
     }
 

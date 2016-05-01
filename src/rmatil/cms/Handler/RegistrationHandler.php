@@ -11,6 +11,7 @@ use rmatil\cms\Entities\Registration;
 use rmatil\cms\Entities\User;
 use rmatil\cms\Exceptions\RegistrationMailNotSentException;
 use rmatil\cms\Exceptions\UserNotSavedException;
+use rmatil\cms\Mail\MailSender;
 use rmatil\cms\Mail\Mandrill\MandrillTemplateMail;
 use rmatil\cms\Mail\Mandrill\MandrillTemplateMailer;
 use rmatil\cms\Mail\PhpMailer\PhpMailer;
@@ -23,9 +24,13 @@ class RegistrationHandler {
 
     protected $usedMailer;
 
+    protected $mailer;
+
     public function __construct(EntityManager $entityManager, $usedMailer) {
         $this->entityManager = $entityManager;
         $this->usedMailer = $usedMailer;
+
+        $this->mailer = new MailSender($this->usedMailer);
     }
 
     /**
@@ -80,10 +85,10 @@ class RegistrationHandler {
 
     public function sendRegistrationMail(RegistrationMail $mail) {
         switch ($this->usedMailer) {
-            case 'mailChimp':
+            case MandrillTemplateMailer::MAILER_NAME:
                 $this->sendMailChimpMail($mail);
                 break;
-            case 'phpMailer':
+            case PhpMailer::MAILER_NAME:
                 $this->sendPhpMailerMail($mail);
                 break;
             default:
@@ -92,9 +97,7 @@ class RegistrationHandler {
     }
 
     protected function sendMailChimpMail(RegistrationMail $registrationMail) {
-        $config = ConfigurationHandler::readConfiguration(CONFIG_FILE);
-        $mailChimpConfig = $config['mail']['mailChimp'];
-
+        // TODO: move this to either the registration mail or mandrill mailer
         $receiver = $registrationMail->getTo();
 
         $mergeVars = array(
@@ -124,24 +127,10 @@ class RegistrationHandler {
             array('registration')
         );
 
-        $globalMergeVars = array();
-        foreach ($mailChimpConfig['globalMergeVars'] as $key => $val) {
-            $globalMergeVars[] = array(
-                'name' => $key,
-                'content' => $val
-            );
-        }
-
-        $mailChimpMailer = new MandrillTemplateMailer(
-            $mailChimpConfig['apiKey'],
-            $mailChimpConfig['templateName'],
-            $mailChimpConfig['templateContent'],
-            $globalMergeVars
-        );
 
         try {
-            $mailChimpMailer->send($mail);
-        } catch (\Mandrill_Error $e) {
+            $this->mailer->send($mail);
+        } catch (\Exception $e) {
             throw new RegistrationMailNotSentException($e->getMessage());
         }
 
