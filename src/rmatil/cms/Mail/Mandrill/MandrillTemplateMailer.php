@@ -5,11 +5,13 @@ namespace rmatil\cms\Mail\Mandrill;
 
 
 use Mandrill;
+use rmatil\cms\Exceptions\InvalidConfigurationException;
 use rmatil\cms\Handler\ConfigurationHandler;
 use rmatil\cms\Mail\MailerInterface;
 use rmatil\cms\Mail\MailInterface;
+use rmatil\cms\Mail\RegistrationMail\MandrillRegistrationMail;
+use rmatil\cms\Mail\RegistrationMail\RegistrationMail;
 use RuntimeException;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 class MandrillTemplateMailer implements MailerInterface {
 
@@ -62,6 +64,10 @@ class MandrillTemplateMailer implements MailerInterface {
     public function send(MailInterface $mail) {
         if ( ! ($mail instanceof MandrillTemplateMail)) {
             throw new RuntimeException(sprintf("Mail must be of instance %s to be sent using %s", MandrillTemplateMail::class, MandrillTemplateMailer::class));
+        }
+
+        if ($mail instanceof RegistrationMail) {
+            $mail = new MandrillRegistrationMail($mail);
         }
 
         $message = array(

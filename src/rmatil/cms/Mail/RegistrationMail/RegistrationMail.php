@@ -1,8 +1,9 @@
 <?php
 
-namespace rmatil\cms\Mail;
+namespace rmatil\cms\Mail\RegistrationMail;
 
 use rmatil\cms\Entities\User;
+use rmatil\cms\Mail\AMail;
 
 class RegistrationMail extends AMail {
 

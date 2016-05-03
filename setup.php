@@ -86,7 +86,8 @@ $app->container->singleton('serializer', function () {
 HandlerSingleton::setEntityManager($entityManager);
 $thumbnailHandler = HandlerSingleton::getThumbnailHandler();
 $fileHandler = HandlerSingleton::getFileHandler(HTTP_MEDIA_DIR, LOCAL_MEDIA_DIR);
-$registrationHandler = HandlerSingleton::getRegistrationHandler($config['mail']['use']);
+$mailSender = HandlerSingleton::getMailSender($config['mail']);
+$registrationHandler = HandlerSingleton::getRegistrationHandler($mailSender);
 $databaseHandler = HandlerSingleton::getDatabaseHandler();
 $loginHandler = HandlerSingleton::getLoginHandler(array(
     '^\/authenticate' => array('ROLE_SUPER_ADMIN', 'ROLE_ANONYMOUS'), // allow anonymous user to send request to authenticate
@@ -118,6 +119,10 @@ $app->container->singleton('registrationHandler', function() use ($registrationH
 
 $app->container->singleton('loginHandler', function () use ($loginHandler) {
     return $loginHandler;
+});
+
+$app->container->singleton('mailSender', function () use ($mailSender) {
+    return $mailSender;
 });
 
 $dataAccessorFactory = new \rmatil\cms\DataAccessor\DataAccessorFactory($entityManager, $app->getLog(), $fileHandler, $registrationHandler);
