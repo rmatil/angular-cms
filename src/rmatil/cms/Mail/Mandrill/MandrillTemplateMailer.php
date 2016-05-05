@@ -77,7 +77,7 @@ class MandrillTemplateMailer implements MailerInterface {
             'to' => array(
                 $mail->getTo()
             ),
-            'headers' => array('Reply-To' => 'info@jogr.ch'),
+            'headers' => array('Reply-To' => $mail->getFromEmail()),
             'important' => false,
             'track_opens' => false,
             'track_clicks' => false,
