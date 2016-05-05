@@ -6,9 +6,9 @@ namespace rmatil\cms\Mail\PhpMailer;
 
 class PhpMailerConstants {
 
-    const CHAR_SET = 'CharSet';
+    const CHAR_SET = 'charset';
 
-    const SMTP_AUTH = 'SMTPAuth';
+    const SMTP_AUTH = 'smtp_auth';
 
     const HOST = 'host';
 
@@ -16,5 +16,5 @@ class PhpMailerConstants {
 
     const PASSWORD = 'password';
 
-    const PORT = 587;
+    const PORT = 'port';
 }

@@ -80,6 +80,8 @@ class PhpMailer implements MailerInterface {
         if ( ! $this->phpMailer->send()) {
             throw new \RuntimeException($this->phpMailer->ErrorInfo);
         }
+
+        return true;
     }
 
 }
