@@ -2,25 +2,32 @@ database:
   driver: pdo_mysql
   user: cmsv4
   password: cmsv4
-  dbname: db_test_install4
+  dbname: cmsv4
   host: localhost
 
 mail:
-  use: mailChimp
-  phpMailer:
-    CharSet: utf-8
-    SMTPAuth: true
+  use: mandrill
+  php_mailer:
+    charset: utf-8
+    smtp_auth: true
     host:
     username:
     password:
     port: 587
-  mailChimp:
-    apiKey:
-    templateName:
-    templateContent: []
-    globalMergeVars:
+  mandrill:
+    api_key:
+    template_name:
+    template_content: []
+    global_merge_vars:
       COMPANY: myCompany
       SENDERMAIL: sender@company.com
+  swiftmailer:
+    charset: utf-8
+    smtp_auth: true
+    host:
+    username:
+    password:
+    port:
 
 template:
   path: default

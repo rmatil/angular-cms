@@ -48,16 +48,16 @@ class MandrillTemplateMailer implements MailerInterface {
         $mailChimpConfig = $config['mail'][MandrillTemplateMailer::MAILER_NAME];
 
         $globalMergeVars = array();
-        foreach ($mailChimpConfig['globalMergeVars'] as $key => $val) {
+        foreach ($mailChimpConfig['global_merge_vars'] as $key => $val) {
             $globalMergeVars[] = array(
                 'name' => $key,
                 'content' => $val
             );
         }
 
-        $this->mandrill = new Mandrill($mailChimpConfig['apiKey']);
-        $this->templateName = $mailChimpConfig['templateName'];
-        $this->templateContent = $mailChimpConfig['templateContent'];
+        $this->mandrill = new Mandrill($mailChimpConfig['api_key']);
+        $this->templateName = $mailChimpConfig['template_name'];
+        $this->templateContent = $mailChimpConfig['template_content'];
         $this->globalMergeVars = $globalMergeVars;
     }
 
