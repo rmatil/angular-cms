@@ -7,6 +7,7 @@ namespace rmatil\cms\Mail;
 use rmatil\cms\Exceptions\InvalidConfigurationException;
 use rmatil\cms\Mail\Mandrill\MandrillTemplateMailer;
 use rmatil\cms\Mail\PhpMailer\PhpMailer;
+use rmatil\cms\Mail\SwiftMailer\SwiftMailerMailer;
 
 class MailSender {
 
@@ -19,13 +20,14 @@ class MailSender {
 
     protected $supportedMailers = array(
         PhpMailer::MAILER_NAME,
-        MandrillTemplateMailer::MAILER_NAME
+        MandrillTemplateMailer::MAILER_NAME,
+        SwiftMailerMailer::MAILER_NAME
     );
 
     protected $mailConfiguration = array();
 
     public function __construct($mailConfig) {
-        if (! array_key_exists('use', $mailConfig)) {
+        if ( ! array_key_exists('use', $mailConfig)) {
             throw new InvalidConfigurationException('The mailer to use must be defined');
         }
 
@@ -33,7 +35,7 @@ class MailSender {
 
         $this->configuredMailer = strtolower($configuredMailer);
 
-        if (!in_array($this->configuredMailer, $this->supportedMailers)) {
+        if ( ! in_array($this->configuredMailer, $this->supportedMailers)) {
             throw new InvalidConfigurationException(sprintf("No supported mailer found for %s", $this->configuredMailer));
         }
 
@@ -43,6 +45,9 @@ class MailSender {
                 break;
             case MandrillTemplateMailer::MAILER_NAME:
                 $this->mailer = new MandrillTemplateMailer();
+                break;
+            case SwiftMailerMailer::MAILER_NAME:
+                $this->mailer = new SwiftMailerMailer();
                 break;
         }
     }
