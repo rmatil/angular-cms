@@ -6,7 +6,7 @@ database:
   host: localhost
 
 mail:
-  use: mandrill
+  use: swift_mailer
   php_mailer:
     charset: utf-8
     smtp_auth: true
@@ -21,7 +21,7 @@ mail:
     global_merge_vars:
       COMPANY: myCompany
       SENDERMAIL: sender@company.com
-  swiftmailer:
+  swift_mailer:
     charset: utf-8
     smtp_auth: true
     host:
