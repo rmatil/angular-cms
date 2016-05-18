@@ -1,12 +1,12 @@
 <?php
 
 
-namespace rmatil\cms\Mail\PhpMailer;
+namespace rmatil\cms\Mail\SwiftMailer;
 
 
 use rmatil\cms\Mail\AMail;
 
-class PhpMailerMail extends AMail {
+class SwiftMailerMail extends AMail {
 
     protected $body;
 
@@ -21,5 +21,4 @@ class PhpMailerMail extends AMail {
     public function getBody() {
         return $this->body;
     }
-
 }

@@ -86,7 +86,8 @@ $app->container->singleton('serializer', function () {
 HandlerSingleton::setEntityManager($entityManager);
 $thumbnailHandler = HandlerSingleton::getThumbnailHandler();
 $fileHandler = HandlerSingleton::getFileHandler(HTTP_MEDIA_DIR, LOCAL_MEDIA_DIR);
-$registrationHandler = HandlerSingleton::getRegistrationHandler($config['mail']['use']);
+$mailSender = HandlerSingleton::getMailSender($config['mail']);
+$registrationHandler = HandlerSingleton::getRegistrationHandler($mailSender);
 $databaseHandler = HandlerSingleton::getDatabaseHandler();
 $loginHandler = HandlerSingleton::getLoginHandler(array(
     '^\/authenticate' => array('ROLE_SUPER_ADMIN', 'ROLE_ANONYMOUS'), // allow anonymous user to send request to authenticate
@@ -120,6 +121,10 @@ $app->container->singleton('loginHandler', function () use ($loginHandler) {
     return $loginHandler;
 });
 
+$app->container->singleton('mailSender', function () use ($mailSender) {
+    return $mailSender;
+});
+
 $dataAccessorFactory = new \rmatil\cms\DataAccessor\DataAccessorFactory($entityManager, $app->getLog(), $fileHandler, $registrationHandler);
 $app->container->singleton('dataAccessorFactory', function () use ($dataAccessorFactory) {
     return $dataAccessorFactory;
@@ -129,7 +134,7 @@ $app->container->singleton('dataAccessorFactory', function () use ($dataAccessor
 $app->add(new BasicAuthMiddleware($entityManager, 'Secured Area'));
 
 $corsOptions = array(
-    "origin" => "http://cms-frontend.dev.local",
+    "origin" => "http://dev.cmsv4.rmatil.vagrant",
     "maxAge" => 1728000,
     "allowCredentials" => true,
     "allowHeaders" => array("X-PINGOTHER", "Authorization", "Content-Type"),

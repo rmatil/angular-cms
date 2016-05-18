@@ -11,21 +11,18 @@ use rmatil\cms\Entities\Registration;
 use rmatil\cms\Entities\User;
 use rmatil\cms\Exceptions\RegistrationMailNotSentException;
 use rmatil\cms\Exceptions\UserNotSavedException;
-use rmatil\cms\Mail\Mandrill\MandrillTemplateMail;
-use rmatil\cms\Mail\Mandrill\MandrillTemplateMailer;
-use rmatil\cms\Mail\PhpMailer\PhpMailer;
-use rmatil\cms\Mail\PhpMailer\PhpMailerMail;
-use rmatil\cms\Mail\RegistrationMail;
+use rmatil\cms\Mail\MailSender;
+use rmatil\cms\Mail\RegistrationMail\RegistrationMail;
 
 class RegistrationHandler {
 
     protected $entityManager;
 
-    protected $usedMailer;
+    protected $mailer;
 
-    public function __construct(EntityManager $entityManager, $usedMailer) {
+    public function __construct(EntityManager $entityManager, MailSender $mailSender) {
         $this->entityManager = $entityManager;
-        $this->usedMailer = $usedMailer;
+        $this->mailer = $mailSender;
     }
 
     /**
@@ -67,7 +64,7 @@ class RegistrationHandler {
         );
 
         try {
-            $this->sendRegistrationMail($mail);
+            $this->mailer->send($mail);
             $this->entityManager->flush();
         } catch (Exception $e) {
             throw new RegistrationMailNotSentException($e->getMessage());
@@ -77,96 +74,5 @@ class RegistrationHandler {
     public function getRegistrationLink($token, $websiteUrl) {
         return sprintf('%s/registration/%s', $websiteUrl, $token);
     }
-
-    public function sendRegistrationMail(RegistrationMail $mail) {
-        switch ($this->usedMailer) {
-            case 'mailChimp':
-                $this->sendMailChimpMail($mail);
-                break;
-            case 'phpMailer':
-                $this->sendPhpMailerMail($mail);
-                break;
-            default:
-                throw new \RuntimeException('Could not send email. No Mailer specified');
-        }
-    }
-
-    protected function sendMailChimpMail(RegistrationMail $registrationMail) {
-        $config = ConfigurationHandler::readConfiguration(CONFIG_FILE);
-        $mailChimpConfig = $config['mail']['mailChimp'];
-
-        $receiver = $registrationMail->getTo();
-
-        $mergeVars = array(
-            'rcpt' => $receiver['email'],
-            'vars' => array(
-                array(
-                    "name" => "FNAME",
-                    "content" => $registrationMail->getUser()->getFirstname()
-                ),
-                array(
-                    "name" => "REGLINK",
-                    "content" => $registrationMail->getRegistrationLink()
-                ),
-                array(
-                    "name" => 'HOMLINK',
-                    "content" => $registrationMail->getFromName()
-                )
-            )
-        );
-
-        $mail = new MandrillTemplateMail(
-            $registrationMail->getSubject(),
-            $registrationMail->getFromEmail(),
-            $registrationMail->getFromName(),
-            $registrationMail->getTo(),
-            $mergeVars,
-            array('registration')
-        );
-
-        $globalMergeVars = array();
-        foreach ($mailChimpConfig['globalMergeVars'] as $key => $val) {
-            $globalMergeVars[] = array(
-                'name' => $key,
-                'content' => $val
-            );
-        }
-
-        $mailChimpMailer = new MandrillTemplateMailer(
-            $mailChimpConfig['apiKey'],
-            $mailChimpConfig['templateName'],
-            $mailChimpConfig['templateContent'],
-            $globalMergeVars
-        );
-
-        try {
-            $mailChimpMailer->send($mail);
-        } catch (\Mandrill_Error $e) {
-            throw new RegistrationMailNotSentException($e->getMessage());
-        }
-
-    }
-
-    protected function sendPhpMailerMail(RegistrationMail $registrationMail) {
-        $config = ConfigurationHandler::readConfiguration(CONFIG_FILE);
-        $mailConfig = $config['mail']['phpMailer'];
-
-        $phpMailerMail = new PhpMailerMail(
-            $registrationMail->getSubject(),
-            $registrationMail->getFromEmail(),
-            $registrationMail->getFromName(),
-            $registrationMail->getTo(),
-            $registrationMail->getBody()
-        );
-
-        $phpMailer = new PhpMailer($mailConfig['host'], $mailConfig['username'], $mailConfig['password'], $mailConfig['port']);
-
-        try {
-            $phpMailer->send($phpMailerMail);
-        } catch (Exception $e) {
-            throw new RegistrationMailNotSentException($e->getMessage());
-        }
-    }
-
 
 }
