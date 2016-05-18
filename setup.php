@@ -134,7 +134,7 @@ $app->container->singleton('dataAccessorFactory', function () use ($dataAccessor
 $app->add(new BasicAuthMiddleware($entityManager, 'Secured Area'));
 
 $corsOptions = array(
-    "origin" => "http://cms-frontend.dev.local",
+    "origin" => "http://dev.cmsv4.rmatil.vagrant",
     "maxAge" => 1728000,
     "allowCredentials" => true,
     "allowHeaders" => array("X-PINGOTHER", "Authorization", "Content-Type"),

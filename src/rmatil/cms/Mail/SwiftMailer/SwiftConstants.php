@@ -17,4 +17,6 @@ class SwiftConstants {
     const PASSWORD = 'password';
 
     const PORT = 'port';
+
+    const SECURITY = 'security';
 }

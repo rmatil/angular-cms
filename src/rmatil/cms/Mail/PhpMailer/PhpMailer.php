@@ -58,12 +58,12 @@ class PhpMailer implements MailerInterface {
     }
 
     public function send(MailInterface $mail) {
-        if (!($mail instanceof PhpMailerMail)) {
-            throw new RuntimeException(sprintf("Mail must be of instance %s to be sent using %s", PhpMailerMail::class, PhpMailer::class));
-        }
-
         if ($mail instanceof RegistrationMail) {
             $mail = new PhpMailerRegistrationMail($mail);
+        }
+
+        if (!($mail instanceof PhpMailerMail)) {
+            throw new RuntimeException(sprintf("Mail must be of instance %s to be sent using %s", PhpMailerMail::class, PhpMailer::class));
         }
 
         $receiver = $mail->getTo();
