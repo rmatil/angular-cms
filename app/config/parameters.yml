@@ -27,7 +27,8 @@ mail:
     host:
     username:
     password:
-    port:
+    port: 587
+    security: tls
 
 template:
   path: default
