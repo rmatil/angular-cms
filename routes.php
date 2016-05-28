@@ -117,7 +117,8 @@ $app->addRoutes(array(
     '/api/empty/locations'             => array('get'      => 'Location:getEmptyLocation'),
     '/api/empty/users'                 => array('get'      => 'User:getEmptyUser'),
 
-    '/:type/:identifier' => array('get' => 'Index:path'),
+    '/:type/:identifier'               => array('get' => 'Index:path'),
+    '/:type'                           => array('get' => 'Index:root'),
 
 ));
 
