@@ -1,0 +1,7 @@
+rmatil_cms:
+    resource: "@rmatilCmsBundle/Resources/config/routing.yml"
+    prefix:   "/api"
+
+app:
+    resource: "@AppBundle/Controller/"
+    type:     annotation

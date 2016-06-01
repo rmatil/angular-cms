@@ -1,0 +1,4 @@
+rmatil_cms_api:
+    resource: "@rmatilCmsBundle/Controller/"
+    type:     annotation
+    prefix:   "v1"

@@ -1,0 +1,17 @@
+services:
+#    rmatil_cms.example:
+#        class: rmatil\CmsBundle\Example
+#        arguments: ["@service_id", "plain_value", %parameter%]
+
+    rmatil_cms.factory.json_response:
+        class: rmatil\CmsBundle\Response\JsonResponseFactory
+        arguments: ['@jms_serializer']
+
+    rmatil_cms.data_accessor.article_category:
+        class: rmatil\CmsBundle\DataAccessor\DataAccessor
+        arguments: ['rmatilCmsBundle:ArticleCategory', '@doctrine.orm.entity_manager', '@logger']
+
+    rmatil_cms.data_accessor.article:
+        class: rmatil\CmsBundle\DataAccessor\ArticleDataAccessor
+        arguments: ['@doctrine.orm.entity_manager', '@logger']
+
