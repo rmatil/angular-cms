@@ -19,17 +19,17 @@ vagrantfile:
                         check_guest_tools: 0
                         update_guest_tools: 0
                 machines:
-                    vflm_mwgmwo3eps2n:
+                    vflm_fjzpgglx25xg:
                         id: cmsv5
                         hostname: dev.cmsv5.rmatil.vagrant
                         network:
                             private_network: 192.168.100.80
                             forwarded_port:
-                                vflmnfp_s6qdg5ybw6zd:
-                                    host: '5838'
+                                vflmnfp_dc00pib8hzek:
+                                    host: '6873'
                                     guest: '22'
-                        memory: '512'
-                        cpus: '1'
+                        memory: '1024'
+                        cpus: '2'
         provision:
             puppet:
                 manifests_path: puphpet/puppet/manifests
@@ -38,7 +38,7 @@ vagrantfile:
                     - '--verbose'
                     - '--hiera_config /vagrant/puphpet/puppet/hiera.yaml'
         synced_folder:
-            vflsf_nnb1orgfsdxt:
+            vflsf_o56h1hcjdijr:
                 source: ./
                 target: /var/www
                 sync_type: nfs
@@ -86,7 +86,6 @@ server:
     install: '1'
     packages:
         - vim
-        - htop
 users_groups:
     install: '1'
     groups: {  }
@@ -117,7 +116,7 @@ nginx:
         names_hash_bucket_size: 128
     upstreams: {  }
     vhosts:
-        nxv_zyrhwfeowhxt:
+        nxv_o6rruz0ig28n:
             server_name: awesome.dev
             server_aliases:
                 - www.awesome.dev
@@ -137,7 +136,7 @@ nginx:
             rewrite_to_https: '1'
             spdy: '1'
             locations:
-                nxvl_ov3fmnnn5cto:
+                nxvl_vh61oz1p9enn:
                     location: /
                     try_files:
                         - $uri
@@ -148,7 +147,7 @@ nginx:
                     fastcgi_split_path: ''
                     proxy: ''
                     proxy_redirect: ''
-                nxvl_9gpgjmyz5cm9:
+                nxvl_h9mzg5hvwsvi:
                     location: '~ \.php$'
                     try_files:
                         - $uri
@@ -179,7 +178,7 @@ apache:
         - proxy_fcgi
         - rewrite
     vhosts:
-        av_l799wp8zydls:
+        av_2c6kjt2p9m3i:
             servername: dev.cmsv5.rmatil.vagrant
             serveraliases:
                 - www.dev.cmsv5.rmatil.vagrant
@@ -198,7 +197,7 @@ apache:
             ssl_protocol: ''
             ssl_cipher: ''
             directories:
-                avd_t5lrdehatvkw:
+                avd_yz4af8trpqtl:
                     path: /var/www/web
                     options:
                         - Indexes
@@ -210,7 +209,7 @@ apache:
                         - 'all granted'
                     custom_fragment: ''
                     files_match:
-                        avdfm_1ar1s0ud70bu:
+                        avdfm_7njst3szglqk:
                             path: \.php$
                             sethandler: 'proxy:fcgi://127.0.0.1:9000'
                             custom_fragment: ''
@@ -224,7 +223,7 @@ letsencrypt:
 php:
     install: '1'
     settings:
-        version: '56'
+        version: '70'
     modules:
         php:
             - cli
@@ -239,14 +238,14 @@ php:
     fpm_ini:
         error_log: /var/log/php-fpm.log
     fpm_pools:
-        phpfp_etowggxby7u4:
+        phpfp_64z7suo4uhxo:
             ini:
                 prefix: www
                 listen: '127.0.0.1:9000'
                 security.limit_extensions: .php
                 user: www-user
                 group: www-data
-    composer: 'on'
+    composer: '1'
     composer_home: ''
 xdebug:
     install: '1'
@@ -282,20 +281,20 @@ drush:
 ruby:
     install: '1'
     versions:
-        rv_k7vqc8op8fwu:
+        rv_s74xudon953d:
             default: '1'
             bundler: '1'
             version: 1.9.3
             gems:
-                - deep_merge
-                - activesupport
-                - vine
+                - deep_merge@1.0.1
+                - activesupport@4.2.6
+                - vine@0.2
 python:
     install: '1'
     packages: {  }
     versions: {  }
 nodejs:
-    install: '1'
+    install: '0'
     settings:
         version: '5'
     npm_packages: {  }
@@ -322,15 +321,15 @@ mariadb:
         override_options: {  }
     adminer: 0
     users:
-        mariadbnu_b4m0v61jdt5p:
+        mariadbnu_5bwuk1yvllf6:
             name: dbuser
             password: '123'
     databases:
-        mariadbnd_gqq4w719ooxr:
+        mariadbnd_nz9u64uahauk:
             name: dbname
             sql: ''
     grants:
-        mariadbng_7dezikhytnyw:
+        mariadbng_6cghos68dtbc:
             user: dbuser
             table: '*.*'
             privileges:
@@ -341,17 +340,17 @@ mysql:
         version: '5.6'
         root_password: root
         override_options: {  }
-    adminer: '1'
+    adminer: 0
     users:
-        mysqlnu_s71x5457shon:
+        mysqlnu_o835fhjman35:
             name: cmsv5
             password: cmsv5
     databases:
-        mysqlnd_eyztwer7co60:
+        mysqlnd_nduzxfaf2y34:
             name: cmsv5
             sql: ''
     grants:
-        mysqlng_rdn7qftzc405:
+        mysqlng_qld5jmm6f8im:
             user: cmsv5
             table: '*.*'
             privileges:
@@ -416,7 +415,7 @@ elastic_search:
         version: 2.3.1
         java_install: true
     instances:
-        esi_2fm7wylbe80x:
+        esi_75kzzrn09wox:
             name: es-01
 solr:
     install: '0'

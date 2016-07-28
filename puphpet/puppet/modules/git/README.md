@@ -35,32 +35,10 @@ Simply include the `git` class.
 include git
 ```
 
-###I want to configure `git` using hiera
-
-```yaml
-git::configs:
-  user.name:
-    value: 'test'
-  user.email:
-    value: 'test@test.com'
-```
-
 ###I want to use `git subtree` with bash completion
 
 ```puppet
 include git::subtree
-```
-
-###I want to set my user.name and user.email
-
-```puppet
-git::config { 'user.name':
-  value => 'John Doe',
-}
-
-git::config { 'user.email':
-  value => 'john.doe@example.com',
-}
 ```
 
 ##Reference
@@ -70,10 +48,6 @@ git::config { 'user.email':
 * `git`: Installs the git client package.
 * `gitosis`: Installs the gitosis package. No configuration
 * `subtree`: Installs and configures git-subtree for git 1.7 and up.
-
-###Resources
-
-* `git::config`: Set git global configuration for the user running puppet, for the specified `$user` or for the system.
 
 ###Facts
 
