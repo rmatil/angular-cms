@@ -76,3 +76,6 @@ fos_user:
     db_driver: orm
     firewall_name: main # must match the firewall name where fos_user_bundle is configured
     user_class: rmatil\CmsBundle\Entity\User
+    registration:
+        confirmation:
+            enabled: true
