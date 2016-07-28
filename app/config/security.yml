@@ -20,6 +20,16 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+        # Basic Authentication for API requests
+        api:
+            pattern: /api/*
+            stateless: true
+            anonymous: true
+            form_login: false
+            http_basic:
+                provider: fos_userbundle
+
+        # Form Login Authentication for all other requests
         main:
             # activate different ways to authenticate
 
