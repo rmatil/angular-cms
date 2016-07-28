@@ -19,6 +19,7 @@ class AppKernel extends Kernel
             new rmatil\CmsBundle\rmatilCmsBundle(),
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle(),
+            new FOS\UserBundle\FOSUserBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
@@ -38,12 +39,14 @@ class AppKernel extends Kernel
 
     public function getCacheDir()
     {
-        return '/tmp/var/cache/'.$this->getEnvironment();
+//        return dirname(__DIR__).'/var/'.$this->environment.'/cache';
+        return '/tmp/var/'.$this->environment.'/cache';
     }
 
     public function getLogDir()
     {
-        return '/tmp//var/logs';
+//        return dirname(__DIR__).'/var/'.$this->environment.'/logs';
+        return '/tmp/var/'.$this->environment.'/logs';
     }
 
     public function registerContainerConfiguration(LoaderInterface $loader)

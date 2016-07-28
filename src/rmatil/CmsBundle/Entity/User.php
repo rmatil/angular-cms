@@ -2,16 +2,34 @@
 
 namespace rmatil\CmsBundle\Entity;
 
-use JMS\Serializer\Annotation\MaxDepth;
 use JMS\Serializer\Annotation\Type;
-use JMS\Serializer\Annotation\Exclude;
 use Doctrine\ORM\Mapping as ORM;
+use FOS\UserBundle\Model\User as BaseUser;
 
 /**
+ * Attribute override is required by the indexes
+ * See issue https://github.com/FriendsOfSymfony/FOSUserBundle/issues/1919
+ * 
  * @ORM\Entity 
  * @ORM\Table(name="users")
+ * @ORM\AttributeOverrides({
+ *      @ORM\AttributeOverride(name="usernameCanonical",
+ *          column=@ORM\Column(
+ *              name     = "username_canonical",
+ *              length   = 191,
+ *              unique   = true
+ *          )
+ *      ),
+ *      @ORM\AttributeOverride(name="emailCanonical",
+ *          column=@ORM\Column(
+ *              name     = "email_canonical",
+ *              length   = 191,
+ *              unique   = true
+ *          )
+ *      )
+ * })
  **/
-class User {
+class User extends BaseUser {
 
     /**
      * Id of the user
@@ -25,29 +43,6 @@ class User {
      * @var integer
      */
     protected $id;
-
-    /**
-     * The usergroup to which the user belongs 
-     *
-     * @ORM\ManyToOne(targetEntity="UserGroup")
-     *
-     * @Type("rmatil\CmsBundle\Entity\UserGroup")
-     * @MaxDepth(1)
-     * 
-     * @var \rmatil\CmsBundle\Entity\UserGroup
-     */
-    protected $userGroup;
-
-    /**
-     * Username of the user
-     * 
-     * @ORM\Column(type="string")
-     *
-     * @Type("string")
-     * 
-     * @var string
-     */
-    protected $userName = '';
 
     /**
      * Firstname of the user
@@ -70,17 +65,6 @@ class User {
      * @var string
      */
     protected $lastName = '';
-
-    /**
-     * Email of the user
-     * 
-     * @ORM\Column(type="string")
-     *
-     * @Type("string")
-     * 
-     * @var string
-     */
-    protected $email = '';
 
     /**
      * Phone number of the user
@@ -137,87 +121,9 @@ class User {
      */
     protected $place;
 
-    /**
-     * Plain password used for REST
-     * 
-     * @ORM\Column(type="string", nullable=true)
-     *
-     * @Exclude
-     * 
-     * @var string
-     */
-    protected $plainPassword;
-
-    /**
-     * Hash of the users password including the salt
-     * 
-     * @ORM\Column(type="string", nullable=true)
-     *
-     * @Exclude
-     * 
-     * @var string
-     */
-    protected $passwordHash;
-
-    /**
-     * DateTime object of the users last login date.
-     * May be null
-     * 
-     * @ORM\Column(type="datetime")
-     *
-     * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
-     * 
-     * @var \DateTime
-     */
-    protected $lastLoginDate;
-
-    /**
-     * DateTime object of the users registration date.
-     * May be null
-     * 
-     * @ORM\Column(type="datetime")
-     *
-     * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
-     * 
-     * @var \DateTime
-     */
-    protected $registrationDate;
-
-    /**
-     * Indicates whether the user is locked or not
-     * 
-     * @ORM\Column(type="boolean")
-     *
-     * @Type("boolean")
-     * 
-     * @var boolean
-     */
-    protected $isLocked;
-
-    /**
-     * Indicates whether the user has validated his email or not
-     * 
-     * @ORM\Column(type="boolean")
-     *
-     * @Type("boolean")
-     * 
-     * @var boolean
-     */
-    protected $hasEmailValidated;
-
-    /**
-     * Indicates whether this article is locked 
-     * for editing or not
-     * 
-     * @ORM\ManyToOne(targetEntity="User")
-     *
-     * @Type("rmatil\CmsBundle\Entity\User")
-     * @MaxDepth(1)
-     * 
-     * @var \rmatil\CmsBundle\Entity\User
-     */
-    protected $isLockedBy;
-
+    public function __construct() {
+        parent::__construct();
+    }
 
     /**
      * Gets the Id of the user.
@@ -235,42 +141,6 @@ class User {
      */
     public function setId($id) {
         $this->id = $id;
-    }
-
-    /**
-     * Gets the The usergroup to which the user belongs.
-     *
-     * @return \rmatil\CmsBundle\Entity\UserGroup
-     */
-    public function getUserGroup() {
-        return $this->userGroup;
-    }
-
-    /**
-     * Sets the The usergroup to which the user belongs.
-     *
-     * @param \rmatil\CmsBundle\Entity\UserGroup $userGroup the user group
-     */
-    public function setUserGroup(UserGroup $userGroup = null) {
-        $this->userGroup = $userGroup;
-    }
-
-    /**
-     * Gets the Username of the user.
-     *
-     * @return string
-     */
-    public function getUserName() {
-        return $this->userName;
-    }
-
-    /**
-     * Sets the Username of the user.
-     *
-     * @param string $userName the user name
-     */
-    public function setUserName($userName) {
-        $this->userName = $userName;
     }
 
     /**
@@ -307,24 +177,6 @@ class User {
      */
     public function setLastName($lastName) {
         $this->lastName = $lastName;
-    }
-
-    /**
-     * Gets the Email of the user.
-     *
-     * @return string
-     */
-    public function getEmail() {
-        return $this->email;
-    }
-
-    /**
-     * Sets the Email of the user.
-     *
-     * @param string $email the email
-     */
-    public function setEmail($email) {
-        $this->email = $email;
     }
 
     /**
@@ -417,135 +269,8 @@ class User {
         $this->place = $place;
     }
 
-     /**
-     * Gets the Plain password used for REST.
-     *
-     * @return string
-     */
-    public function getPlainPassword() {
-        return $this->plainPassword;
-    }
-
-    /**
-     * Sets the Plain password used for REST.
-     *
-     * @param string $plainPassword the plain password
-     */
-    public function setPlainPassword($plainPassword) {
-        $this->plainPassword = $plainPassword;
-    }
-
-    /**
-     * Gets the Hash of the users password.
-     *
-     * @return string
-     */
-    public function getPasswordHash() {
-        return $this->passwordHash;
-    }
-
-    /**
-     * Sets the Hash of the users password.
-     *
-     * @param string $passwordHash the password hash
-     */
-    public function setPasswordHash($passwordHash) {
-        $this->passwordHash = $passwordHash;
-    }
-
-    /**
-     * Gets the DateTime object of the users last login date. May be null.
-     *
-     * @return \DateTime
-     */
-    public function getLastLoginDate() {
-        return $this->lastLoginDate;
-    }
-
-    /**
-     * Sets the DateTime object of the users last login date. May be null.
-     *
-     * @param \DateTime $lastLoginDate the last login date
-     */
-    public function setLastLoginDate(\DateTime $lastLoginDate = null) {
-        $this->lastLoginDate = $lastLoginDate;
-    }
-
-    /**
-     * Gets the DateTime object of the users registration date. May be null.
-     *
-     * @return \DateTime
-     */
-    public function getRegistrationDate() {
-        return $this->registrationDate;
-    }
-
-    /**
-     * Sets the DateTime object of the users registration date. May be null.
-     *
-     * @param \DateTime $registrationDate the registration date
-     */
-    public function setRegistrationDate(\DateTime $registrationDate = null) {
-        $this->registrationDate = $registrationDate;
-    }
-
-    /**
-     * Gets the Indicates whether the user is locked or not.
-     *
-     * @return boolean
-     */
-    public function getIsLocked() {
-        return $this->isLocked;
-    }
-
-    /**
-     * Sets the Indicates whether the user is locked or not.
-     *
-     * @param boolean $isLocked the is locked
-     */
-    public function setIsLocked($isLocked) {
-        $this->isLocked = $isLocked;
-    }
-
-    /**
-     * Gets the Indicates whether the user has validated his email or not.
-     *
-     * @return boolean
-     */
-    public function getHasEmailValidated() {
-        return $this->hasEmailValidated;
-    }
-
-    /**
-     * Sets the Indicates whether the user has validated his email or not.
-     *
-     * @param boolean $hasEmailValidated the has email validated
-     */
-    public function setHasEmailValidated($hasEmailValidated) {
-        $this->hasEmailValidated = $hasEmailValidated;
-    }
-
-    /**
-     * Gets the user which locks this user
-     *
-     * @return \rmatil\CmsBundle\Entity\User
-     */
-    public function getIsLockedBy() {
-        return $this->isLockedBy;
-    }
-
-    /**
-     * Sets the user which locks this article
-     *
-     * @param \rmatil\CmsBundle\Entity\User $isLockedBy the user which locks the article
-     */
-    public function setIsLockedBy(User $isLockedBy = null) {
-        $this->isLockedBy = $isLockedBy;
-    }
-
     public function update(User $user) {
-        $this->setUserGroup($user->getUserGroup());
-        $this->setUserName($user->getUserName());
+        $this->setUsername($user->getUsername());
         $this->setFirstName($user->getFirstName());
         $this->setLastName($user->getLastName());
         $this->setEmail($user->getEmail());
@@ -554,11 +279,5 @@ class User {
         $this->setAddress($user->getAddress());
         $this->setZipCode($user->getZipCode());
         $this->setPlace($user->getPlace());
-        $this->setPlainPassword($user->getPlainPassword());
-        $this->setPasswordHash($user->getPasswordHash());
-        $this->setLastLoginDate($user->getLastLoginDate());
-        $this->setRegistrationDate($user->getRegistrationDate());
-        $this->setIsLocked($user->getIsLocked());
-        $this->setIsLockedBy($user->getIsLockedBy());
     }
 }
