@@ -2,52 +2,45 @@
 
 namespace rmatil\CmsBundle\Entity;
 
-use JMS\Serializer\Annotation\Type;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity 
+ * @ORM\Entity
  * @ORM\Table(name="languages")
  **/
 class Language {
 
     /**
      * Id of the language
-     * 
-     * @ORM\Id 
-     * @ORM\Column(type="integer") 
+     *
+     * @ORM\Id
+     * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      *
-     * @Type("integer")
-     * 
      * @var integer
      */
     protected $id;
 
     /**
      * Name of the Language
-     * 
+     *
      * @ORM\Column(type="string")
      *
-     * @Type("string")
-     * 
      * @var string
      */
     protected $name;
 
     /**
      * ISO 639-1-Code of the Language: Is a 2-letter abbr.
-     * 
+     *
      * @ORM\Column(type="string")
      *
-     * @Type("string")
-     * 
      * @var string
      */
     protected $code;
 
 
-     /**
+    /**
      * Gets the Id of the language.
      *
      * @return integer

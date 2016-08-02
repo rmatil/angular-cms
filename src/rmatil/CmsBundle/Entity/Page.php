@@ -4,8 +4,6 @@ namespace rmatil\CmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation\MaxDepth;
-use JMS\Serializer\Annotation\Type;
 
 /**
  * @ORM\Entity
@@ -20,8 +18,6 @@ class Page {
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      *
-     * @Type("integer")
-     *
      * @var integer
      */
     protected $id;
@@ -30,8 +26,6 @@ class Page {
      * Url name for the page
      *
      * @ORM\Column(type="string")
-     *
-     * @Type("string")
      *
      * @var string
      */
@@ -42,9 +36,6 @@ class Page {
      *
      * @ORM\ManyToOne(targetEntity="PageCategory", cascade="persist")
      *
-     * @Type("rmatil\CmsBundle\Entity\PageCategory")
-     * @MaxDepth(1)
-     *
      * @var \rmatil\CmsBundle\Entity\PageCategory
      */
     protected $category;
@@ -53,9 +44,6 @@ class Page {
      * The author of this page
      *
      * @ORM\ManyToOne(targetEntity="User", cascade="persist")
-     *
-     * @Type("rmatil\CmsBundle\Entity\User")
-     * @MaxDepth(1)
      *
      * @var \rmatil\CmsBundle\Entity\User
      */
@@ -66,9 +54,6 @@ class Page {
      *
      * @ORM\ManyToOne(targetEntity="Language", cascade="persist")
      *
-     * @Type("rmatil\CmsBundle\Entity\Language")
-     * @MaxDepth(2)
-     *
      * @var \rmatil\CmsBundle\Entity\Language
      */
     protected $language;
@@ -77,8 +62,6 @@ class Page {
      * Title of the page
      *
      * @ORM\Column(type="string")
-     *
-     * @Type("string")
      *
      * @var string
      */
@@ -89,9 +72,6 @@ class Page {
      *
      * @ORM\ManyToOne(targetEntity="Page", cascade="persist")
      *
-     * @Type("rmatil\CmsBundle\Entity\Page")
-     * @MaxDepth(2)
-     *
      * @var \rmatil\CmsBundle\Entity\Page
      */
     protected $parent;
@@ -100,9 +80,6 @@ class Page {
      * An array of articles (bidirectional - inverse side)
      *
      * @ORM\OneToMany(targetEntity="Article", mappedBy="page")
-     *
-     * @Type("ArrayCollection<rmatil\CmsBundle\Entity\Article>")
-     * @MaxDepth(2)
      *
      * @var array
      */
@@ -114,8 +91,6 @@ class Page {
      *
      * @ORM\Column(type="boolean")
      *
-     * @Type("boolean")
-     *
      * @var boolean
      */
     protected $hasSubnavigation = false;
@@ -126,9 +101,6 @@ class Page {
      *
      * @ORM\ManyToOne(targetEntity="User", cascade="persist")
      *
-     * @Type("rmatil\CmsBundle\Entity\User")
-     * @MaxDepth(1)
-     *
      * @var \rmatil\CmsBundle\Entity\User
      */
     protected $isLockedBy;
@@ -137,8 +109,6 @@ class Page {
      * Indicates whether the page should be published or not
      *
      * @ORM\Column(type="boolean")
-     *
-     * @Type("boolean")
      *
      * @var boolean
      */
@@ -149,8 +119,6 @@ class Page {
      *
      * @ORM\Column(type="datetime")
      *
-     * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
-     *
      * @var \DateTime
      */
     protected $lastEditDate;
@@ -160,8 +128,6 @@ class Page {
      *
      * @ORM\Column(type="datetime")
      *
-     * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
-     *
      * @var \DateTime
      */
     protected $creationDate;
@@ -170,25 +136,19 @@ class Page {
      * All user groups which are allowed to access this page.
      *
      * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
-     * @see \rmatil\CmsBundle\Entity\UserGroup::$accessiblePages
+     * @see  \rmatil\CmsBundle\Entity\UserGroup::$accessiblePages
      * @link http://docs.doctrine-project.org/en/latest/reference/working-with-associations.html#working-with-associations
      *
-     * @ORM\ManyToMany(targetEntity="UserGroup", mappedBy="accessiblePages")
-     * @ORM\JoinTable(name="usergroup_pages")
+     * @ORM\ManyToOne(targetEntity="UserGroup")
      *
-     * @Type("ArrayCollection<rmatil\CmsBundle\Entity\UserGroup>")
-     * @MaxDepth(2)
-     *
-     * @var ArrayCollection[rmatil\CmsBundle\Entity\UserGroup]
+     * @var \rmatil\CmsBundle\Entity\UserGroup
      */
-    protected $allowedUserGroups;
+    protected $allowedUserGroup;
 
     /**
      * Indicates whether this page should be used as the start page
      *
      * @ORM\Column(type="boolean")
-     *
-     * @Type("boolean")
      *
      * @var boolean
      */
@@ -197,7 +157,6 @@ class Page {
 
     public function __construct() {
         $this->articles = new ArrayCollection();
-        $this->allowedUserGroups = new ArrayCollection();
     }
 
     /**
@@ -435,48 +394,21 @@ class Page {
     }
 
     /**
-     * Gets all user groups which are allowed to access this page
+     * Get the user group which are allowed to access this page
      *
-     * @return ArrayCollection
+     * @return UserGroup
      */
-    public function getAllowedUserGroups() {
-        return $this->allowedUserGroups;
+    public function getAllowedUserGroup() {
+        return $this->allowedUserGroup;
     }
 
     /**
-     * Sets all user groups which are allowed to access this page.
+     * Set the user group which is allowed to access this page
      *
-     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
-     * @see \rmatil\CmsBundle\Entity\UserGroup::$accessiblePages
-     *
-     * @param ArrayCollection $allowedUserGroups The user groups which may access this page
+     * @param UserGroup $allowedUserGroup The user group which may access this page
      */
-    public function setAllowedUserGroups($allowedUserGroups) {
-        $this->allowedUserGroups = $allowedUserGroups;
-    }
-
-    /**
-     * Adds an user group which may access this page.
-     *
-     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
-     * @see \rmatil\CmsBundle\Entity\UserGroup::$accessiblePages
-     *
-     * @param UserGroup $userGroup The user group to allow access to this page
-     */
-    public function addAllowedUserGroup(UserGroup $userGroup) {
-        $this->allowedUserGroups[] = $userGroup;
-    }
-
-    /**
-     * Removes the given user group from the groups which may access this page.
-     *
-     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
-     * @see \rmatil\CmsBundle\Entity\UserGroup::$accessiblePages
-     *
-     * @param UserGroup $userGroup
-     */
-    public function removeAllowedUserGroup(UserGroup $userGroup) {
-        $this->allowedUserGroups->removeElement($userGroup);
+    public function setAllowedUserGroup($allowedUserGroup) {
+        $this->allowedUserGroup = $allowedUserGroup;
     }
 
     /**

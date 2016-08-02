@@ -2,39 +2,34 @@
 
 namespace rmatil\CmsBundle\Entity;
 
-use JMS\Serializer\Annotation\Type;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity 
+ * @ORM\Entity
  * @ORM\Table(name="pageCategories")
  **/
 class PageCategory {
 
     /**
      * Id of the page category
-     * 
-     * @ORM\Id 
-     * @ORM\Column(type="integer") 
+     *
+     * @ORM\Id
+     * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      *
-     * @Type("integer")
-     * 
      * @var integer
      */
     protected $id;
 
     /**
      * Name of the category
-     * 
+     *
      * @ORM\Column(type="string")
      *
-     * @Type("string")
-     * 
      * @var string
      */
     protected $name;
-    
+
 
     /**
      * Gets the Id of the page category.

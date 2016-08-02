@@ -154,21 +154,16 @@ class Event {
     protected $creationDate;
 
     /**
-     * All user groups which are allowed to access this event.
+     * The user group which is allowed to access this event.
      *
-     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
-     * @see \rmatil\CmsBundle\Entity\UserGroup::$accessiblePages
-     * @link http://docs.doctrine-project.org/en/latest/reference/working-with-associations.html#working-with-associations
+     * @ORM\ManyToOne(targetEntity="UserGroup")
      *
-     * @ORM\ManyToMany(targetEntity="UserGroup", mappedBy="accessibleEvents")
-     * @ORM\JoinTable(name="usergroup_events")
+     * @Type("rmatil\CmsBundle\Entity\UserGroup")
+     * @MaxDepth(1)
      *
-     * @Type("ArrayCollection<rmatil\CmsBundle\Entity\UserGroup>")
-     * @MaxDepth(2)
-     *
-     * @var ArrayCollection[rmatil\CmsBundle\Entity\UserGroup]
+     * @var \rmatil\CmsBundle\Entity\UserGroup
      */
-    protected $allowedUserGroups;
+    protected $allowedUserGroup;
 
     /**
      * Url name for the event
@@ -181,10 +176,6 @@ class Event {
      */
     protected $urlName;
 
-
-    public function __construct() {
-        $this->allowedUserGroups = new ArrayCollection();
-    }
 
     /**
      * Gets the The author of this article.
@@ -403,48 +394,21 @@ class Event {
     }
 
     /**
-     * Gets all user groups which are allowed to access this event
+     * Get the user group which are allowed to access this event
      *
-     * @return ArrayCollection
+     * @return UserGroup
      */
-    public function getAllowedUserGroups() {
-        return $this->allowedUserGroups;
+    public function getAllowedUserGroup() {
+        return $this->allowedUserGroup;
     }
 
     /**
-     * Sets all user groups which are allowed to access this event.
+     * Set the user group which is allowed to access this event.
      *
-     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
-     * @see \rmatil\CmsBundle\Entity\UserGroup::$accessibleEvents
-     *
-     * @param ArrayCollection $allowedUserGroups The user groups which may access this event
+     * @param UserGroup $allowedUserGroup The user group which may access this event
      */
-    public function setAllowedUserGroups($allowedUserGroups) {
-        $this->allowedUserGroups = $allowedUserGroups;
-    }
-
-    /**
-     * Adds an user group which may access this event.
-     *
-     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
-     * @see \rmatil\CmsBundle\Entity\UserGroup::$accessibleEvents
-     *
-     * @param UserGroup $userGroup The user group which will have access to this event
-     */
-    public function addAllowedUserGroup(UserGroup $userGroup) {
-        $this->allowedUserGroups[] = $userGroup;
-    }
-
-    /**
-     * Revokes access from a user group to this event.
-     *
-     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
-     * @see \rmatil\CmsBundle\Entity\UserGroup::$accessibleEvents
-     *
-     * @param UserGroup $userGroup
-     */
-    public function removeAllowedUserGroup(UserGroup $userGroup) {
-        $this->allowedUserGroups->removeElement($userGroup);
+    public function setAllowedUserGroup($allowedUserGroup) {
+        $this->allowedUserGroup = $allowedUserGroup;
     }
 
     /**

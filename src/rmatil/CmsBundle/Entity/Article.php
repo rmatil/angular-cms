@@ -3,13 +3,10 @@
 namespace rmatil\CmsBundle\Entity;
 
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation\MaxDepth;
-use JMS\Serializer\Annotation\Type;
 
 /**
- * @ORM\Entity(repositoryClass="rmatil\CmsBundle\Repository\ArticleRepository")
+ * @ORM\Entity
  * @ORM\Table(name="articles")
  **/
 class Article {
@@ -21,8 +18,6 @@ class Article {
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      *
-     * @Type("integer")
-     *
      * @var integer
      */
     protected $id;
@@ -31,8 +26,6 @@ class Article {
      * Url name for the article
      *
      * @ORM\Column(type="string")
-     *
-     * @Type("string")
      *
      * @var string
      */
@@ -43,9 +36,6 @@ class Article {
      *
      * @ORM\ManyToOne(targetEntity="ArticleCategory", cascade="persist")
      *
-     * @Type("rmatil\CmsBundle\Entity\ArticleCategory")
-     * @MaxDepth(2)
-     *
      * @var \rmatil\CmsBundle\Entity\ArticleCategory
      */
     protected $category;
@@ -54,9 +44,6 @@ class Article {
      * The author of this article
      *
      * @ORM\ManyToOne(targetEntity="User", cascade="persist")
-     *
-     * @Type("rmatil\CmsBundle\Entity\User")
-     * @MaxDepth(1)
      *
      * @var \rmatil\CmsBundle\Entity\User
      */
@@ -67,9 +54,6 @@ class Article {
      *
      * @ORM\ManyToOne(targetEntity="Language", cascade="persist")
      *
-     * @Type("rmatil\CmsBundle\Entity\Language")
-     * @MaxDepth(2)
-     *
      * @var \rmatil\CmsBundle\Entity\Language
      */
     protected $language;
@@ -79,8 +63,6 @@ class Article {
      *
      * @ORM\Column(type="string")
      *
-     * @Type("string")
-     *
      * @var string
      */
     protected $title;
@@ -89,8 +71,6 @@ class Article {
      * Body of the article
      *
      * @ORM\Column(type="text", nullable=true)
-     *
-     * @Type("string")
      *
      * @var string
      */
@@ -102,8 +82,6 @@ class Article {
      *
      * @ORM\Column(type="datetime")
      *
-     * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
-     *
      * @var \DateTime
      */
     protected $lastEditDate;
@@ -114,8 +92,6 @@ class Article {
      *
      * @ORM\Column(type="datetime")
      *
-     * @Type("DateTime<'Y-m-d\TH:i:sP', 'UTC'>")
-     *
      * @var \DateTime
      */
     protected $creationDate;
@@ -124,8 +100,6 @@ class Article {
      * Indicates whether the article should be published or not
      *
      * @ORM\Column(type="boolean")
-     *
-     * @Type("boolean")
      *
      * @var boolean
      */
@@ -136,9 +110,6 @@ class Article {
      *
      * @ORM\ManyToOne(targetEntity="Page", inversedBy="articles")
      *
-     * @Type("rmatil\CmsBundle\Entity\Page")
-     * @MaxDepth(2)
-     *
      * @var \rmatil\CmsBundle\Entity\Page
      */
     protected $page;
@@ -146,19 +117,11 @@ class Article {
     /**
      * All user groups which are allowed to access this article
      *
-     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
-     * @see \rmatil\CmsBundle\Entity\UserGroup::$accessibleArticles
-     * @link http://docs.doctrine-project.org/en/latest/reference/working-with-associations.html#working-with-associations
+     * @ORM\ManyToOne(targetEntity="UserGroup")
      *
-     * @ORM\ManyToMany(targetEntity="UserGroup", mappedBy="accessibleArticles")
-     * @ORM\JoinTable(name="usergroup_articles")
-     *
-     * @Type("ArrayCollection<rmatil\CmsBundle\Entity\UserGroup>")
-     * @MaxDepth(2)
-     *
-     * @var ArrayCollection[rmatil\CmsBundle\Entity\UserGroup]
+     * @var \rmatil\CmsBundle\Entity\UserGroup
      */
-    protected $allowedUserGroups;
+    protected $allowedUserGroup;
 
 
     public function __construct() {
@@ -168,7 +131,6 @@ class Article {
         $this->urlName = '';
         $this->title = '';
         $this->isPublished = true;
-        $this->allowedUserGroups = new ArrayCollection();
     }
 
 
@@ -375,48 +337,21 @@ class Article {
     }
 
     /**
-     * Gets all user groups which are allowed to access this article
+     * Get user group which is allowed to access this article
      *
-     * @return ArrayCollection
+     * @return UserGroup
      */
-    public function getAllowedUserGroups() {
-        return $this->allowedUserGroups;
+    public function getAllowedUserGroup() {
+        return $this->allowedUserGroup;
     }
 
     /**
-     * Sets all user groups which are allowed to access this article.
+     * Sets the user group which is allowed to access this article.
      *
-     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
-     * @see \rmatil\CmsBundle\Entity\UserGroup::$accessibleArticles
-     *
-     * @param ArrayCollection $allowedUserGroups The user groups which may access this article
+     * @param UserGroup $allowedUserGroup The user group which may access this article
      */
-    public function setAllowedUserGroups($allowedUserGroups) {
-        $this->allowedUserGroups = $allowedUserGroups;
-    }
-
-    /**
-     * Adds an user group which may access this article.
-     *
-     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
-     * @see \rmatil\CmsBundle\Entity\UserGroup::$accessibleArticles
-     *
-     * @param UserGroup $userGroup The user group to allow access to
-     */
-    public function addAllowedUserGroup(UserGroup $userGroup) {
-        $this->allowedUserGroups[] = $userGroup;
-    }
-
-    /**
-     * Removes the access to this article from the given user group.
-     *
-     * THIS IS THE INVERSE SIDE. CORRESPONDING RELATION IN USERGROUP MUST BE UPDATED MANUALLY
-     * @see \rmatil\CmsBundle\Entity\UserGroup::$accessibleArticles
-     *
-     * @param UserGroup $userGroup The user group from which to revoke access from
-     */
-    public function removeAllowedUserGroup(UserGroup $userGroup) {
-        $this->allowedUserGroups->removeElement($userGroup);
+    public function setAllowedUserGroup($allowedUserGroup) {
+        $this->allowedUserGroup = $allowedUserGroup;
     }
 
     public function update(Article $article) {

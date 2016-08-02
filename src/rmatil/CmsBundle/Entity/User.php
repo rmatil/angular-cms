@@ -2,15 +2,14 @@
 
 namespace rmatil\CmsBundle\Entity;
 
-use JMS\Serializer\Annotation\Type;
 use Doctrine\ORM\Mapping as ORM;
 use FOS\UserBundle\Model\User as BaseUser;
 
 /**
  * Attribute override is required by the indexes
  * See issue https://github.com/FriendsOfSymfony/FOSUserBundle/issues/1919
- * 
- * @ORM\Entity 
+ *
+ * @ORM\Entity
  * @ORM\Table(name="users")
  * @ORM\AttributeOverrides({
  *      @ORM\AttributeOverride(name="usernameCanonical",
@@ -33,35 +32,29 @@ class User extends BaseUser {
 
     /**
      * Id of the user
-     * 
-     * @ORM\Id 
-     * @ORM\Column(type="integer") 
+     *
+     * @ORM\Id
+     * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      *
-     * @Type("integer")
-     * 
      * @var integer
      */
     protected $id;
 
     /**
      * Firstname of the user
-     * 
+     *
      * @ORM\Column(type="string")
      *
-     * @Type("string")
-     * 
      * @var string
      */
     protected $firstName = '';
 
     /**
      * Lastname of the user
-     * 
+     *
      * @ORM\Column(type="string")
      *
-     * @Type("string")
-     * 
      * @var string
      */
     protected $lastName = '';
@@ -71,8 +64,6 @@ class User extends BaseUser {
      *
      * @ORM\Column(type="string", nullable=true)
      *
-     * @type("string")
-     * 
      * @var string
      */
     protected $phoneNumber;
@@ -82,8 +73,6 @@ class User extends BaseUser {
      *
      * @ORM\Column(type="string", nullable=true)
      *
-     * @type("string")
-     * 
      * @var string
      */
     protected $mobileNumber;
@@ -93,8 +82,6 @@ class User extends BaseUser {
      *
      * @ORM\Column(type="string", nullable=true)
      *
-     * @type("string")
-     * 
      * @var string
      */
     protected $address;
@@ -104,8 +91,6 @@ class User extends BaseUser {
      *
      * @ORM\Column(type="string", nullable=true)
      *
-     * @type("string")
-     * 
      * @var string
      */
     protected $zipCode;
@@ -115,8 +100,6 @@ class User extends BaseUser {
      *
      * @ORM\Column(type="string", nullable=true)
      *
-     * @Type("string")
-     * 
      * @var string
      */
     protected $place;
