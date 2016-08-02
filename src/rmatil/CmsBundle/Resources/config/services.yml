@@ -9,9 +9,31 @@ services:
 
     rmatil_cms.data_accessor.article_category:
         class: rmatil\CmsBundle\DataAccessor\DataAccessor
-        arguments: ['rmatilCmsBundle:ArticleCategory', '@doctrine.orm.entity_manager', '@logger']
+        arguments: ['rmatilCmsBundle:ArticleCategory', '@doctrine.orm.entity_manager', '@security.acl.provider', '@logger']
 
     rmatil_cms.data_accessor.article:
         class: rmatil\CmsBundle\DataAccessor\ArticleDataAccessor
-        arguments: ['@doctrine.orm.entity_manager', '@logger']
+        arguments: ['@doctrine.orm.entity_manager', '@security.acl.provider', '@logger']
 
+    rmatil_cms.mapper.article_category_mapper:
+        class: rmatil\CmsBundle\Mapper\ArticleCategoryMapper
+
+    rmatil_cms.mapper.language_mapper:
+        class: rmatil\CmsBundle\Mapper\LanguageMapper
+
+    rmatil_cms.mapper.page_category_mapper:
+        class: rmatil\CmsBundle\Mapper\PageCategoryMapper
+
+    rmatil_cms.mapper.user_group_mapper:
+        class: rmatil\CmsBundle\Mapper\UserGroupMapper
+
+    rmatil_cms.mapper.user_mapper:
+        class: rmatil\CmsBundle\Mapper\UserMapper
+
+    rmatil_cms.mapper.article_mapper:
+        class: rmatil\CmsBundle\Mapper\ArticleMapper
+        arguments: ['@rmatil_cms.mapper.article_category_mapper', '@rmatil_cms.mapper.language_mapper', '@rmatil_cms.mapper.user_group_mapper', '@rmatil_cms.mapper.user_mapper']
+
+    rmatil_cms.mapper.page_mapper:
+        class: rmatil\CmsBundle\Mapper\PageMapper
+        arguments: ['@rmatil_cms.mapper.page_category_mapper', '@rmatil_cms.mapper.article_mapper', '@rmatil_cms.mapper.language_mapper', '@rmatil_cms.mapper.user_group_mapper', '@rmatil_cms.mapper.user_mapper']
