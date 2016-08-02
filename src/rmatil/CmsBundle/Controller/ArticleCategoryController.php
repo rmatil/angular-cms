@@ -40,9 +40,9 @@ class ArticleCategoryController extends Controller {
         $responseFactory = $this->get('rmatil_cms.factory.json_response');
 
         try {
-            $categories = $this->get('rmatil_cms.data_accessor.article_category')->getById($id);
+            $category = $this->get('rmatil_cms.data_accessor.article_category')->getById($id);
 
-            return $responseFactory->createResponse($categories);
+            return $responseFactory->createResponse($category);
         } catch (EntityNotFoundException $ex) {
             return $responseFactory->createNotFoundResponse($ex->getMessage());
         }
@@ -88,7 +88,7 @@ class ArticleCategoryController extends Controller {
      *
      * @return JsonResponse
      *
-     * @Route("/article-categories/{id}", name="insert_article_category", methods={"POST"})
+     * @Route("/article-categories", name="insert_article_category", methods={"POST"})
      */
     public function insertArticleCategoryAction(Request $request) {
         $responseFactory = $this->get('rmatil_cms.factory.json_response');
