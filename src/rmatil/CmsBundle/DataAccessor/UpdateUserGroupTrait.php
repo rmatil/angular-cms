@@ -1,7 +1,7 @@
 <?php
 
 
-namespace rmatil\CmsBundle\Controller;
+namespace rmatil\CmsBundle\DataAccessor;
 
 
 use rmatil\CmsBundle\Constants\EntityNames;
