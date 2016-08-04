@@ -5,13 +5,18 @@ namespace rmatil\CmsBundle\Mapper;
 
 
 use rmatil\CmsBundle\Entity\User;
+use rmatil\CmsBundle\Exception\MapperException;
 use rmatil\CmsBundle\Model\UserDTO;
 
-class UserMapper {
+class UserMapper extends AbstractMapper {
 
-    public function userToUserDTO(User $user) : UserDTO {
+    public function entityToDto($user) {
         if (null === $user) {
             return null;
+        }
+
+        if ( ! ($user instanceof User)) {
+            throw new MapperException(sprintf('Required object of type "%s" but got "%s"', User::class, get_class($user)));
         }
 
         $userDto = new UserDTO();
@@ -37,9 +42,13 @@ class UserMapper {
         return $userDto;
     }
 
-    public function userDTOToUser(UserDTO $userDto) : User {
+    public function dtoToEntity($userDto) {
         if (null === $userDto) {
             return null;
+        }
+
+        if ( ! ($userDto instanceof UserDTO)) {
+            throw new MapperException(sprintf('Required object of type "%s" but got "%s"', UserDTO::class, get_class($userDto)));
         }
 
         $user = new User();

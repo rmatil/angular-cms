@@ -4,10 +4,12 @@
 namespace rmatil\CmsBundle\Mapper;
 
 
+use rmatil\CmsBundle\Constants\EntityNames;
 use rmatil\CmsBundle\Entity\Article;
+use rmatil\CmsBundle\Exception\MapperException;
 use rmatil\CmsBundle\Model\ArticleDTO;
 
-class ArticleMapper {
+class ArticleMapper extends AbstractMapper {
 
     protected $articleCategoryMapper;
     protected $languageMapper;
@@ -21,9 +23,13 @@ class ArticleMapper {
         $this->userMapper = $userMapper;
     }
 
-    public function articleToArticleDTO(Article $article) : ArticleDTO {
+    public function entityToDto($article) {
         if (null === $article) {
             return null;
+        }
+
+        if ( ! ($article instanceof Article)) {
+            throw new MapperException(sprintf('Required object of type "%s" but got "%s"', EntityNames::ARTICLE, get_class($article)));
         }
 
         $articleDto = new ArticleDTO();
@@ -31,15 +37,15 @@ class ArticleMapper {
         $articleDto->setUrlName($article->getUrlName());
 
         if (null !== $article->getCategory()) {
-            $articleDto->setCategory($this->articleCategoryMapper->articleCategoryToArticleCategoryDTO($article->getCategory()));
+            $articleDto->setCategory($this->articleCategoryMapper->entityToDto($article->getCategory()));
         }
 
         if (null !== $article->getAuthor()) {
-            $articleDto->setAuthor($this->userMapper->userToUserDTO($article->getAuthor()));
+            $articleDto->setAuthor($this->userMapper->entityToDto($article->getAuthor()));
         }
 
         if (null !== $article->getLanguage()) {
-            $articleDto->setLanguage($this->languageMapper->languageToLanguageDTO($article->getLanguage()));
+            $articleDto->setLanguage($this->languageMapper->entityToDto($article->getLanguage()));
         }
 
         $articleDto->setTitle($article->getTitle());
@@ -56,15 +62,19 @@ class ArticleMapper {
         $articleDto->setIsPublished($article->getIsPublished());
 
         if (null !== $article->getAllowedUserGroup()) {
-            $articleDto->setAllowedUserGroup($this->userGroupMapper->userGroupToUserGroupDTO($article->getAllowedUserGroup()));
+            $articleDto->setAllowedUserGroup($this->userGroupMapper->entityToDto($article->getAllowedUserGroup()));
         }
 
         return $articleDto;
     }
 
-    public function articleDTOToArticle(ArticleDTO $articleDto) : Article {
+    public function dtoToEntity($articleDto) {
         if (null === $articleDto) {
             return null;
+        }
+
+        if ( ! ($articleDto instanceof ArticleDTO)) {
+            throw new MapperException(sprintf('Required object of type "%s" but got "%s"', ArticleDTO::class, get_class($articleDto)));
         }
 
         $article = new Article();
@@ -72,15 +82,15 @@ class ArticleMapper {
         $article->setUrlName($articleDto->getUrlName());
 
         if (null !== $articleDto->getCategory()) {
-            $article->setCategory($this->articleCategoryMapper->articleCategoryDTOToArticleCategory($articleDto->getCategory()));
+            $article->setCategory($this->articleCategoryMapper->dtoToEntity($articleDto->getCategory()));
         }
 
         if (null !== $articleDto->getAuthor()) {
-            $article->setAuthor($this->userMapper->userDTOToUser($articleDto->getAuthor()));
+            $article->setAuthor($this->userMapper->dtoToEntity($articleDto->getAuthor()));
         }
 
         if (null !== $articleDto->getLanguage()) {
-            $article->setLanguage($this->languageMapper->languageDTOToLanguage($articleDto->getLanguage()));
+            $article->setLanguage($this->languageMapper->dtoToEntity($articleDto->getLanguage()));
         }
 
         $article->setTitle($articleDto->getTitle());
@@ -98,7 +108,7 @@ class ArticleMapper {
 
 
         if (null !== $articleDto->getAllowedUserGroup()) {
-            $article->setAllowedUserGroup($this->userGroupMapper->userGroupDTOToUserGroup($articleDto->getAllowedUserGroup()));
+            $article->setAllowedUserGroup($this->userGroupMapper->dtoToEntity($articleDto->getAllowedUserGroup()));
         }
 
 
