@@ -7,21 +7,37 @@ namespace rmatil\CmsBundle\DataAccessor;
 use DateTime;
 use DateTimeZone;
 use Doctrine\DBAL\DBALException;
-use Doctrine\ORM\EntityNotFoundException;
-use rmatil\CmsBundle\Controller\UpdateUserGroupTrait;
-use rmatil\CmsBundle\Exception\EntityInvalidException;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use rmatil\CmsBundle\Constants\EntityNames;
 use rmatil\CmsBundle\Entity\Article;
 use rmatil\CmsBundle\Entity\ArticleCategory;
 use rmatil\CmsBundle\Entity\Language;
 use rmatil\CmsBundle\Entity\User;
+use rmatil\CmsBundle\Exception\EntityInvalidException;
+use rmatil\CmsBundle\Exception\EntityNotFoundException;
+use rmatil\CmsBundle\Exception\EntityNotInsertedException;
+use rmatil\CmsBundle\Exception\EntityNotUpdatedException;
+use rmatil\CmsBundle\Mapper\ArticleMapper;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
+use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
+use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 
 class ArticleDataAccessor extends DataAccessor {
 
     use UpdateUserGroupTrait;
 
-    public function __construct($em, $logger) {
-        parent::__construct(EntityNames::ARTICLE, $em, $logger);
+    protected $articleMapper;
+
+    public function __construct(EntityManagerInterface $em, ArticleMapper $articleMapper, MutableAclProviderInterface $aclProvider, LoggerInterface $logger) {
+        parent::__construct(EntityNames::ARTICLE, $em, $aclProvider, $logger);
+
+        $this->articleMapper = $articleMapper;
+    }
+
+    public function getAll() {
+        return $this->articleMapper->entitiesToDtos(parent::getAll());
     }
 
     public function update($article) {
@@ -115,6 +131,25 @@ class ArticleDataAccessor extends DataAccessor {
 
         try {
             $this->em->flush();
+
+            // creating the ACL
+            $objectIdentity = ObjectIdentity::fromDomainObject($article);
+            $acl = $this->aclProvider->createAcl($objectIdentity);
+
+            // creating the security identity for the select access role
+            $superAdminSid = new RoleSecurityIdentity('ROLE_SUPER_ADMIN');
+            $adminSid = new RoleSecurityIdentity('ROLE_ADMIN');
+            // TODO: set this correctly -> use role inheritance
+            $selectedRoleSid = new RoleSecurityIdentity($article->getAllowedUserGroup()->first()->getRole());
+
+            // grant all permissions for super admins
+            $acl->insertObjectAce($superAdminSid, MaskBuilder::MASK_OWNER);
+            // grant VIEW, EDIT, CREATE, DELETE, UNDELETE permissions to admins
+            $acl->insertObjectAce($adminSid, MaskBuilder::MASK_OPERATOR);
+            // grant selected role VIEW permissions
+            $acl->insertObjectAce($selectedRoleSid, MaskBuilder::MASK_VIEW);
+            $this->aclProvider->updateAcl($acl);
+
         } catch (DBALException $dbalex) {
             $this->logger->error($dbalex);
 
