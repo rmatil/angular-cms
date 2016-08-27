@@ -13,6 +13,7 @@ use rmatil\CmsBundle\Exception\EntityNotInsertedException;
 use rmatil\CmsBundle\Exception\EntityNotUpdatedException;
 use Symfony\Component\Security\Acl\Dbal\AclProvider;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * A base data accessor allowing modified access to the repositories
@@ -40,6 +41,11 @@ class DataAccessor implements DataAccessorInterface {
     protected $aclProvider;
 
     /**
+     * @var TokenStorageInterface
+     */
+    protected $tokenStorage;
+
+    /**
      * Creates a new data accessor for the given entity
      *
      * @param $entityName  string The bundle's qualifier for the entity (e.g. Bundle:Entity)
@@ -47,10 +53,11 @@ class DataAccessor implements DataAccessorInterface {
      * @param $aclProvider MutableAclProviderInterface The ACL Provider used to set permissions to objects
      * @param $logger      LoggerInterface The logger
      */
-    public function __construct($entityName, EntityManagerInterface $em, MutableAclProviderInterface $aclProvider, LoggerInterface $logger) {
+    public function __construct($entityName, EntityManagerInterface $em, MutableAclProviderInterface $aclProvider, TokenStorageInterface $tokenStorage, LoggerInterface $logger) {
         $this->entityName = $entityName;
         $this->em = $em;
         $this->aclProvider = $aclProvider;
+        $this->tokenStorage = $tokenStorage;
         $this->logger = $logger;
     }
 
