@@ -135,7 +135,7 @@ class ArticleDataAccessor extends DataAccessor {
             throw new EntityNotUpdatedException(sprintf('Could not update entity "%s" with id "%s"', $this->entityName, $article->getId()));
         }
 
-        return $article;
+        return $this->articleMapper->entityToDto($dbArticle);
     }
 
     public function insert($article) {
@@ -204,7 +204,7 @@ class ArticleDataAccessor extends DataAccessor {
             throw new EntityNotInsertedException(sprintf('Could not insert entity "%s"', $this->entityName));
         }
 
-        return $article;
+        return $this->articleMapper->entityToDto($article);
     }
 
 }
