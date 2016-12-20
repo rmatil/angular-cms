@@ -11,8 +11,7 @@ use rmatil\CmsBundle\Exception\EntityInvalidException;
 use rmatil\CmsBundle\Exception\EntityNotFoundException;
 use rmatil\CmsBundle\Exception\EntityNotInsertedException;
 use rmatil\CmsBundle\Exception\EntityNotUpdatedException;
-use Symfony\Component\Security\Acl\Dbal\AclProvider;
-use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
+use rmatil\CmsBundle\Security\AclManager;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -36,11 +35,6 @@ class DataAccessor implements DataAccessorInterface {
     protected $entityName;
 
     /**
-     * @var AclProvider
-     */
-    protected $aclProvider;
-
-    /**
      * @var TokenStorageInterface
      */
     protected $tokenStorage;
@@ -50,13 +44,12 @@ class DataAccessor implements DataAccessorInterface {
      *
      * @param $entityName  string The bundle's qualifier for the entity (e.g. Bundle:Entity)
      * @param $em          EntityManagerInterface The entity manager to access the db
-     * @param $aclProvider MutableAclProviderInterface The ACL Provider used to set permissions to objects
+     * @param $aclManager  AclManager The ACL Manager used to set permissions to objects
      * @param $logger      LoggerInterface The logger
      */
-    public function __construct($entityName, EntityManagerInterface $em, MutableAclProviderInterface $aclProvider, TokenStorageInterface $tokenStorage, LoggerInterface $logger) {
+    public function __construct($entityName, EntityManagerInterface $em, TokenStorageInterface $tokenStorage, LoggerInterface $logger) {
         $this->entityName = $entityName;
         $this->em = $em;
-        $this->aclProvider = $aclProvider;
         $this->tokenStorage = $tokenStorage;
         $this->logger = $logger;
     }
@@ -120,6 +113,7 @@ class DataAccessor implements DataAccessorInterface {
 
         try {
             $this->em->flush();
+
         } catch (DBALException $dbalex) {
             $this->logger->error($dbalex);
 

@@ -9,11 +9,11 @@ services:
 
     rmatil_cms.data_accessor.article_category:
         class: rmatil\CmsBundle\DataAccessor\DataAccessor
-        arguments: ['rmatilCmsBundle:ArticleCategory', '@doctrine.orm.entity_manager', '@security.acl.provider', '@logger']
+        arguments: ['rmatilCmsBundle:ArticleCategory', '@doctrine.orm.entity_manager', '@security.token_storage', '@logger']
 
     rmatil_cms.data_accessor.article:
         class: rmatil\CmsBundle\DataAccessor\ArticleDataAccessor
-        arguments: ['@doctrine.orm.entity_manager', '@rmatil_cms.mapper.article_mapper', '@security.acl.provider', '@logger']
+        arguments: ['@doctrine.orm.entity_manager', '@rmatil_cms.mapper.article_mapper', '@security.token_storage', '@logger']
 
     rmatil_cms.mapper.article_category_mapper:
         class: rmatil\CmsBundle\Mapper\ArticleCategoryMapper
