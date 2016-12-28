@@ -19,7 +19,7 @@
     "repositories": [
         {
             "url": "https://github.com/rmatil/angular-cms-bundle.git",
-            "type": "git"
+            "type": "vcs"
         }
     ],
     "require": {
