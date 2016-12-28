@@ -4,12 +4,13 @@ namespace rmatil\CmsBundle\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use rmatil\CmsBundle\Security\IRestrictable;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="articles")
  **/
-class Article {
+class Article implements IRestrictable {
 
     /**
      * Id of the article
@@ -350,7 +351,7 @@ class Article {
      *
      * @param UserGroup $allowedUserGroup The user group which may access this article
      */
-    public function setAllowedUserGroup($allowedUserGroup) {
+    public function setAllowedUserGroup(UserGroup $allowedUserGroup = null) {
         $this->allowedUserGroup = $allowedUserGroup;
     }
 

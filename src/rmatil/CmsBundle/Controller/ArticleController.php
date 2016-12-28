@@ -6,7 +6,6 @@ namespace rmatil\CmsBundle\Controller;
 
 use DateTime;
 use DateTimeZone;
-use rmatil\CmsBundle\Constants\EntityNames;
 use rmatil\CmsBundle\Constants\HttpStatusCodes;
 use rmatil\CmsBundle\Entity\Article;
 use rmatil\CmsBundle\Exception\EntityInvalidException;
@@ -18,9 +17,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
-use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 
 class ArticleController extends Controller {
 
@@ -99,19 +95,20 @@ class ArticleController extends Controller {
     public function insertArticleAction(Request $request) {
         $responseFactory = $this->get('rmatil_cms.factory.json_response');
 
-        /** @var \rmatil\CmsBundle\Entity\Article $articleObject */
-        $articleObject = $this->get('jms_serializer')->deserialize(
+        /** @var \rmatil\CmsBundle\Model\ArticleDTO $articleDto */
+        $articleDto = $this->get('jms_serializer')->deserialize(
             $request->getContent(),
-            EntityNames::ARTICLE,
+            'rmatil\CmsBundle\Model\ArticleDTO',
             'json'
         );
 
-        $author = $this->get('security.token_storage')->getToken()->getUser();
-        $articleObject->setAuthor($author);
+        $now = new DateTime('now', new DateTimeZone('UTC'));
+        $articleDto->setLastEditDate($now);
+        $articleDto->setCreationDate($now);
 
         try {
 
-            $article = $this->get('rmatil_cms.data_accessor.article')->insert($articleObject);
+            $article = $this->get('rmatil_cms.data_accessor.article')->insert($articleDto);
 
             return $responseFactory->createResponseWithCode(HttpStatusCodes::CREATED, $article);
 

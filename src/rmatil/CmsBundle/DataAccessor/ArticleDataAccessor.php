@@ -75,8 +75,9 @@ class ArticleDataAccessor extends DataAccessor {
             );
         }
 
-        // Note: we prevent updating title and url name due to the uniqid
+        // Note: we prevent updating url name due to the uniqid
         // stored in url-name. Otherwise, permanent links would fail
+        $dbArticle->setTitle($article->getTitle());
         $dbArticle->setContent($article->getContent());
         $dbArticle->setIsPublished($article->getIsPublished());
         $dbArticle->setCategory($article->getCategory());
@@ -85,12 +86,14 @@ class ArticleDataAccessor extends DataAccessor {
         $dbArticle->setCreationDate($article->getCreationDate());
         $dbArticle->setLastEditDate(new DateTime('now', new DateTimeZone('UTC')));
 
-        // only update ACL if allowed role changed
-        if ($article->getAllowedUserGroup()->getRole() !== $dbArticle->getAllowedUserGroup()->getRole()) {
-            // also update allowed user group
+
+        $allowedUserGroup = $article->getAllowedUserGroup();
+        if (null !== $allowedUserGroup) {
             $dbArticle->setAllowedUserGroup(
                 $this->em->getRepository(EntityNames::USER_GROUP)->find($article->getAllowedUserGroup()->getId())
             );
+        } else {
+            $dbArticle->setAllowedUserGroup(null);
         }
 
 
@@ -119,11 +122,11 @@ class ArticleDataAccessor extends DataAccessor {
             );
         }
 
-        if ($article->getAuthor() instanceof User) {
-            $article->setAuthor(
-                $this->em->getRepository(EntityNames::USER)->find($article->getAuthor()->getId())
-            );
-        }
+        $user = $this->tokenStorage->getToken()->getUser();
+        $article->setAuthor(
+            $this->em->getRepository(EntityNames::USER)->find($user->getId())
+        );
+
 
         if ($article->getCategory() instanceof ArticleCategory) {
             $article->setCategory(
@@ -131,9 +134,12 @@ class ArticleDataAccessor extends DataAccessor {
             );
         }
 
-        $article->setAllowedUserGroup(
-            $this->em->getRepository(EntityNames::USER_GROUP)->find($article->getAllowedUserGroup()->getId())
-        );
+        $allowedUserGroup = $article->getAllowedUserGroup();
+        if (null !== $allowedUserGroup) {
+            $article->setAllowedUserGroup(
+                $this->em->getRepository(EntityNames::USER_GROUP)->find($article->getAllowedUserGroup()->getId())
+            );
+        }
 
         $uniqid = uniqid();
         $article->setUrlName(sprintf('%s-%s', $article->getUrlName(), $uniqid));
