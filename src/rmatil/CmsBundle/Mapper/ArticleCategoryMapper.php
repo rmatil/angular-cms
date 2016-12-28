@@ -21,7 +21,7 @@ class ArticleCategoryMapper extends AbstractMapper {
 
         $articleCategoryDto = new ArticleCategoryDTO();
         $articleCategoryDto->setId($articleCategory->getId());
-        $articleCategoryDto->setName($articleCategoryDto->getName());
+        $articleCategoryDto->setName($articleCategory->getName());
 
         return $articleCategoryDto;
     }
