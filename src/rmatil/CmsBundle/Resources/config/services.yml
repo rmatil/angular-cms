@@ -40,7 +40,7 @@ services:
 
     rmatil_cms.security.restrictable_voter:
         class: rmatil\CmsBundle\Security\RestrictableVoter
-        arguments: ['@security.access.decision_manager', '@security.role_hierarchy', '@security.authorization_checker']
+        arguments: ['@security.access.decision_manager', '@security.role_hierarchy']
         public: false
         tags:
             - { name: security.voter }

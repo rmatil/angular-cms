@@ -7,15 +7,14 @@ namespace rmatil\CmsBundle\Security;
 use rmatil\CmsBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Symfony\Component\Security\Core\Role\RoleInterface;
 
 class RestrictableVoter extends Voter {
 
-    const VIEW = 'view';
-    const EDIT = 'edit';
+    const VIEW = 'VIEW';
+    const EDIT = 'EDIT';
 
     /**
      * @var AccessDecisionManagerInterface
@@ -28,19 +27,13 @@ class RestrictableVoter extends Voter {
     private $roleHierarchy;
 
     /**
-     * @var AuthorizationCheckerInterface
-     */
-    private $authorizationChecker;
-
-    /**
      * RestrictableVoter constructor.
      *
      * @param AccessDecisionManagerInterface $decisionManager
      */
-    public function __construct(AccessDecisionManagerInterface $decisionManager, RoleHierarchyInterface $roleHierarchy, AuthorizationCheckerInterface $authorizationChecker) {
+    public function __construct(AccessDecisionManagerInterface $decisionManager, RoleHierarchyInterface $roleHierarchy) {
         $this->decisionManager = $decisionManager;
         $this->roleHierarchy = $roleHierarchy;
-        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
