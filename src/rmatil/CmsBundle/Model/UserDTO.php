@@ -130,6 +130,8 @@ class UserDTO {
     /**
      * All roles of the user
      *
+     * @Type("array<string>")
+     *
      * @var array
      */
     protected $roles = [];

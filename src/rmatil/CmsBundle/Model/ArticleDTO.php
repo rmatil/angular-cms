@@ -123,7 +123,7 @@ class ArticleDTO {
     /**
      * @return int
      */
-    public function getId(): int {
+    public function getId() {
         return $this->id;
     }
 
@@ -165,7 +165,7 @@ class ArticleDTO {
     /**
      * @return UserDTO
      */
-    public function getAuthor(): UserDTO {
+    public function getAuthor() {
         return $this->author;
     }
 
@@ -179,7 +179,7 @@ class ArticleDTO {
     /**
      * @return LanguageDTO
      */
-    public function getLanguage(): LanguageDTO {
+    public function getLanguage() {
         return $this->language;
     }
 
@@ -263,7 +263,7 @@ class ArticleDTO {
     /**
      * @return UserGroupDTO
      */
-    public function getAllowedUserGroup(): UserGroupDTO {
+    public function getAllowedUserGroup() {
         return $this->allowedUserGroup;
     }
 
