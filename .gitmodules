@@ -1,0 +1,3 @@
+[submodule "src/rmatil/CmsBundle"]
+	path = src/rmatil/CmsBundle
+	url = git@github.com:rmatil/angular-cms-bundle.git
