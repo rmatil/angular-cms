@@ -5,8 +5,8 @@ parameters:
     database_host: localhost
     database_port: 3306
     database_name: cmsv5
-    database_user: root
-    database_password: root
+    database_user: cmsv5
+    database_password: cmsv5
 
     mailer_transport: smtp
     mailer_host: 127.0.0.1
