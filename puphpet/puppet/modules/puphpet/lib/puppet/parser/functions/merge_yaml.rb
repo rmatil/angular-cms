@@ -13,9 +13,18 @@ module Puppet::Parser::Functions
     generatedHash = { }
 
     args.each do |value|
-      if File.file?(value)
-        generatedHash.deep_merge!(YAML.load_file(value))
+      if (!value.is_a?(Array))
+        if File.file?(value)
+          generatedHash.deep_merge!(YAML.load_file(value))
+        end
+      else
+        value.each do |valueInner|
+          if File.file?(valueInner)
+            generatedHash.deep_merge!(YAML.load_file(valueInner))
+          end
+        end
       end
+
     end
 
     return generatedHash

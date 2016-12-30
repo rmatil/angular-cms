@@ -2,6 +2,10 @@
 
 [![Build Status](https://travis-ci.org/tPl0ch/puppet-composer.png?branch=master)](https://travis-ci.org/tPl0ch/puppet-composer)
 
+## Maintainers needed!
+
+See https://github.com/tPl0ch/puppet-composer/issues/84 for more details!
+
 ## Description
 
 The `puppet-composer` module installs the latest version of Composer from http://getcomposer.org. Composer is a dependency manager for PHP.
@@ -17,6 +21,7 @@ This module supports puppet in versions `>= 2.7, <3.5`
 * `Redhat`
 * `Centos`
 * `Amazon Linux`
+* `FreeBSD`
 
 ## Installation
 
@@ -103,6 +108,7 @@ composer::exec { 'silex-update':
     dry_run              => false, # Just simulate actions
     custom_installers    => false, # No custom installers
     scripts              => false, # No script execution
+    ignore_platform_reqs => false, # Ignore platform requirements
     interaction          => false, # No interactive questions
     optimize             => false, # Optimize autoloader
     dev                  => true, # Install dev dependencies
@@ -125,6 +131,7 @@ composer::exec { 'silex-install':
     dry_run              => false, # Just simulate actions
     custom_installers    => false, # No custom installers
     scripts              => false, # No script execution
+    ignore_platform_reqs => false, # Ignore platform requirements
     interaction          => false, # No interactive questions
     optimize             => false, # Optimize autoloader
     dev                  => true, # Install dev dependencies

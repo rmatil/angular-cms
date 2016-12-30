@@ -103,7 +103,7 @@ define elasticsearch::service::systemd(
     $service_enable = false
   }
 
-  $notify_service = $elasticsearch::restart_on_change ? {
+  $notify_service = $elasticsearch::restart_config_change ? {
     true  => [ Exec["systemd_reload_${name}"], Service["elasticsearch-instance-${name}"] ],
     false => Exec["systemd_reload_${name}"]
   }
@@ -163,7 +163,7 @@ define elasticsearch::service::systemd(
         $memlock = undef
       }
 
-      file { "/lib/systemd/system/elasticsearch-${name}.service":
+      file { "${elasticsearch::params::systemd_service_path}/elasticsearch-${name}.service":
         ensure  => $ensure,
         content => template($init_template),
         before  => Service["elasticsearch-instance-${name}"],
@@ -176,7 +176,7 @@ define elasticsearch::service::systemd(
 
   } else {
 
-    file { "/lib/systemd/system/elasticsearch-${name}.service":
+    file { "${elasticsearch::params::systemd_service_path}/elasticsearch-${name}.service":
       ensure    => 'absent',
       subscribe => Service["elasticsearch-instance-${name}"],
       notify    => Exec["systemd_reload_${name}"],

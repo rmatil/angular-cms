@@ -1,3 +1,154 @@
+## Supported Release 1.10.0
+#### Summary
+This release fixes backwards compatibilty bugs introduced in 1.9.0. Also includes a new mod class and a new vhost feature.
+
+#### Features
+- Allow setting KeepAlive related options per vhost
+  - `apache::vhost::keepalive`
+  - `apache::vhost::keepalive_timeout`
+  - `apache::vhost::max_keepalive_requests`
+- Adds new class `apache::mod::cluster`
+
+#### Bugfixes
+- MODULES-2890: Allow php_version != 5
+- MODULES-2890: mod::php: Explicit test on jessie
+- MODULES-2890: Fix PHP on Debian stretch and Ubuntu Xenial
+- MODULES-2890: Fix mod_php SetHandler and cleanup
+- Fixed trailing slash in lib_path on Suse
+- Revert "MODULES-2956: Enable options within location block on proxy_match". Bug introduced in release 1.9.0.
+- Revert "changed rpaf Configuration Directives: RPAF -> RPAF_". Bug introduced in release 1.9.0.
+- Set actual path to apachectl on FreeBSD. Fixes snippets verification.
+
+## Supported Release 1.9.0 [DELETED]
+#### Features
+- Added `apache_version` fact
+- Added `apache::balancer::target` attribute
+- Added `apache::fastcgi::server::pass_header` attribute
+- Added ability for `apache::fastcgi::server::host` using sockets
+- Added `apache::root_directory_options` attribute
+- Added for `apache::mod::ldap`:
+  - `ldap_shared_cache_size`
+  - `ldap_cache_entries`
+  - `ldap_cache_ttl`
+  - `ldap_opcache_entries`
+  - `ldap_opcache_ttl`
+- Added `apache::mod::pagespeed::package_ensure` attribute
+- Added `apache::mod::passenger` attributes:
+  - `passenger_log_level`
+  - `manage_repo`
+- Added upstream repo for `apache::mod::passenger`
+- Added `apache::mod::proxy_fcgi` class
+- Added `apache::mod::security` attributes:
+  - `audit_log_parts`
+  - `secpcrematchlimit`
+  - `secpcrematchlimitrecursion`
+  - `secdefaultaction`
+  - `anomaly_score_blocking`
+  - `inbound_anomaly_threshold`
+  - `outbound_anomaly_threshold`
+- Added `apache::mod::ssl` attributes:
+  - `ssl_mutex`
+  - `apache_version`
+- Added ubuntu 16.04 support
+- Added `apache::mod::authnz_ldap::package_name` attribute
+- Added `apache::mod::ldap::package_name` attribute
+- Added `apache::mod::proxy::package_name` attribute
+- Added `apache::vhost` attributes:
+  - `ssl_proxy_check_peen_expire`
+  - `ssl_proxy_protocol`
+  - `logroot_owner`
+  - `logroot_group`
+  - `setenvifnocase`
+  - `passenger_user`
+  - `passenger_high_performance`
+  - `jk_mounts`
+  - `fastcgi_idle_timeout`
+  - `modsec_disable_msgs`
+  - `modsec_disable_tags`
+- Added ability for 2.4-style `RequireAll|RequireNone|RequireAny` directory permissions
+- Added ability for includes in vhost directory
+- Added directory values:
+  - `AuthMerging`
+  - `MellonSPMetadataFile`
+- Adds Configurability of Collaborative Detection Severity Levels for OWASP Core Rule Set to `apache::mod::security` class
+  - `critical_anomaly_score`
+  - `error_anomaly_score`
+  - `warning_anomaly_score`
+  - `notice_anomaly_score`
+- Adds ability to configure `info_path` in `apache::mod::info` class
+- Adds ability to configure `verify_config` in `apache::vhost::custom`
+
+#### Bugfixes
+- Fixed apache mod setup for event/worker failing syntax
+- Fixed concat deprecation warnings
+- Fixed pagespeed mod
+- Fixed service restart on mod update
+- Fixed mod dir purging to happen after package installs
+- Fixed various `apache::mod::*` file modes
+- Fixed `apache::mod::authnz_ldap` parameter `verifyServerCert` to be `verify_server_cert`
+- Fixed loadfile name in `apache::mod::fcgid`
+- Fixed `apache::mod::remoteip` to fail on apache < 2.4 (because it is not available)
+- Fixed `apache::mod::ssl::ssl_honorcipherorder` interpolation
+- Lint fixes
+- Strict variable fixes
+- Fixed `apache::vhost` attribute `redirectmatch_status` to be optional
+- Fixed SSLv3 on by default in mod\_nss
+- Fixed mod\_rpaf directive names in template
+- Fixed mod\_worker needing MaxClients with ThreadLimit
+- Fixed quoting on vhost php\_value
+- Fixed xml2enc for proxy\_html on debian
+- Fixed a problem where the apache service restarts too fast
+
+## Supported Release 1.8.1
+### Summary
+This release includes bug fixes and a documentation update.
+
+#### Bugfixes
+- Fixes a bug that occurs when using the module in combination with puppetlabs-concat 2.x.
+- Fixes a bug where passenger.conf was vulnerable to purging.
+- Removes the pin of the concat module dependency.
+
+## 2016-01-26 - Supported Release 1.8.0
+### Summary
+This release includes a lot of bug fixes and feature updates, including support for Debian 8, as well as many test improvements.
+
+#### Features
+- Debian 8 Support.
+- Added the 'file_mode' property to allow a custom permission setting for config files.
+- Enable 'PassengerMaxRequestQueueSize' to be set for mod_passenger.
+- MODULES-2956: Enable options within location block on proxy_match.
+- Support itk on redhat.
+- Support the mod_ssl SSLProxyVerify directive.
+- Support ProxPassReverseCookieDomain directive (mod_proxy).
+- Support proxy provider for vhost directories.
+- Added new 'apache::vhost::custom' resource.
+
+#### Bugfixes
+- Fixed ProxyPassReverse configuration.
+- Fixed error in Amazon operatingsystem detection.
+- Fixed mod_security catalog ordering issues for RedHat 7.
+- Fixed paths and packages for the shib2 apache module on Debian pre Jessie.
+- Fixed EL7 directory path for apache modules.
+- Fixed validation error when empty array is passed for the rewrites parameter.
+- Idempotency fixes with regards to '::apache::mod_enable_dir'.
+- ITK fixes.
+- (MODULES-2865) fix $mpm_module logic for 'false'.
+- Set SSLProxy directives even if ssl is false, due to issue with RewriteRules and ProxyPass directives.
+- Enable setting LimitRequestFieldSize globally, and remove it from vhost.
+
+#### Improvements
+- apache::mod::php now uses FilesMatch to configure the php handler. This is following the recommended upstream configuration guidelines (http://php.net/manual/en/install.unix.apache2.php#example-20) and distribution's default config (e.g.: http://bazaar.launchpad.net/~ubuntu-branches/ubuntu/vivid/php5/vivid/view/head:/debian/php5.conf). It avoids inadvertently exposing the PHP handler to executing uploads with names like 'file.php.jpg', but might impact setups with unusual requirements.
+- Improved compatibility for Gentoo.
+- Vhosts can now be supplied with a wildcard listen value.
+- Numerous test improvements.
+- Removed workarounds for https://bz.apache.org/bugzilla/show_bug.cgi?id=38864 as the issues have been fixed in Apache.
+- Documentation updates.
+- Ensureed order of ProxyPass and ProxyPassMatch parameters.
+- Ensure that ProxyPreserveHost is set to off mode explicitly if not set in manifest.
+- Put headers and request headers before proxy with regards to template generation.
+- Added X-Forwarded-For into log_formats defaults.
+- (MODULES-2703) Allow mod pagespeed to take an array of lines as additional_configuration.
+
 ## Supported Release 1.7.1
 ###Summary
 

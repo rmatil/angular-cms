@@ -3,13 +3,7 @@ require 'spec_helper'
 describe 'mongodb::repo', :type => :class do
 
   context 'when deploying on Debian' do
-    let :facts do
-      {
-        :osfamily        => 'Debian',
-        :operatingsystem => 'Debian',
-        :lsbdistid       => 'Debian',
-      }
-    end
+    with_debian_facts
 
     it {
       is_expected.to contain_class('mongodb::repo::apt')
@@ -17,12 +11,7 @@ describe 'mongodb::repo', :type => :class do
   end
 
   context 'when deploying on CentOS' do
-    let :facts do
-      {
-        :osfamily        => 'RedHat',
-        :operatingsystem => 'CentOS',
-      }
-    end
+    with_centos_facts
 
     it {
       is_expected.to contain_class('mongodb::repo::yum')
@@ -30,12 +19,8 @@ describe 'mongodb::repo', :type => :class do
   end
 
   context 'when yumrepo has a proxy set' do
-    let :facts do
-      {
-        :osfamily        => 'RedHat',
-        :operatingsystem => 'RedHat',
-      }
-    end
+    with_redhat_facts
+
     let :params do
       {
         :proxy => 'http://proxy-server:8080',

@@ -24,7 +24,7 @@ define staging::file (
   $subdir      = $caller_module_name
 ) {
 
-  include staging
+  include ::staging
 
   $quoted_source = shellquote($source)
 
@@ -55,15 +55,17 @@ define staging::file (
 
   case $::staging_http_get {
     'curl', default: {
-      $http_get        = "curl ${curl_option} -f -L -o ${target_file} ${quoted_source}"
-      $http_get_passwd = "curl ${curl_option} -f -L -o ${target_file} -u ${username}:${password} ${quoted_source}"
-      $http_get_cert   = "curl ${curl_option} -f -L -o ${target_file} -E ${certificate}:${password} ${quoted_source}"
-      $ftp_get         = "curl ${curl_option} -o ${target_file} ${quoted_source}"
-      $ftp_get_passwd  = "curl ${curl_option} -o ${target_file} -u ${username}:${password} ${quoted_source}"
+      $quoted_credentials = shellquote("${username}:${password}")
+      $http_get           = "curl ${curl_option} -f -L -o ${target_file} ${quoted_source}"
+      $http_get_passwd    = "curl ${curl_option} -f -L -o ${target_file} -u ${quoted_credentials} ${quoted_source}"
+      $http_get_cert      = "curl ${curl_option} -f -L -o ${target_file} -E ${certificate}:${password} ${quoted_source}"
+      $ftp_get            = "curl ${curl_option} -o ${target_file} ${quoted_source}"
+      $ftp_get_passwd     = "curl ${curl_option} -o ${target_file} -u ${username}:${password} ${quoted_source}"
     }
     'wget': {
+      $quoted_password = shellquote($password)
       $http_get        = "wget ${wget_option} -O ${target_file} ${quoted_source}"
-      $http_get_passwd = "wget ${wget_option} -O ${target_file} --user=${username} --password=${password} ${quoted_source}"
+      $http_get_passwd = "wget ${wget_option} -O ${target_file} --user=${username} --password=${quoted_password} ${quoted_source}"
       $http_get_cert   = "wget ${wget_option} -O ${target_file} --user=${username} --certificate=${certificate} ${quoted_source}"
       $ftp_get         = $http_get
       $ftp_get_passwd  = $http_get_passwd
@@ -71,8 +73,8 @@ define staging::file (
     'powershell':{
       $http_get           = "powershell.exe -Command \"\$wc = New-Object System.Net.WebClient;\$wc.DownloadFile('${source}','${target_file}')\""
       $ftp_get            = $http_get
-      $http_get_password  = "powershell.exe -Command \"\$wc = (New-Object System.Net.WebClient);\$wc.Credentials = New-Object System.Net.NetworkCredential('${username}','${password}');\$wc.DownloadFile(${source},${target_file})\""
-      $ftp_get_password   = $http_get_password
+      $http_get_passwd  = "powershell.exe -Command \"\$wc = New-Object System.Net.WebClient;\$wc.Credentials = New-Object System.Net.NetworkCredential('${username}','${password}');\$wc.DownloadFile('${source}','${target_file}')\""
+      $ftp_get_passwd   = $http_get_passwd
     }
   }
 
@@ -81,6 +83,20 @@ define staging::file (
       file { $target_file:
         source  => $source,
         replace => false,
+      }
+    }
+    /^[A-Za-z]:/: {
+      if versioncmp($::puppetversion, '3.4.0') >= 0 {
+        file { $target_file:
+          source             => $source,
+          replace            => false,
+          source_permissions => ignore,
+        }
+      } else {
+        file { $target_file:
+          source  => $source,
+          replace => false,
+        }
       }
     }
     /^puppet:\/\//: {

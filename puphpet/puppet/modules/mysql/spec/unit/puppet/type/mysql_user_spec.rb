@@ -2,10 +2,25 @@ require 'puppet'
 require 'puppet/type/mysql_user'
 describe Puppet::Type.type(:mysql_user) do
 
-  it 'should fail with a long user name' do
-    expect {
-      Puppet::Type.type(:mysql_user).new({:name => '12345678901234567@localhost', :password_hash => 'pass'})
-    }.to raise_error /MySQL usernames are limited to a maximum of 16 characters/
+  context "On MySQL 5.x" do
+    before :each do
+      Facter.stubs(:value).with(:mysql_version).returns("5.6.24")
+    end
+    it 'should fail with a long user name' do
+      expect {
+        Puppet::Type.type(:mysql_user).new({:name => '12345678901234567@localhost', :password_hash => 'pass'})
+      }.to raise_error /MySQL usernames are limited to a maximum of 16 characters/
+    end
+  end
+
+  context "On MariaDB 10.0.0+" do
+    before :each do
+      Facter.stubs(:value).with(:mysql_version).returns("10.0.19")
+      @user = Puppet::Type.type(:mysql_user).new(:name => '12345678901234567@localhost', :password_hash => 'pass')
+    end
+    it 'should succeed with a long user name on MariaDB' do
+       expect(@user[:name]).to eq('12345678901234567@localhost')
+    end
   end
 
   it 'should require a name' do
@@ -36,6 +51,16 @@ describe Puppet::Type.type(:mysql_user) do
 
     it 'should lowercase the user name' do
       expect(@user[:name]).to eq('foo@localhost')
+    end
+  end
+
+  context 'using foo@192.168.1.0/255.255.255.0' do
+    before :each do
+      @user = Puppet::Type.type(:mysql_user).new(:name => 'foo@192.168.1.0/255.255.255.0', :password_hash => 'pass')
+    end
+
+    it 'should create the user with the netmask' do
+      expect(@user[:name]).to eq('foo@192.168.1.0/255.255.255.0')
     end
   end
 
@@ -70,6 +95,10 @@ describe Puppet::Type.type(:mysql_user) do
   end
 
   context 'using a quoted username that is too long ' do
+    before :each do
+      Facter.stubs(:value).with(:mysql_version).returns("5.6.24")
+    end
+
     it 'should fail with a size error' do
       expect {
         Puppet::Type.type(:mysql_user).new(:name => '"debian-sys-maint2"@localhost', :password_hash => 'pass')

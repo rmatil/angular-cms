@@ -3,7 +3,7 @@ require 'spec_helper_acceptance'
 describe 'deprecation warnings' do
   basedir = default.tmpdir('concat')
 
-  shared_examples 'has_warning'do |pp, w|
+  shared_examples 'has_warning' do |pp, w|
     it 'applies the manifest twice with a stderr regex' do
       expect(apply_manifest(pp, :catch_failures => true).stderr).to match(/#{Regexp.escape(w)}/m)
       expect(apply_manifest(pp, :catch_changes => true).stderr).to match(/#{Regexp.escape(w)}/m)
@@ -43,8 +43,10 @@ describe 'deprecation warnings' do
 
         describe file("#{basedir}/file") do
           it { should be_file }
-          it { should contain '# This file is managed by Puppet. DO NOT EDIT.' }
-          it { should contain 'bar' }
+          its(:content) {
+            should match '# This file is managed by Puppet. DO NOT EDIT.'
+            should match 'bar'
+          }
         end
       end
     end
@@ -66,17 +68,18 @@ describe 'deprecation warnings' do
 
         describe file("#{basedir}/file") do
           it { should be_file }
-          it { should_not contain '# This file is managed by Puppet. DO NOT EDIT.' }
-          it { should contain 'bar' }
+          its(:content) {
+            should_not match '# This file is managed by Puppet. DO NOT EDIT.'
+            should match 'bar'
+          }
         end
       end
     end
   end
 
-  context 'concat::fragment ensure parameter' do
+  context 'concat::fragment ensure parameter', :unless => fact('osfamily') == 'windows' do
     context 'target file exists' do
       before(:all) do
-        shell("/bin/echo 'file1 contents' > #{basedir}/file1")
         pp = <<-EOS
           file { '#{basedir}':
             ensure => directory,
@@ -101,7 +104,7 @@ describe 'deprecation warnings' do
 
       describe file("#{basedir}/file") do
         it { should be_file }
-        it { should contain 'file1 contents' }
+        its(:content) { should match 'file1 contents' }
       end
 
       describe 'the fragment can be changed from a symlink to a plain file', :unless => (fact("osfamily") == "windows") do
@@ -120,13 +123,15 @@ describe 'deprecation warnings' do
 
         describe file("#{basedir}/file") do
           it { should be_file }
-          it { should contain 'new content' }
-          it { should_not contain 'file1 contents' }
+          its(:content) {
+            should match 'new content'
+            should_not match 'file1 contents'
+          }
         end
       end
     end # target file exists
 
-    context 'target does not exist' do
+    context 'target does not exist', :unless => fact('osfamily') == 'windows' do
       pp = <<-EOS
         concat { '#{basedir}/file': }
         concat::fragment { 'foo':
@@ -158,7 +163,7 @@ describe 'deprecation warnings' do
 
         describe file("#{basedir}/file") do
           it { should be_file }
-          it { should contain 'new content' }
+          its(:content) { should match 'new content' }
         end
       end
     end # target file exists

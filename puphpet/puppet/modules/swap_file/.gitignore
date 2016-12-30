@@ -1,4 +1,14 @@
 .*.sw?
 pkg
-spec/fixtures
 .rspec_system
+.vagrant/
+log/
+junit/
+.yar*
+doc/
+
+# Puppet
+coverage/
+spec/fixtures/modules/*
+spec/fixtures/manifests/*
+Gemfile.lock

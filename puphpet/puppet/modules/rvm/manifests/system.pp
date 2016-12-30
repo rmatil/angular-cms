@@ -45,14 +45,14 @@ class rvm::system(
   }
 
   exec { 'system-rvm':
-    path        => '/usr/bin:/usr/sbin:/bin',
-    command     => "/usr/bin/curl -fsSL https://get.rvm.io | bash -s -- --version ${actual_version}",
+    path        => '/usr/bin:/usr/sbin:/bin:/usr/local/bin',
+    command     => "curl -fsSL https://get.rvm.io | bash -s -- --version ${actual_version}",
     creates     => '/usr/local/rvm/bin/rvm',
     environment => $environment,
   }
 
   # the fact won't work until rvm is installed before puppet starts
-  if !empty($::rvm_version) {
+  if getvar('::rvm_version') and !empty($::rvm_version) {
     if ($version != undef) and ($version != present) and ($version != $::rvm_version) {
 
       if defined(Class['rvm::gnupg_key']) {

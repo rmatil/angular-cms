@@ -10,3 +10,4 @@ gem 'rspec-puppet-facts'
 gem 'beaker'
 gem 'beaker-rspec'
 gem 'pry'
+gem 'json_pure', '1.8.3' # Ruby 1.9 compat

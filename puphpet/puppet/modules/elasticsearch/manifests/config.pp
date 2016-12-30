@@ -38,11 +38,6 @@ class elasticsearch::config {
 
   if ( $elasticsearch::ensure == 'present' ) {
 
-    $notify_service = $elasticsearch::restart_on_change ? {
-      true  => Class['elasticsearch::service'],
-      false => undef,
-    }
-
     file { $elasticsearch::configdir:
       ensure => directory,
       mode   => '0644',
@@ -100,11 +95,23 @@ class elasticsearch::config {
       mode   => '0644',
     }
 
+    # Resources for shield management
+    file { "${elasticsearch::params::homedir}/shield":
+      ensure => 'directory',
+      mode   => '0644',
+      owner  => 'root',
+      group  => 'root',
+    }
+
+    if ($elasticsearch::service_providers == 'systemd') {
+      # Mask default unit (from package)
+      exec { 'systemctl mask elasticsearch.service':
+        unless => 'test `systemctl is-enabled elasticsearch.service` = masked',
+      }
+    }
+
     # Removal of files that are provided with the package which we don't use
     file { '/etc/init.d/elasticsearch':
-      ensure => 'absent',
-    }
-    file { '/lib/systemd/system/elasticsearch.service':
       ensure => 'absent',
     }
 

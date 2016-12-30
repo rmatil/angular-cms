@@ -1,5 +1,98 @@
-##2014-09-10 - Supported Release 1.1.1
+##Supported Release 1.2.5
+###Summary
 
+Small release for support of newer PE versions. This increments the version of PE in the metadata.json file.
+
+##2015-07-21 - Supported Release 1.2.4
+###Summary
+
+This release includes some ruby path and lint fixes.
+
+####Bugfixes
+- Use correct ruby path with PE and AIO
+- Lint fixes
+- Use correct ruby path on FreeBSD
+- Test fixes
+
+##2015-06-02 - Supported Release 2.0.1 [YANKED]
+###Summary
+
+This is a bugfix release. 
+
+####Bugfixes
+- Fixes dependency graphing with concurrent modification of the same file.
+- Fixes handling fragment target.
+- Fixes the defaulted force behavior to handle empty concats correctly.
+
+##2015-06-02 - Supported Release 1.2.3
+###Summary
+
+This release includes a README fix to document correct behavior of fragment target parameter.
+
+####Bugfixes
+- README Fix to correctly document how a fragment $target param should work.
+
+##2015-05-12 - Supported Release 2.0.0 [YANKED]
+###Summary
+
+This is a major release. Includes re-implementation of concat to use native Type and Providers, resulting in significantly improved performance and testability. Also includes a bugfix to alpha ordering of fragments.
+
+####Features
+- Re-implementation of concat to use native Type and Providers.
+
+####Bugfixes
+- Fixes a bug in alpha ordering of fragments.
+
+##2015-05-12 - Supported Release 1.2.2
+###Summary
+
+This release includes a bugfix.
+
+####Bugfixes
+- Fixes a bug introduced by MODULES-1700, in handling default retrieval of fragment backup parameter.
+
+##2015-04-14 - Supported Release 1.2.1
+###Summary
+
+This release includes bugfixes, test improvements, and a rewritten README.
+
+####Bugfixes
+
+- Verifies existence of $is_pe before using it.
+- Adds validation for $order param to not allow restricted characters.
+- Sets the group id on Fragments for versions of Facter that contain the $gid fact.
+- Sets the script group to 0 if the script is owned by root.
+- Explicitly sets script and concat directories to the same owner and group.
+- Re-adds support for fragment backup, so that static compiler can work with filebucket (MODULES-1700).
+
+##2015-02-17 - Supported Release 1.2.0
+###Summary
+
+This release includes a number of bugfixes and adds support for running a validation command when using puppet >= 3.5.0.
+
+####Features
+- Support running a validation command for Puppet >= 3.5.0
+
+####Bugfixes
+- Reset poisoned defaults from Exec
+- Use concatfragments.rb on AIX since it doesn't support print0
+- Make sure ruby is in the path for PE (MODULES-1456)
+- Fix missing method for check_is_owned_by for windows (MODULES-1764)
+- Fix sort by numeric
+
+##2014-10-28 - Supported Release 1.1.2
+###Summary
+
+This release includes bugfixes and test improvements. The module was tested against SLES10 and SLES12 and found to work against those platforms with no module improvements. Metadata was updated to include those as supported platforms.
+
+####Bugfixes
+- newline didn't work for Windows and Solaris. This has been fixed.
+- Install certs on Windows for acceptance tests
+- Update tests to work with strict variables (no module updates were required)
+- Update tests to work on Windows
+- Fix typo in CHANGELOG.md
+
+##2014-09-10 - Supported Release 1.1.1
 ###Summary
 
 This is a bugfix release, and the first supported release of the 1.1.x series.
@@ -8,7 +101,7 @@ This is a bugfix release, and the first supported release of the 1.1.x series.
 - Make the `$order` parameter default to a string and be validated as an integer
   or a string
 - Use the ruby script on Solaris to not break Sol10 support
-- Add quotes to the ryby script location for Windows
+- Add quotes to the ruby script location for Windows
 - Fix typos in README.md
 - Make regex in concat::setup case-insensitive to make it work on Windows
 - Make sure concat fragments are always replaced
@@ -19,7 +112,6 @@ This is a bugfix release, and the first supported release of the 1.1.x series.
 - Synchronized files for more consistency across modules via modulesync
 
 ##2014-05-14 - Release 1.1.0
-
 ###Summary
 
 This release is primarily a bugfix release since 1.1.0-rc1.
@@ -34,7 +126,6 @@ This release is primarily a bugfix release since 1.1.0-rc1.
 - Fix newlines
 
 ##2014-01-03 - Release 1.1.0-rc1
-
 ###Summary
 
 This release of concat was 90% written by Joshua Hoblitt, and the module team
@@ -124,7 +215,6 @@ This is a supported release. No functional changes were made from 1.0.1.
 
 
 ##2014-02-12 - 1.0.1
-
 ###Summary
 
 Minor bugfixes for sorting of fragments and ordering of resources.
@@ -137,7 +227,6 @@ fragments.
 
 
 ##2013-08-09 - 1.0.0
-
 ###Summary
 
 Many new features and bugfixes in this release, and if you're a heavy concat

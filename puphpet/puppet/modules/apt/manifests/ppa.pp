@@ -14,14 +14,20 @@ define apt::ppa(
     fail('apt::ppa is not currently supported on Debian.')
   }
 
-  $filename_without_slashes = regsubst($name, '/', '-', 'G')
-  $filename_without_dots    = regsubst($filename_without_slashes, '\.', '_', 'G')
-  $filename_without_ppa     = regsubst($filename_without_dots, '^ppa:', '', 'G')
-  $sources_list_d_filename  = "${filename_without_ppa}-${release}.list"
+  if versioncmp($::apt::xfacts['lsbdistrelease'], '15.10') >= 0 {
+    $distid = downcase($::apt::xfacts['lsbdistid'])
+    $filename = regsubst($name, '^ppa:([^/]+)/(.+)$', "\\1-${distid}-\\2-${release}")
+  } else {
+    $filename = regsubst($name, '^ppa:([^/]+)/(.+)$', "\\1-\\2-${release}")
+  }
+
+  $filename_no_slashes      = regsubst($filename, '/', '-', 'G')
+  $filename_no_specialchars = regsubst($filename_no_slashes, '[\.\+]', '_', 'G')
+  $sources_list_d_filename  = "${filename_no_specialchars}.list"
 
   if $ensure == 'present' {
     if $package_manage {
-      package { $package_name: }
+      ensure_packages($package_name)
 
       $_require = [File['sources.list.d'], Package[$package_name]]
     } else {
@@ -42,7 +48,7 @@ define apt::ppa(
     exec { "add-apt-repository-${name}":
       environment => $_proxy_env,
       command     => "/usr/bin/add-apt-repository ${options} ${name}",
-      unless      => "/usr/bin/test -s ${::apt::sources_list_d}/${sources_list_d_filename}",
+      unless      => "/usr/bin/test -f ${::apt::sources_list_d}/${sources_list_d_filename}",
       user        => 'root',
       logoutput   => 'on_failure',
       notify      => Class['apt::update'],

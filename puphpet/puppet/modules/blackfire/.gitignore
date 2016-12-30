@@ -1,5 +1,7 @@
 .idea/
 .vagrant/
-pkg/
 Gemfile.lock
+pkg/
 log
+spec/fixtures
+

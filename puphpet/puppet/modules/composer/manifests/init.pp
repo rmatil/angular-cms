@@ -96,7 +96,7 @@ class composer(
   # download composer
   case $download_method {
     'curl': {
-      $download_command = "curl -sS https://getcomposer.org/installer | ${composer::php_bin}"
+      $download_command = "curl -sS https://getcomposer.org/installer | ${composer::php_bin} -- --install-dir=${tmp_path} --filename=${composer_file}"
       $download_require = $suhosin_enabled ? {
         false    => [ Package['curl', $php_package] ],
         default  => [
@@ -107,7 +107,7 @@ class composer(
       $method_package = $curl_package
     }
     'wget': {
-      $download_command = 'wget https://getcomposer.org/composer.phar -O composer.phar'
+      $download_command = "wget https://getcomposer.org/composer.phar -O ${tmp_path}/${composer_file}"
       $download_require = $suhosin_enabled ? {
         false   => [ Package['wget', $php_package] ],
         default => [
@@ -136,21 +136,23 @@ class composer(
     }
   }
 
-  if defined(File["${target_dir}/${composer_file}"]) == false {
-    exec { 'download_composer':
-      command   => $download_command,
-      cwd       => $tmp_path,
-      require   => $download_require,
-      creates   => "${tmp_path}/composer.phar",
-      logoutput => $logoutput,
-    }
-    # move file to target_dir
-    file { "${target_dir}/${composer_file}":
-      ensure  => present,
-      source  => "${tmp_path}/composer.phar",
-      require => [ Exec['download_composer'], File[$target_dir] ],
-      mode    => '0755',
-    }
+  # download composer if target_file doesn't exist
+  exec { "download_composer":
+    command     => $download_command,
+    cwd         => $tmp_path,
+    require     => $download_require,
+    creates     => "${tmp_path}/${composer_file}",
+    logoutput   => $logoutput,
+    onlyif      => "test ! -f ${target_dir}/${composer_file}",
+    path        => [ '/bin', '/usr/bin' ],
+    notify      => Exec["move_composer_${target_dir}"],
+    environment => ["COMPOSER_HOME=${composer::composer_home}"]
+  }
+
+  # move downloaded file to target_dir
+  exec { "move_composer_${target_dir}":
+    command     => "mv ${tmp_path}/${composer_file} ${target_dir}/${composer_file}; chmod 0755 ${target_dir}/${composer_file}",
+    refreshonly => true,
   }
 
   if $auto_update == true {
@@ -194,6 +196,22 @@ class composer(
         }
       }
 
+      'FreeBSD': {
+        # set /usr/local/etc/php/suhosin.ini/suhosin.executor.include.whitelist = phar
+        augeas { 'whitelist_phar':
+          context => '/files/usr/local/etc/php/suhosin.ini/suhosin',
+          changes => 'set suhosin.executor.include.whitelist phar',
+          require => Package[$php_package],
+        }
+
+        # set /usr/local/etc/php.ini/PHP/allow_url_fopen = On
+        augeas { 'allow_url_fopen':
+          context => '/files/usr/local/etc/php.ini/PHP',
+          changes => 'set allow_url_fopen On',
+          require => Package[$php_package],
+        }
+      }
+
       default: {}
     }
   }
@@ -214,10 +232,12 @@ class composer(
     }
   }
 
-  if $projects or $::execs {
+  $execs = getvar('::execs')
+
+  if $projects or !empty($execs) {
     class {'composer::project_factory' :
       projects => $projects,
-      execs    => $::execs,
+      execs    => $execs,
     }
   }
 }

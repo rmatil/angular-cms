@@ -1,58 +1,65 @@
-# Class: swap_file
+# Main class to allow passing required swapfiles as hashes
 #
-# This class manages swapspace on a node.
-#
-# == Parameters
-# [*ensure*]
-#   Allows creation or removal of swapspace and the corresponding file.
-# [*swapfile*]
-#   Location of swapfile, defaults to /mnt
-# [*swapfilesize*]
-#   Size of the swapfile as a string (eg. 10 MB, 1.2 GB).
-#   Defaults to $::memorysize fact on the node
-#
-# == Examples
-#
-#   include swap_file
-#
-#   class { 'swap_file':
-#     ensure => present,
+# @example Will create one swapfile in /mnt/swap using the defaults.
+#   class { '::swap_file':
+#     'files' => {
+#       'resource_name' => {
+#         ensure   => present,
+#         swapfile => '/mnt/swap',
+#       },
+#     },
 #   }
 #
+# @example Will create two swapfile with the given parameters
 #   class { 'swap_file':
-#     swapfile => '/mount/swapfile',
-#     swapfilesize => '100 MB',
+#     'files' => {
+#       'swap1' => {
+#         ensure       => present,
+#         swapfile     => '/mnt/swap.1',
+#         swapfilesize => '1 GB',
+#       },
+#       'swap2' => {
+#         ensure       => present,
+#         swapfile     => '/mnt/swap.2',
+#         swapfilesize => '2 GB',
+#         cmd          => 'fallocate',
+#       },
+#     },
 #   }
 #
-# == Authors
-#    @petems - Peter Souter
-#    @Yggdrasil
+# @example Will merge all found instances of swap_file::files found in hiera and create resources for these.
+#   class { '::swap_file':
+#     files_hiera_merge: true,
+#   }
+#
+# @param [Hash] files Hash of swap files to ensure with swap_file::files
+# @param [Boolean] files_hiera_merge Boolean to merge all found instances of swap_file::files in Hiera.
+#   This can be used to specify swap files at different levels an have
+#   them all included in the catalog.
+#
+# @author - Peter Souter
 #
 class swap_file (
-  $ensure        = 'present',
-  $swapfile      = '/mnt/swap.1',
-  $swapfilesize  = $::memorysize,
-) inherits swap_file::params {
-  $swapfilesize_mb = to_bytes($swapfilesize) / 1000000
-  if $ensure == 'present' {
-      exec { 'Create swap file':
-        command => "/bin/dd if=/dev/zero of=${swapfile} bs=1M count=${swapfilesize_mb}",
-        creates => $swapfile,
-      }
-      exec { 'Attach swap file':
-        command => "/sbin/mkswap ${swapfile} && /sbin/swapon ${swapfile}",
-        require => Exec['Create swap file'],
-        unless  => "/sbin/swapon -s | grep ${swapfile}",
-      }
-    }
-  elsif $ensure == 'absent' {
-    exec { 'Detach swap file':
-      command => "/sbin/swapoff ${swapfile}",
-      onlyif  => "/sbin/swapon -s | grep ${swapfile}",
-    }
-    file { $swapfile:
-      ensure  => absent,
-      require => Exec['Detach swap file'],
-    }
+  $files             = {},
+  $files_hiera_merge = false,
+) {
+
+  # variable handling
+  if is_bool($files_hiera_merge) == true {
+    $files_hiera_merge_bool = $files_hiera_merge
+  } else {
+    $files_hiera_merge_bool = str2bool($files_hiera_merge)
+  }
+  validate_bool($files_hiera_merge_bool)
+
+  # functionality
+  if $files_hiera_merge_bool == true {
+    $files_real = hiera_hash('swap_file::files', {})
+  } else {
+    $files_real = $files
+  }
+  if $files_real != undef {
+    validate_hash($files_real)
+    create_resources('swap_file::files', $files_real)
   }
 }

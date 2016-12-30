@@ -12,11 +12,13 @@ class apache::mod::deflate (
     'Ratio'  => 'ratio'
   }
 ) {
+  include ::apache
   ::apache::mod { 'deflate': }
 
   file { 'deflate.conf':
     ensure  => file,
     path    => "${::apache::mod_dir}/deflate.conf",
+    mode    => $::apache::file_mode,
     content => template('apache/mod/deflate.conf.erb'),
     require => Exec["mkdir ${::apache::mod_dir}"],
     before  => File[$::apache::mod_dir],

@@ -5,7 +5,7 @@ Facter.add(:staging_windir) do
     if File.directory? program_data
       "#{program_data}\\staging"
     else
-      "C:\\staging"
+      'C:\\staging'
     end
   end
 end

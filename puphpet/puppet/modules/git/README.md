@@ -2,10 +2,10 @@
 
 ####Table of Contents
 
-1. [Overview - What is the [Modulename] module?](#overview)
+1. [Overview - What is the git module?](#overview)
 2. [Module Description - What does the module do?](#module-description)
-3. [Setup - The basics of getting started with [Modulename]](#setup)
-    * [What [Modulename] affects](#what-registry-affects)
+3. [Setup - The basics of getting started with git](#setup)
+    * [What git affects](#what-registry-affects)
 4. [Usage - Configuration options and additional functionality](#usage)
 6. [Limitations - OS compatibility, etc.](#limitations)
 7. [Development - Guide for contributing to the module](#development)
@@ -35,10 +35,42 @@ Simply include the `git` class.
 include git
 ```
 
+###I want to configure `git` using hiera
+
+```yaml
+git::configs:
+  user.name: 'test'
+  user.email: 'test@example.com'
+  core.filemode:
+    value: false
+    scope: system
+```
+
+If using the flat config syntax, options common to all items can be set:
+
+```yaml
+git::configs:
+  core.filemode: false
+git::configs_defaults:
+  scope: system
+```
+
 ###I want to use `git subtree` with bash completion
 
 ```puppet
 include git::subtree
+```
+
+###I want to set my user.name and user.email
+
+```puppet
+git::config { 'user.name':
+  value => 'John Doe',
+}
+
+git::config { 'user.email':
+  value => 'john.doe@example.com',
+}
 ```
 
 ##Reference
@@ -48,6 +80,10 @@ include git::subtree
 * `git`: Installs the git client package.
 * `gitosis`: Installs the gitosis package. No configuration
 * `subtree`: Installs and configures git-subtree for git 1.7 and up.
+
+###Resources
+
+* `git::config`: Set git global configuration for the user running puppet, for the specified `$user` or for the system.
 
 ###Facts
 

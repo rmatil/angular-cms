@@ -5,40 +5,24 @@
 #
 # I have listed a bunch of places:
 #
-# 5.3
-#     CENTOS 6
-#         CLI   /etc/php.d
-#         FPM   /etc/php.d
-# 5.4
-#     CENTOS 6
-#         CLI   /etc/php.d
-#         FPM   /etc/php.d
-#     DEBIAN 6 SQUEEZE, DEBIAN 7 WHEEZY, UBUNTU 10.04 LUCID, UBUNTU 12.04 PRECISE
-#         CLI   /etc/php5/cli/conf.d  -> /etc/php5/conf.d/*  -> /etc/php5/mods-available/*
-#         FPM   /etc/php5/fpm/conf.d  -> /etc/php5/conf.d/*  -> /etc/php5/mods-available/*
 # 5.5
 #     CENTOS 6
 #         CLI   /etc/php.d
 #         FPM   /etc/php.d
-#     DEBIAN 7 WHEEZY, UBUNTU 12.04 PRECISE
-#         CLI   /etc/php5/cli/conf.d/*  -> /etc/php5/mods-available/*
-#         FPM   /etc/php5/fpm/conf.d/*  -> /etc/php5/mods-available/*
 #     UBUNTU 14.04 TRUSTY
-#         CLI   /etc/php5/cli/conf.d/*  -> /etc/php5/conf.d/*
-#         FPM   /etc/php5/fpm/conf.d/*  -> /etc/php5/mods-available/*
+#         CLI   /etc/php/5.5/cli/conf.d/* -> /etc/php/mods-available/*
+#         FPM   /etc/php/5.5/fpm/conf.d/* -> /etc/php/mods-available/*
 # 5.6
 #     CENTOS 6
 #         CLI   /etc/php.d
 #         FPM   /etc/php.d
-#     DEBIAN 7 WHEEZY
-#         CLI   /etc/php5/cli/conf.d/*  -> /etc/php5/mods-available/*
-#         FPM   /etc/php5/fpm/conf.d/*  -> /etc/php5/mods-available/*
 #     UBUNTU 14.04 TRUSTY
 #         CLI   /etc/php/5.6/cli/conf.d/* -> /etc/php/mods-available/*
 #         FPM   /etc/php/5.6/fpm/conf.d/* -> /etc/php/mods-available/*
 # 7.0
 #     CENTOS 6
-#          N/A
+#         CLI   /etc/php.d
+#         FPM   /etc/php.d
 #     UBUNTU 14.04 TRUSTY
 #         CLI   /etc/php/7.0/cli/conf.d/*  -> /etc/php/mods-available/*
 #         FPM   /etc/php/7.0/fpm/conf.d/*  -> /etc/php/mods-available/*
@@ -52,300 +36,91 @@ define puphpet::php::ini (
   $ensure = present
   ) {
 
-  $real_webserver = $webserver ? {
-    'apache'     => 'fpm',
-    'httpd'      => 'fpm',
-    'apache2'    => 'fpm',
-    'nginx'      => 'fpm',
-    'php53u-fpm' => 'php53u-fpm',
-    'php5-fpm'   => 'fpm',
-    'php5.6-fpm' => 'fpm',
-    'php7-fpm'   => 'php7-fpm',
-    'php7.0-fpm' => 'fpm',
-    'php-fpm'    => 'fpm',
-    'fpm'        => 'fpm',
-    'cgi'        => 'cgi',
-    'fcgi'       => 'cgi',
-    'fcgid'      => 'cgi',
-    undef        => undef,
-  }
-
   case $php_version {
-    '5.3', '53': {
-      case $::osfamily {
-        'redhat': {
-          $target_dir  = '/etc/php.d'
-          $target_file = "${target_dir}/${ini_filename}"
-
-          if ! defined(File[$target_file]) {
-            file { $target_file:
-              replace => no,
-              ensure  => present,
-            }
-          }
-        }
-        default: { fail('This OS has not yet been defined for PHP 5.3!') }
-      }
-    }
-    '5.4', '54': {
+    '5.5': {
       case $::osfamily {
         'debian': {
-          $target_dir  = '/etc/php5/mods-available'
-          $target_file = "${target_dir}/${ini_filename}"
+          $base_dir = '/etc/php/5.5'
 
-          if ! defined(File[$target_file]) {
-            file { $target_file:
-              replace => no,
-              ensure  => present,
-            }
-          }
+          $ini_dir  = "${base_dir}/mods-available"
+          $ini_file = "${ini_dir}/${ini_filename}"
 
-          $symlink = "/etc/php5/conf.d/${ini_filename}"
-
-          if ! defined(File[$symlink]) {
-            file { $symlink:
-              ensure  => link,
-              target  => $target_file,
-              require => File[$target_file],
-            }
-          }
+          $fpm_ini_symlink = "${base_dir}/fpm/conf.d/${ini_filename}"
+          $cli_ini_symlink = "${base_dir}/cli/conf.d/${ini_filename}"
         }
         'redhat': {
-          $target_dir  = '/etc/php.d'
-          $target_file = "${target_dir}/${ini_filename}"
+          $ini_file = "/etc/php.d/${ini_filename}"
 
-          if ! defined(File[$target_file]) {
-            file { $target_file:
-              replace => no,
-              ensure  => present,
-            }
-          }
+          $fpm_ini_symlink = false
+          $cli_ini_symlink = false
         }
-        default: { fail('This OS has not yet been defined for PHP 5.4!') }
+        default: { fail('This OS has not yet been defined for PHP 5.5!') }
       }
     }
-    '5.5', '55': {
+    '5.6': {
       case $::osfamily {
         'debian': {
-          $target_dir  = '/etc/php5/mods-available'
-          $target_file = "${target_dir}/${ini_filename}"
+          $base_dir = '/etc/php/5.6'
 
-          $webserver_ini_location = $real_webserver ? {
-              'apache2' => '/etc/php5/apache2/conf.d',
-              'cgi'     => '/etc/php5/cgi/conf.d',
-              'fpm'     => '/etc/php5/fpm/conf.d',
-              undef     => undef,
-          }
-          $cli_ini_location = '/etc/php5/cli/conf.d'
+          $ini_dir  = "${base_dir}/mods-available"
+          $ini_file = "${ini_dir}/${ini_filename}"
 
-          if ! defined(File[$target_file]) {
-            file { $target_file:
-              replace => no,
-              ensure  => present,
-            }
-          }
-
-          $symlink = "/etc/php5/conf.d"
-
-          if ! defined(File[$symlink]) {
-            file { $symlink:
-              ensure  => link,
-              target  => $target_dir,
-              require => File[$target_file],
-            }
-          }
-
-          if $webserver_ini_location != undef and ! defined(File["${webserver_ini_location}/${ini_filename}"]) {
-            file { "${webserver_ini_location}/${ini_filename}":
-              ensure  => link,
-              target  => $target_file,
-              require => File[$target_file],
-            }
-          }
-
-          if ! defined(File["${cli_ini_location}/${ini_filename}"]) {
-            file { "${cli_ini_location}/${ini_filename}":
-              ensure  => link,
-              target  => $target_file,
-              require => File[$target_file],
-            }
-          }
+          $fpm_ini_symlink = "${base_dir}/fpm/conf.d/${ini_filename}"
+          $cli_ini_symlink = "${base_dir}/cli/conf.d/${ini_filename}"
         }
         'redhat': {
-          $target_dir  = '/etc/php.d'
-          $target_file = "${target_dir}/${ini_filename}"
+          $ini_file = "/etc/php.d/${ini_filename}"
 
-          if ! defined(File[$target_file]) {
-            file { $target_file:
-              replace => no,
-              ensure  => present,
-            }
-          }
+          $fpm_ini_symlink = false
+          $cli_ini_symlink = false
         }
-        default: { fail('This OS has not yet been defined for PHP 5.5/5.6!') }
+        default: { fail('This OS has not yet been defined for PHP 5.6!') }
       }
     }
-    '5.6', '56': {
+    '7.0': {
       case $::osfamily {
         'debian': {
-          case $::operatingsystem {
-            'debian': {
-              $target_dir  = '/etc/php5/mods-available'
-              $target_file = "${target_dir}/${ini_filename}"
+          $base_dir = '/etc/php/7.0'
 
-              $webserver_ini_location = $real_webserver ? {
-                'apache2' => '/etc/php5/apache2/conf.d',
-                'cgi'     => '/etc/php5/cgi/conf.d',
-                'fpm'     => '/etc/php5/fpm/conf.d',
-                undef     => undef,
-              }
-              $cli_ini_location = '/etc/php5/cli/conf.d'
+          $ini_dir  = "${base_dir}/mods-available"
+          $ini_file = "${ini_dir}/${ini_filename}"
 
-              if ! defined(File[$target_file]) {
-                file { $target_file:
-                  replace => no,
-                  ensure  => present,
-                }
-              }
-
-              $symlink = "/etc/php5/conf.d"
-
-              if ! defined(File[$symlink]) {
-                file { $symlink:
-                  ensure  => link,
-                  target  => $target_dir,
-                  require => File[$target_file],
-                }
-              }
-
-              if $webserver_ini_location != undef and ! defined(File["${webserver_ini_location}/${ini_filename}"]) {
-                file { "${webserver_ini_location}/${ini_filename}":
-                  ensure  => link,
-                  target  => $target_file,
-                  require => File[$target_file],
-                }
-              }
-
-              if ! defined(File["${cli_ini_location}/${ini_filename}"]) {
-                file { "${cli_ini_location}/${ini_filename}":
-                  ensure  => link,
-                  target  => $target_file,
-                  require => File[$target_file],
-                }
-              }
-            }
-            'ubuntu': {
-              $target_dir  = '/etc/php/5.6/mods-available'
-              $target_file = "${target_dir}/${ini_filename}"
-
-              $webserver_ini_location = $real_webserver ? {
-                'apache2' => '/etc/php/5.6/apache2/conf.d',
-                'cgi'     => '/etc/php/5.6/cgi/conf.d',
-                'fpm'     => '/etc/php/5.6/fpm/conf.d',
-                undef     => undef,
-              }
-              $cli_ini_location = '/etc/php/5.6/cli/conf.d'
-
-              if ! defined(File[$target_file]) {
-                file { $target_file:
-                  replace => no,
-                  ensure  => present,
-                }
-              }
-
-              if $webserver_ini_location != undef and ! defined(File["${webserver_ini_location}/${ini_filename}"]) {
-                file { "${webserver_ini_location}/${ini_filename}":
-                  ensure  => link,
-                  target  => $target_file,
-                  require => File[$target_file],
-                }
-              }
-
-              if ! defined(File["${cli_ini_location}/${ini_filename}"]) {
-                file { "${cli_ini_location}/${ini_filename}":
-                  ensure  => link,
-                  target  => $target_file,
-                  require => File[$target_file],
-                }
-              }
-            }
-          }
+          $fpm_ini_symlink = "${base_dir}/fpm/conf.d/${ini_filename}"
+          $cli_ini_symlink = "${base_dir}/cli/conf.d/${ini_filename}"
         }
         'redhat': {
-          $target_dir  = '/etc/php.d'
-          $target_file = "${target_dir}/${ini_filename}"
+          $ini_file = "/etc/php.d/${ini_filename}"
 
-          if ! defined(File[$target_file]) {
-            file { $target_file:
-              replace => no,
-              ensure  => present,
-            }
-          }
-        }
-        default: { fail('This OS has not yet been defined for PHP 5.5/5.6!') }
-      }
-    }
-    '7.0', '70': {
-      case $::osfamily {
-        'debian': {
-          case $::operatingsystem {
-            'debian': {
-              fail('PHP 7 support for Debian not yet added.')
-            }
-            'ubuntu': {
-              $target_dir  = '/etc/php/7.0/mods-available'
-              $target_file = "${target_dir}/${ini_filename}"
-
-              $webserver_ini_location = $real_webserver ? {
-                'cgi' => '/etc/php/7.0/cgi/conf.d',
-                'fpm' => '/etc/php/7.0/fpm/conf.d',
-                undef => undef,
-              }
-              $cli_ini_location = '/etc/php/7.0/cli/conf.d'
-
-              if ! defined(File[$target_file]) {
-                file { $target_file:
-                  replace => no,
-                  ensure  => present,
-                }
-              }
-
-              if $webserver_ini_location != undef and ! defined(File["${webserver_ini_location}/${ini_filename}"]) {
-                file { "${webserver_ini_location}/${ini_filename}":
-                  ensure  => link,
-                  target  => $target_file,
-                  require => File[$target_file],
-                }
-              }
-
-              if ! defined(File["${cli_ini_location}/${ini_filename}"]) {
-                file { "${cli_ini_location}/${ini_filename}":
-                  ensure  => link,
-                  target  => $target_file,
-                  require => File[$target_file],
-                }
-              }
-            }
-          }
-        }
-        'redhat': {
-          $target_dir  = '/etc/php.d'
-          $target_file = "${target_dir}/${ini_filename}"
-
-          if ! defined(File[$target_file]) {
-            file { $target_file:
-              replace => no,
-              ensure  => present,
-            }
-          }
+          $fpm_ini_symlink = false
+          $cli_ini_symlink = false
         }
         default: { fail('This OS has not yet been defined for PHP 7.0!') }
+      }
+    }
+    '7.1': {
+      case $::osfamily {
+        'debian': {
+          $base_dir = '/etc/php/7.1'
+
+          $ini_dir  = "${base_dir}/mods-available"
+          $ini_file = "${ini_dir}/${ini_filename}"
+
+          $fpm_ini_symlink = "${base_dir}/fpm/conf.d/${ini_filename}"
+          $cli_ini_symlink = "${base_dir}/cli/conf.d/${ini_filename}"
+        }
+        'redhat': {
+          $ini_file = "/etc/php.d/${ini_filename}"
+
+          $fpm_ini_symlink = false
+          $cli_ini_symlink = false
+        }
+        default: { fail('This OS has not yet been defined for PHP 7.1!') }
       }
     }
     default: { fail('Unrecognized PHP version') }
   }
 
-  if $real_webserver != undef {
+  if $webserver != undef {
     $notify_service = Service[$webserver]
   } else {
     $notify_service = []
@@ -356,16 +131,43 @@ define puphpet::php::ini (
       present => [ "set '${entry}' \"'${value}'\"" ],
       absent  => [ "rm \"'${entry}'\"" ],
     }
-  } else {
+  }
+  else {
     $changes = $ensure ? {
       present => [ "set '${entry}' '${value}'" ],
       absent  => [ "rm '${entry}'" ],
     }
   }
 
+  if ! defined(File[$ini_file]) {
+    file { $ini_file:
+      replace => no,
+      ensure  => present,
+    }
+  }
+
+  if $webserver != undef
+    and $fpm_ini_symlink
+    and ! defined(File[$fpm_ini_symlink])
+  {
+    file { $fpm_ini_symlink:
+      ensure  => link,
+      target  => $ini_file,
+      require => File[$ini_file],
+    }
+  }
+
+  if $cli_ini_symlink and ! defined(File[$cli_ini_symlink]) {
+    file { $cli_ini_symlink:
+      ensure  => link,
+      target  => $ini_file,
+      require => File[$ini_file],
+    }
+  }
+
   augeas { "${entry}: ${value}":
     lens    => 'PHP.lns',
-    incl    => $target_file,
+    incl    => $ini_file,
     changes => $changes,
     notify  => $notify_service,
   }

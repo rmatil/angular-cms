@@ -19,7 +19,7 @@ class erlang::params {
       $key_signature  = undef
       $package_name   = 'erlang'
 
-      if $::operatingsystemrelease =~ /^5/ {
+      if $::operatingsystemrelease and $::operatingsystemrelease =~ /^5/ {
         $local_repo_location  = '/etc/yum.repos.d/epel-erlang.repo'
         $remote_repo_location = 'https://repos.fedorapeople.org/repos/peter/erlang/epel-erlang.repo'
       } else {

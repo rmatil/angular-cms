@@ -3,8 +3,8 @@ vagrantfile:
     vm:
         provider:
             local:
-                box: puphpet/ubuntu1404-x64
-                box_url: puphpet/ubuntu1404-x64
+                box: puphpet/ubuntu1604-x64
+                box_url: puphpet/ubuntu1604-x64
                 box_version: '0'
                 chosen_virtualizer: virtualbox
                 virtualizers:
@@ -15,30 +15,32 @@ vagrantfile:
                     vmware:
                         numvcpus: 1
                     parallels:
-                        use_linked_clone: 0
+                        linked_clone: 0
                         check_guest_tools: 0
                         update_guest_tools: 0
                 machines:
-                    vflm_fjzpgglx25xg:
+                    vflm_wm35vzm4jpqw:
                         id: cmsv5
                         hostname: dev.cmsv5.rmatil.vagrant
                         network:
                             private_network: 192.168.100.80
                             forwarded_port:
-                                vflmnfp_dc00pib8hzek:
-                                    host: '6873'
+                                vflmnfp_q0sxnn7in8lq:
+                                    host: '9819'
                                     guest: '22'
-                        memory: '1024'
-                        cpus: '2'
+                        memory: '2048'
+                        cpus: '1'
         provision:
             puppet:
                 manifests_path: puphpet/puppet/manifests
-                module_path: puphpet/puppet/modules
+                module_path:
+                    - puphpet/puppet/modules
+                    - puphpet/puppet/manifests
                 options:
                     - '--verbose'
                     - '--hiera_config /vagrant/puphpet/puppet/hiera.yaml'
         synced_folder:
-            vflsf_o56h1hcjdijr:
+            vflsf_iz0sp7wyqss7:
                 source: ./
                 target: /var/www
                 sync_type: nfs
@@ -86,6 +88,7 @@ server:
     install: '1'
     packages:
         - vim
+        - htop
 users_groups:
     install: '1'
     groups: {  }
@@ -107,25 +110,22 @@ cron:
 nginx:
     install: '0'
     settings:
+        version: present
         default_vhost: 1
-        proxy_buffer_size: 128k
         proxy_buffers: '4 256k'
+        proxy_buffer_size: 128k
         proxy_connect_timeout: 600s
         proxy_send_timeout: 600s
         proxy_read_timeout: 600s
         names_hash_bucket_size: 128
     upstreams: {  }
     vhosts:
-        nxv_o6rruz0ig28n:
+        nxv_p6c81oow8wtn:
             server_name: awesome.dev
             server_aliases:
                 - www.awesome.dev
             www_root: /var/www/awesome
             listen_port: '80'
-            index_files:
-                - index.html
-                - index.htm
-                - index.php
             client_max_body_size: 1m
             ssl: '0'
             ssl_cert: ''
@@ -136,8 +136,13 @@ nginx:
             rewrite_to_https: '1'
             spdy: '1'
             locations:
-                nxvl_vh61oz1p9enn:
+                nxvl_zb42j2s6j12o:
+                    www_root: ''
                     location: /
+                    index_files:
+                        - index.html
+                        - index.htm
+                        - index.php
                     try_files:
                         - $uri
                         - $uri/
@@ -147,7 +152,8 @@ nginx:
                     fastcgi_split_path: ''
                     proxy: ''
                     proxy_redirect: ''
-                nxvl_h9mzg5hvwsvi:
+                nxvl_hfkpnchlmrc4:
+                    www_root: ''
                     location: '~ \.php$'
                     try_files:
                         - $uri
@@ -178,10 +184,10 @@ apache:
         - proxy_fcgi
         - rewrite
     vhosts:
-        av_2c6kjt2p9m3i:
+        av_5eq7uin372sh:
             servername: dev.cmsv5.rmatil.vagrant
             serveraliases:
-                - www.dev.cmsv5.rmatil.vagrant
+                - www.cmsv5.rmatil.vagrant
             docroot: /var/www/web
             port: '80'
             setenv:
@@ -197,7 +203,7 @@ apache:
             ssl_protocol: ''
             ssl_cipher: ''
             directories:
-                avd_yz4af8trpqtl:
+                avd_3y4t2m1ebovf:
                     path: /var/www/web
                     options:
                         - Indexes
@@ -209,7 +215,7 @@ apache:
                         - 'all granted'
                     custom_fragment: ''
                     files_match:
-                        avdfm_7njst3szglqk:
+                        avdfm_z2ujrk8am7q7:
                             path: \.php$
                             sethandler: 'proxy:fcgi://127.0.0.1:9000'
                             custom_fragment: ''
@@ -223,11 +229,12 @@ letsencrypt:
 php:
     install: '1'
     settings:
-        version: '71'
+        version: '7.1'
     modules:
         php:
             - cli
             - intl
+            - xml
         pear: {  }
         pecl: {  }
     ini:
@@ -238,7 +245,7 @@ php:
     fpm_ini:
         error_log: /var/log/php-fpm.log
     fpm_pools:
-        phpfp_64z7suo4uhxo:
+        phpfp_8jdi8ngn11ji:
             ini:
                 prefix: www
                 listen: '127.0.0.1:9000'
@@ -274,17 +281,17 @@ xhprof:
     install: '0'
 wpcli:
     install: '0'
-    version: v0.21.1
+    version: v0.24.1
 drush:
     install: '0'
     version: 8.0.5
 ruby:
     install: '1'
     versions:
-        rv_s74xudon953d:
+        rv_lv1lxo4imh9m:
             default: '1'
             bundler: '1'
-            version: 1.9.3
+            version: 2.3.1
             gems:
                 - deep_merge@1.0.1
                 - activesupport@4.2.6
@@ -296,11 +303,10 @@ python:
 nodejs:
     install: '0'
     settings:
-        version: '5'
+        version: '6'
     npm_packages: {  }
 hhvm:
     install: '0'
-    nightly: 0
     composer: '1'
     composer_home: ''
     settings: {  }
@@ -321,15 +327,15 @@ mariadb:
         override_options: {  }
     adminer: 0
     users:
-        mariadbnu_5bwuk1yvllf6:
+        mariadbnu_1s28v3df7aau:
             name: dbuser
             password: '123'
     databases:
-        mariadbnd_nz9u64uahauk:
+        mariadbnd_nerw8t4d4gym:
             name: dbname
             sql: ''
     grants:
-        mariadbng_6cghos68dtbc:
+        mariadbng_u7dcd8hpqrtg:
             user: dbuser
             table: '*.*'
             privileges:
@@ -337,30 +343,25 @@ mariadb:
 mysql:
     install: '1'
     settings:
-        version: '5.6'
+        version: '5.7'
         root_password: root
         override_options: {  }
     adminer: 0
     users:
-        mysqlnu_o835fhjman35:
+        mysqlnu_ycyiejkaz00h:
             name: cmsv5
             password: cmsv5
     databases:
-        mysqlnd_nduzxfaf2y34:
+        mysqlnd_wew6in0vwutw:
             name: cmsv5
             sql: ''
-    grants:
-        mysqlng_qld5jmm6f8im:
-            user: cmsv5
-            table: '*.*'
-            privileges:
-                - ALL
+    grants: {  }
 postgresql:
     install: '0'
     settings:
         global:
             encoding: UTF8
-            version: '9.4'
+            version: '9.6'
         server:
             postgres_password: '123'
     databases: {  }
@@ -415,11 +416,11 @@ elastic_search:
         version: 2.3.1
         java_install: true
     instances:
-        esi_75kzzrn09wox:
+        esi_vh15kwxpoorl:
             name: es-01
 solr:
     install: '0'
     settings:
-        version: 4.10.2
+        version: 5.5.2
         port: '8984'
 

@@ -10,6 +10,7 @@ Timeout <%= @timeout %>
 KeepAlive <%= @keepalive %>
 MaxKeepAliveRequests <%= @max_keepalive_requests %>
 KeepAliveTimeout <%= @keepalive_timeout %>
+LimitRequestFieldSize <%= @limitreqfieldsize %>
 
 <%- if @rewrite_lock and scope.function_versioncmp([@apache_version, '2.2']) <= 0 -%>
 RewriteLock <%= @rewrite_lock %>
@@ -30,7 +31,7 @@ AccessFileName .htaccess
 </FilesMatch>
 
 <Directory />
-  Options FollowSymLinks
+  Options <%= Array(@root_directory_options).join(' ') %>
   AllowOverride None
 </Directory>
 
@@ -75,6 +76,9 @@ LogFormat "%{Referer}i -> %U" referer
 <% end -%>
 <% unless @log_formats.has_key?('agent') -%>
 LogFormat "%{User-agent}i" agent
+<% end -%>
+<% unless @log_formats.has_key?('forwarded') -%>
+LogFormat "%{X-Forwarded-For}i %l %u %t \"%r\" %s %b \"%{Referer}i\" \"%{User-agent}i\"" forwarded
 <% end -%>
 <% if @log_formats and !@log_formats.empty? -%>
   <%- @log_formats.sort.each do |nickname,format| -%>

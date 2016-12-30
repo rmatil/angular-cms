@@ -1,3 +1,77 @@
+## Supported Release 4.8.0
+### Summary
+This release primarily fixes an issue with `postgresql_conf` values of ipaddresses being considered floats and not getting quoted.
+
+#### Features
+- Add `default_connect_settings` parameter to `postgresql::server`
+- Running under strict variables is now supported
+- Add timestamps into logs by default
+
+#### Bugfixes
+- Obscure password in postgresql\_psql type
+- Fix ip address quoting in postgresql\_conf type
+- Fix handling of systemd service on Ubuntu
+- Mark log_min_duration_statement setting as requiring a service restart
+- Add fixes for Fedora 23, Fedora 24, FreeBSD, OpenBSD
+- Fix environment handling to avoid "Overriding environment setting" message
+- Work around PUP-6385, using empty arrays instead of undef when specifying resource relationships
+- README editorial pass
+- Reduce whitespace in templates
+- Update build/test infrastructure
+
+## Supported Release 4.7.1
+### Summary
+This release contains some bugfixes and documentation updates.
+
+#### Bugfixes
+- (MODULES-3024) Quote database objects when creating databases.
+- Properly escape case where password ends with '$'.
+- Fixes password change when postgres is configure to non-standard port.
+- Unpins concat dependency to be able to use concat 2.x.
+- Workaround to fix installing on Amazon Linux.
+- Fixes proper defaulting of `$service_provider` parameter.
+- Fixes postgres server init script naming on Amazon Linux.
+- Fixes service reload parameter on Arch Linux.
+- Adds missing onlyif_function to sequence grant code.
+- Fixes to the markdown of the README.
+
+## Supported Release 4.7.0
+### Summary
+A release with a considerable amount of new features, including remote db support and several platform support updates. Various bugfixes including several to address warnings and a sizable README update.
+
+#### Features
+- Remote DB support - Connection-settings allows a hash of options that can be used when connecting to a remote DB.
+- Debian 8 support.
+- Updated systemd-override to support fedora and CentOS paths.
+- Adds the ability to define the extension name separately from the title of the resource, which allows you to add the extension to more than one database.
+- Added parameter to disable automatic service restarts on config changes.
+- Ubuntu 15.10 compatibility.
+- OpenBSD version is now 9.4.
+- Added .gitattributes to maintain line endings for .sh and .rb files.
+- Adds default postgis version for 9.5.
+- Allows float postgresql_conf values.
+- Schedule apt update after install of repo.
+
+#### Bugfixes
+- Fixed systemd-override for RedHat systems with unmanaged Yum repos.
+- Removed inherits postgresql::params.
+- Multi-node tests are now not ran by default.
+- Change apt::pin to apt_postgresql_org to prevent error message.
+- Removed syntax error near UTF8.
+- Removal of extra blanks and backslashes in README.
+- Double quotes now used around database name to prevent syntax error.
+- Removes ruby 1.8.7 and puppet 2.7 from travis-ci jobs.
+- Fixed paths to work on Amazon Linux.
+- Fixed quotes around locale options.
+- Huge README update.
+- Update to use current msync configs.
+- Fixes postgresql::server acceptance test descriptions.
+
+## Supported Release 4.6.1
+###Summary
+
+Small release for support of newer PE versions. This increments the version of PE in the metadata.json file.
+
 ## 2015-09-01 - Supported Release 4.6.0
 ### Summary
 This release adds a proxy feature for yum, Postgis improvements, and decoupling pg_hba_rule from postgresql::server.
@@ -506,7 +580,7 @@ the stage for the large scale refactoring work of 3.0.0.
 ####Features
 
 
-####Bugfixes 
+####Bugfixes
 - Use boolean for refreshonly.
 - Fix postgresql::plperl documentation.
 - Add two missing parameters to config::beforeservice

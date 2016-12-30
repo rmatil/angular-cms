@@ -1,5 +1,6 @@
 <% if @_directories and ! @_directories.empty? -%>
 
+  <%- scope.setvar('_template_scope', {}) -%>
   ## Directories, there should at least be a declaration for <%= @docroot %>
   <%- [@_directories].flatten.compact.each do |directory| -%>
     <%- if scope.function_versioncmp([@apache_version, '2.4']) >= 0 -%>
@@ -17,7 +18,7 @@
       <%- end -%>
     <%- end -%>
     <%- if directory['path'] and directory['path'] != '' -%>
-      <%- if directory['provider'] and directory['provider'].match('(directory|location|files)') -%>
+      <%- if directory['provider'] and directory['provider'].match('(directory|location|files|proxy)') -%>
         <%- if /^(.*)match$/ =~ directory['provider'] -%>
           <%- provider = $1.capitalize + 'Match' -%>
         <%- else -%>
@@ -56,57 +57,21 @@
     AllowOverride None
       <%- end -%>
     <%- end -%>
-    <%- if scope.function_versioncmp([@apache_version, '2.4']) >= 0 -%>
-      <%- if directory['require'] and directory['require'] != '' -%>
-        <%- Array(directory['require']).each do |req| -%>
-    Require <%= req %>
-        <%- end -%>
-      <%- end -%>
-      <%- if directory['auth_require'] -%>
-    Require <%= directory['auth_require'] %>
-      <%- end -%>
-      <%- if !(directory['require'] and directory['require'] != '') && !(directory['auth_require']) -%>
-    Require all granted
-      <%- end -%>
-    <%- else -%>
-      <%- if directory['auth_require'] -%>
-    Require <%= directory['auth_require'] %>
-      <%- end -%>
-      <%- if directory['order'] and directory['order'] != '' -%>
-    Order <%= Array(directory['order']).join(',') %>
-      <%- else -%>
-    Order allow,deny
-      <%- end -%>
-      <%- if directory['deny'] and ! [ false, 'false', '' ].include?(directory['deny']) -%>
-        <%- if directory['deny'].kind_of?(Array) -%>
-          <%- Array(directory['deny']).each do |restrict| -%>
-    Deny <%=  restrict %>
-          <%- end -%>
-        <%- else -%>
-    Deny <%= directory['deny'] %>
-        <%- end -%>
-      <%- end -%>
-      <%- if directory['allow'] and ! [ false, 'false', '' ].include?(directory['allow']) -%>
-        <%- if directory['allow'].kind_of?(Array) -%>
-          <%- Array(directory['allow']).each do |access| -%>
-    Allow <%=  access %>
-        <%- end -%>
-      <%- else -%>
-    Allow <%= directory['allow'] %>
-      <%- end -%>
-      <%- elsif [ 'from all', 'from All' ].include?(directory['deny']) -%>
-      <%- elsif ! directory['deny'] and [ false, 'false', '' ].include?(directory['allow']) -%>
-    Deny from all
-      <%- else -%>
-    Allow from all
-      <%- end -%>
-      <%- if directory['satisfy'] and directory['satisfy'] != '' -%>
-    Satisfy <%= directory['satisfy'] %>
+    <%- scope.lookupvar('_template_scope')[:item] = directory -%>
+<%= scope.function_template(["apache/vhost/_require.erb"]) -%>
+    <%- if directory['limit'] && directory['limit'] != '' -%>
+      <%- Array(directory['limit']).each do |lim| -%>
+    <Limit <%= lim['methods'] %>>
+    <%- scope.lookupvar('_template_scope')[:item] = lim -%>
+    <%= scope.function_template(["apache/vhost/_require.erb"]) -%>
+    </Limit>
       <%- end -%>
     <%- end -%>
     <%- if directory['addhandlers'] and ! directory['addhandlers'].empty? -%>
       <%- [directory['addhandlers']].flatten.compact.each do |addhandler| -%>
-    AddHandler <%= addhandler['handler'] %> <%= Array(addhandler['extensions']).join(' ') %>
+    <FilesMatch ".+(<%= Array(addhandler['extensions']).collect { |s| Regexp.escape(s) }.join('|') %>)$">
+        SetHandler <%= addhandler['handler'] %>
+    </FilesMatch>
       <%- end -%>
     <%- end -%>
     <%- if directory['sethandler'] and directory['sethandler'] != '' -%>
@@ -140,10 +105,24 @@
     <%- if directory['directoryindex'] and directory['directoryindex'] != '' -%>
     DirectoryIndex <%= directory['directoryindex'] %>
     <%- end -%>
+    <%- if directory['additional_includes'] and ! directory['additional_includes'].empty? -%>
+      <%- directory['additional_includes'].each do |include| -%>
+    Include '<%= "#{include}" %>'
+      <%- end -%>
+    <%- end -%>
     <%- if directory['error_documents'] and ! directory['error_documents'].empty? -%>
       <%- [directory['error_documents']].flatten.compact.each do |error_document| -%>
     ErrorDocument <%= error_document['error_code'] %> <%= error_document['document'] %>
       <%- end -%>
+    <%- end -%>
+    <%- if directory['dav'] -%>
+    Dav <%= directory['dav'] %>
+    <%- if directory['dav_depth_infinity'] -%>
+    DavDepthInfinity <%= scope.function_bool2httpd([directory['dav_depth_infinity']]) %>
+    <%- end -%>
+    <%- if directory['dav_min_timeout'] -%>
+    DavMinTimeout <%= directory['dav_min_timeout'] %>
+    <%- end -%>
     <%- end -%>
     <%- if directory['auth_type'] -%>
     AuthType <%= directory['auth_type'] %>
@@ -183,6 +162,9 @@
     <%- end -%>
     <%- if directory['auth_group_file'] -%>
     AuthGroupFile <%= directory['auth_group_file'] %>
+    <%- end -%>
+    <%- if directory['auth_merging'] -%>
+    AuthMerging <%= directory['auth_merging'] %>
     <%- end -%>
     <%- if directory['fallbackresource'] -%>
     FallbackResource <%= directory['fallbackresource'] %>
@@ -268,6 +250,9 @@
       <%- end -%>
       <%- if directory['mellon_sp_cert_file'] -%>
     MellonSPCertFile "<%= directory['mellon_sp_cert_file'] %>"
+      <%- end -%>
+      <%- if directory['mellon_sp_metadata_file'] -%>
+    MellonSPMetadataFile "<%= directory['mellon_sp_metadata_file'] %>"
       <%- end -%>
       <%- if directory['mellon_idp_metadata_file'] -%>
     MellonIDPMetadataFile "<%= directory['mellon_idp_metadata_file'] %>"

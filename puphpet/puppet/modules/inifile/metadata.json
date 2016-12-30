@@ -1,12 +1,15 @@
 {
   "name": "puppetlabs-inifile",
-  "version": "1.2.0",
+  "version": "1.6.0",
   "author": "Puppet Labs",
   "summary": "Resource types for managing settings in INI files",
   "license": "Apache-2.0",
   "source": "https://github.com/puppetlabs/puppetlabs-inifile",
   "project_page": "https://github.com/puppetlabs/puppetlabs-inifile",
   "issues_url": "https://tickets.puppetlabs.com/browse/MODULES",
+  "dependencies": [
+  ],
+  "data_provider": null,
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
@@ -52,7 +55,8 @@
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
         "6",
-        "7"
+        "7",
+        "8"
       ]
     },
     {
@@ -60,14 +64,16 @@
       "operatingsystemrelease": [
         "10.04",
         "12.04",
-        "14.04"
+        "14.04",
+        "16.04"
       ]
     },
     {
       "operatingsystem": "Solaris",
       "operatingsystemrelease": [
         "10",
-        "11"
+        "11",
+        "12"
       ]
     },
     {
@@ -90,15 +96,8 @@
   ],
   "requirements": [
     {
-      "name": "pe",
-      "version_requirement": "3.x"
-    },
-    {
       "name": "puppet",
-      "version_requirement": "3.x"
+      "version_requirement": ">= 3.0.0 < 5.0.0"
     }
-  ],
-  "dependencies": [
-  
   ]
 }

@@ -3,7 +3,11 @@ require 'pry'
 
 # Install Puppet and PHP
 hosts.each do |host|
-  on host, install_puppet
+  if host.name =~ /ubuntu.*1604/
+    host.install_package('puppet')
+  else
+    on host, install_puppet
+  end
   install_package host, options['php_cli_package']
 end
 

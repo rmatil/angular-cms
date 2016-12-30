@@ -11,6 +11,7 @@ define mysql::db (
   $enforce_sql    = false,
   $ensure         = 'present',
   $import_timeout = 300,
+  $import_cat_cmd = 'cat',
 ) {
   #input validation
   validate_re($ensure, '^(present|absent)$',
@@ -25,16 +26,12 @@ define mysql::db (
 
   include '::mysql::client'
 
-  anchor{"mysql::db_${name}::begin": }->
-  Class['::mysql::client']->
-  anchor{"mysql::db_${name}::end": }
-
   $db_resource = {
     ensure   => $ensure,
     charset  => $charset,
     collate  => $collate,
     provider => 'mysql',
-    require  => [ Class['mysql::server'], Class['mysql::client'] ],
+    require  => [ Class['mysql::client'] ],
   }
   ensure_resource('mysql_database', $dbname, $db_resource)
 
@@ -42,7 +39,6 @@ define mysql::db (
     ensure        => $ensure,
     password_hash => mysql_password($password),
     provider      => 'mysql',
-    require       => Class['mysql::server'],
   }
   ensure_resource('mysql_user', "${user}@${host}", $user_resource)
 
@@ -52,14 +48,17 @@ define mysql::db (
       provider   => 'mysql',
       user       => "${user}@${host}",
       table      => $table,
-      require    => [Mysql_database[$dbname], Mysql_user["${user}@${host}"], Class['mysql::server'] ],
+      require    => [
+        Mysql_database[$dbname],
+        Mysql_user["${user}@${host}"],
+      ],
     }
 
     $refresh = ! $enforce_sql
 
     if $sql {
       exec{ "${dbname}-import":
-        command     => "cat ${sql_inputs} | mysql ${dbname}",
+        command     => "${import_cat_cmd} ${sql_inputs} | mysql ${dbname}",
         logoutput   => true,
         environment => "HOME=${::root_home}",
         refreshonly => $refresh,

@@ -13,12 +13,6 @@ function create_key()
         ssh-keygen -f "${VAGRANT_CORE_FOLDER}/files/dot/ssh/${BASE_KEY_NAME}" -P ""
 
         if [[ ! -f "${VAGRANT_CORE_FOLDER}/files/dot/ssh/${BASE_KEY_NAME}.ppk" ]]; then
-            if [ "${OS}" == 'debian' ] || [ "${OS}" == 'ubuntu' ]; then
-                apt-get install -y putty-tools >/dev/null
-            elif [ "${OS}" == 'centos' ]; then
-                yum -y install putty >/dev/null
-            fi
-
             puttygen "${VAGRANT_CORE_FOLDER}/files/dot/ssh/${BASE_KEY_NAME}" -O private -o "${VAGRANT_CORE_FOLDER}/files/dot/ssh/${BASE_KEY_NAME}.ppk"
         fi
 

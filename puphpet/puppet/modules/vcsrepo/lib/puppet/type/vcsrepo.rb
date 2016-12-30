@@ -37,6 +37,21 @@ Puppet::Type.newtype(:vcsrepo) do
   feature :cvs_rsh,
           "The provider understands the CVS_RSH environment variable"
 
+  feature :depth,
+          "The provider can do shallow clones or set scope limit"
+
+  feature :branch,
+          "The name of the branch"
+
+  feature :p4config,
+          "The provider understands Perforce Configuration"
+
+  feature :submodules,
+          "The repository contains submodules which can be optionally initialized"
+
+  feature :conflict,
+          "The provider supports automatic conflict resolution"
+
   ensurable do
     attr_accessor :latest
 
@@ -54,6 +69,8 @@ Puppet::Type.newtype(:vcsrepo) do
         end
       when :bare
         return is == :bare
+      when :mirror
+        return is == :mirror
       end
     end
 
@@ -68,12 +85,18 @@ Puppet::Type.newtype(:vcsrepo) do
       end
     end
 
+    newvalue :mirror, :required_features => [:bare_repositories] do
+      if !provider.exists?
+        provider.create
+      end
+    end
+
     newvalue :absent do
       provider.destroy
     end
 
     newvalue :latest, :required_features => [:reference_tracking] do
-      if provider.exists?
+      if provider.exists? && !@resource.value(:force)
         if provider.respond_to?(:update_references)
           provider.update_references
         end
@@ -191,8 +214,35 @@ Puppet::Type.newtype(:vcsrepo) do
     desc "The value to be used for the CVS_RSH environment variable."
   end
 
-  autorequire(:package) do
-    ['git', 'git-core']
+  newparam :depth, :required_features => [:depth] do
+    desc "The value to be used to do a shallow clone."
   end
 
+  newparam :branch, :required_features => [:branch] do
+    desc "The name of the branch to clone."
+  end
+
+  newparam :p4config, :required_features => [:p4config] do
+    desc "The Perforce P4CONFIG environment."
+  end
+
+  newparam :submodules, :required_features => [:submodules] do
+    desc "Initialize and update each submodule in the repository."
+    newvalues(:true, :false)
+    defaultto true
+  end
+
+  newparam :conflict do
+    desc "The action to take if conflicts exist between repository and working copy"
+  end
+
+  newparam :trust_server_cert do
+    desc "Trust server certificate"
+    newvalues(:true, :false)
+    defaultto :false
+  end
+
+  autorequire(:package) do
+    ['git', 'git-core', 'mercurial']
+  end
 end

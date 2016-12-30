@@ -35,13 +35,19 @@ class blackfire::repo inherits blackfire {
         }
       }
       'redhat': {
+        if ("${::clientversion} " < '3.5 ') {
+          $sslverify = 'True'
+        } else {
+          $sslverify = 1
+        }
+
         yumrepo { 'blackfire':
           descr     => 'blackfire',
           baseurl   => 'http://packages.blackfire.io/fedora/$releasever/$basearch',
           gpgcheck  => 0,
           enabled   => 1,
           gpgkey    => 'https://packagecloud.io/gpg.key',
-          sslverify => 'True',
+          sslverify => $sslverify,
           sslcacert => '/etc/pki/tls/certs/ca-bundle.crt',
         }
       }

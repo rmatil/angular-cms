@@ -13,6 +13,7 @@ describe 'apt::source', :type => :define do
         :lsbdistid       => 'Debian',
         :lsbdistcodename => 'wheezy',
         :osfamily        => 'Debian',
+        :puppetversion   => Puppet.version,
       }
     end
 
@@ -33,7 +34,8 @@ describe 'apt::source', :type => :define do
       {
         :lsbdistid       => 'Debian',
         :lsbdistcodename => 'wheezy',
-        :osfamily        => 'Debian'
+        :osfamily        => 'Debian',
+        :puppetversion   => Puppet.version,
       }
     end
     let :params do
@@ -88,7 +90,8 @@ describe 'apt::source', :type => :define do
       {
         :lsbdistid       => 'Debian',
         :lsbdistcodename => 'wheezy',
-        :osfamily        => 'Debian'
+        :osfamily        => 'Debian',
+        :puppetversion   => Puppet.version,
       }
     end
     let :params do
@@ -107,7 +110,8 @@ describe 'apt::source', :type => :define do
       {
         :lsbdistid       => 'Debian',
         :lsbdistcodename => 'wheezy',
-        :osfamily        => 'Debian'
+        :osfamily        => 'Debian',
+        :puppetversion   => Puppet.version,
       }
     end
     let :params do
@@ -117,7 +121,7 @@ describe 'apt::source', :type => :define do
       }
     end
 
-    it { is_expected.to contain_apt__setting('list-my_source').with_content(/# my_source\ndeb \[arch=x86_64 \] http:\/\/debian\.mirror\.iweb\.ca\/debian\/ wheezy main\n/)
+    it { is_expected.to contain_apt__setting('list-my_source').with_content(/# my_source\ndeb \[arch=x86_64\] http:\/\/debian\.mirror\.iweb\.ca\/debian\/ wheezy main\n/)
     }
   end
 
@@ -126,7 +130,8 @@ describe 'apt::source', :type => :define do
       {
         :lsbdistid       => 'Debian',
         :lsbdistcodename => 'wheezy',
-        :osfamily        => 'Debian'
+        :osfamily        => 'Debian',
+        :puppetversion   => Puppet.version,
       }
     end
     let :params do
@@ -146,7 +151,8 @@ describe 'apt::source', :type => :define do
       let :facts do
         {
           :lsbdistid       => 'Debian',
-          :osfamily        => 'Debian'
+          :osfamily        => 'Debian',
+          :puppetversion   => Puppet.version,
         }
       end
 

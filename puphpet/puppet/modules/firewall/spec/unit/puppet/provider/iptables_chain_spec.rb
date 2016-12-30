@@ -21,6 +21,10 @@ describe 'iptables chain provider detection' do
   before :each do
     # Reset the default provider
     Puppet::Type.type(:firewallchain).defaultprovider = nil
+
+    # Stub confine facts
+    allow(Facter.fact(:kernel)).to receive(:value).and_return('Linux')
+    allow(Facter.fact(:operatingsystem)).to receive(:value).and_return('Debian')
   end
 
   it "should default to iptables provider if /sbin/(eb|ip|ip6)tables[-save] exists" do
@@ -42,7 +46,7 @@ describe 'iptables chain provider detection' do
 
     # Every other command should return false so we don't pick up any
     # other providers
-    allow(exists).to receive(:which).with() { |value|
+    allow(exists).to receive(:which) { |value|
       value !~ /(eb|ip|ip6)tables(-save)?$/
     }.and_return false
 
@@ -134,6 +138,9 @@ describe 'iptables chain resource parsing' do
      'NAT:mangle:IPv4',
      'NAT:mangle:IPv4',
      'NAT:mangle:IPv4',
+     'security:INPUT:IPv4',
+     'security:FORWARD:IPv4',
+     'security:OUTPUT:IPv4',
      ':$5()*&%\'"^$): :IPv4',
     ]
     allow(provider).to receive(:execute).with(['/sbin/iptables-save']).and_return('
@@ -180,6 +187,9 @@ COMMIT
       'mangle:OUTPUT:IPv6',
       'mangle:POSTROUTING:IPv6',
       'mangle:ff:IPv6',
+      'security:INPUT:IPv6',
+      'security:FORWARD:IPv6',
+      'security:OUTPUT:IPv6',
       ':INPUT:IPv6',
       ':FORWARD:IPv6',
       ':OUTPUT:IPv6',

@@ -146,7 +146,34 @@ Converts any object to an array containing that object. Empty argument lists are
 
 #### `base64`
 
-Converts a string to and from base64 encoding. Requires an action ('encode', 'decode') and either a plain or base64-encoded string. *Type*: rvalue.
+Converts a string to and from base64 encoding. Requires an `action` ('encode', 'decode') and either a plain or base64-encoded `string`, and an optional `method` ('default', 'strict', 'urlsafe')
+
+For backward compatibility, `method` will be set as `default` if not specified.
+
+*Examples:*
+~~~
+base64('encode', 'hello')
+base64('encode', 'hello', 'default')
+# return: "aGVsbG8=\n"
+
+base64('encode', 'hello', 'strict')
+# return: "aGVsbG8="
+
+base64('decode', 'aGVsbG8=')
+base64('decode', 'aGVsbG8=\n')
+base64('decode', 'aGVsbG8=', 'default')
+base64('decode', 'aGVsbG8=\n', 'default')
+base64('decode', 'aGVsbG8=', 'strict')
+# return: "hello"
+
+base64('encode', 'https://puppetlabs.com', 'urlsafe')
+# return: "aHR0cHM6Ly9wdXBwZXRsYWJzLmNvbQ=="
+
+base64('decode', 'aHR0cHM6Ly9wdXBwZXRsYWJzLmNvbQ==', 'urlsafe')
+# return: "https://puppetlabs.com"
+~~~
+
+*Type*: rvalue.
 
 #### `basename`
 
@@ -192,6 +219,14 @@ Removes the record separator from the end of a string or an array of strings; fo
 #### `chop`
 
 Returns a new string with the last character removed. If the string ends with '\r\n', both characters are removed. Applying `chop` to an empty string returns an empty string. If you want to merely remove record separators, then you should use the `chomp` function. Requires a string or an array of strings as input. *Type*: rvalue.
+
+#### `clamp`
+
+Keeps value within the range [Min, X, Max] by sort based on integer value (order of params doesn't matter). Takes strings, arrays or numerics. Strings are converted and compared numerically. Arrays of values are flattened into a list for further handling. For example:
+  * `clamp('24', [575, 187])` returns 187.
+  * `clamp(16, 88, 661)` returns 88.
+  * `clamp([4, 3, '99'])` returns 4.
+  *Type*: rvalue.
 
 #### `concat`
 
@@ -246,6 +281,42 @@ Deletes all instances of the undef value from an array or hash. For example, `$h
 
 Returns the difference between two arrays. The returned array is a copy of the original array, removing any items that also appear in the second array. For example, `difference(["a","b","c"],["b","c","d"])` returns ["a"]. *Type*: rvalue.
 
+#### `dig`
+
+*Type*: rvalue.
+
+Retrieves a value within multiple layers of hashes and arrays via an array of keys containing a path. The function goes through the structure by each path component and tries to return the value at the end of the path.
+
+In addition to the required path argument, the function accepts the default argument. It is returned if the path is not correct, if no value was found, or if any other error has occurred.
+
+~~~ruby
+$data = {
+  'a' => {
+    'b' => [
+      'b1',
+      'b2',
+      'b3',
+    ]
+  }
+}
+
+$value = dig($data, ['a', 'b', 2])
+# $value = 'b3'
+
+# with all possible options
+$value = dig($data, ['a', 'b', 2], 'not_found')
+# $value = 'b3'
+
+# using the default value
+$value = dig($data, ['a', 'b', 'c', 'd'], 'not_found')
+# $value = 'not_found'
+~~~
+
+1. **$data** The data structure we are working with.
+2. **['a', 'b', 2]** The path array.
+3. **'not_found'** The default value. It will be returned if nothing is found.
+   (optional, defaults to *undef*)
+
 #### `dirname`
 
 Returns the `dirname` of a path. For example, `dirname('/path/to/a/file.ext')` returns '/path/to/a'. *Type*: rvalue.
@@ -271,9 +342,21 @@ Converts the case of a string or of all strings in an array to lowercase. *Type*
 
 Returns true if the argument is an array or hash that contains no elements, or an empty string. Returns false when the argument is a numerical value. *Type*: rvalue.
 
+#### `enclose_ipv6`
+
+Takes an array of ip addresses and encloses the ipv6 addresses with square brackets. *Type*: rvalue.
+
 #### `ensure_packages`
 
-Takes a list of packages and only installs them if they don't already exist. It optionally takes a hash as a second parameter to be passed as the third argument to the `ensure_resource()` function. *Type*: statement.
+Takes a list of packages array/hash and only installs them if they don't already exist. It optionally takes a hash as a second parameter to be passed as the third argument to the `ensure_resource()` or `ensure_resources()` function. *Type*: statement.
+
+For Array:
+
+    ensure_packages(['ksh','openssl'], {'ensure' => 'present'})
+
+For Hash:
+
+    ensure_packages({'ksh' => { enure => '20120801-1' } ,  'mypackage' => { source => '/tmp/myrpm-1.0.0.x86_64.rpm', provider => "rpm" }}, {'ensure' => 'present'})
 
 #### `ensure_resource`
 
@@ -297,7 +380,37 @@ An array of resources can also be passed in, and each will be created with the t
 
 *Type*: statement.
 
-#### `flatten`
+#### `ensure_resources`
+
+Takes a resource type, title (only hash), and a hash of attributes that describe the resource(s).
+
+~~~
+user { 'dan':
+  gid => 'mygroup',
+  ensure => present,
+}
+
+ensure_resources($user)
+~~~
+
+An hash of resources should be passed in and each will be created with the type and parameters specified if it doesn't already exist:
+
+    ensure_resources('user', {'dan' => { gid => 'mygroup', uid => '600' } ,  'alex' => { gid => 'mygroup' }}, {'ensure' => 'present'})
+
+From Hiera Backend:
+
+~~~
+userlist:
+dan:
+  gid: 'mygroup'
+uid: '600'
+alex:
+gid: 'mygroup'
+
+ensure_resources('user', hiera_hash('userlist'), {'ensure' => 'present'})
+~~~
+
+### `flatten`
 
 Flattens deeply nested arrays and returns a single flat array as a result. For example, `flatten(['a', ['b', ['c']]])` returns ['a','b','c']. *Type*: rvalue.
 
@@ -509,6 +622,14 @@ Returns 'true' if the variable returned to this string is an integer. *Type*: rv
 #### `is_ip_address`
 
 Returns 'true' if the string passed to this function is a valid IP address. *Type*: rvalue.
+
+#### `is_ipv6_address`
+
+Returns 'true' if the string passed to this function is a valid IPv6 address. *Type*: rvalue.
+
+#### `is_ipv4_address`
+
+Returns 'true' if the string passed to this function is a valid IPv4 address. *Type*: rvalue.
 
 #### `is_mac_address`
 
@@ -780,7 +901,12 @@ Removes leading and trailing whitespace from a string or from every string insid
 
 #### `suffix`
 
-Applies a suffix to all elements in an array. For example, `suffix(['a','b','c'], 'p')` returns ['ap','bp','cp']. *Type*: rvalue.
+Applies a suffix to all elements in an array, or to the keys in a hash.
+For example:
+* `suffix(['a','b','c'], 'p')` returns ['ap','bp','cp']
+* `suffix({'a'=>'b','b'=>'c','c'=>'d'}, 'p')` returns {'ap'=>'b','bp'=>'c','cp'=>'d'}.
+
+*Type*: rvalue.
 
 #### `swapcase`
 
@@ -797,6 +923,8 @@ Converts the argument into bytes, for example "4 kB" becomes "4096". Takes a sin
 #### `try_get_value`
 
 *Type*: rvalue.
+
+DEPRECATED: replaced by `dig()`.
 
 Retrieves a value within multiple layers of hashes and arrays via a string containing a path. The path is a string of hash keys or array indexes starting with zero, separated by the path separator character (default "/"). The function goes through the structure by each path component and tries to return the value at the end of the path.
 
@@ -1202,6 +1330,22 @@ Instead, use:
   if $var == undef {
     fail('...')
   }
+  ~~~
+
+*Type*: statement.
+
+#### `validate_x509_rsa_key_pair`
+
+Validates a PEM-formatted X.509 certificate and private key using OpenSSL.
+Verifies that the certficate's signature was created from the supplied key.
+
+Fails catalog compilation if any value fails this check.
+
+Takes two arguments, the first argument must be a X.509 certificate and the
+second must be an RSA private key:
+
+  ~~~
+  validate_x509_rsa_key_pair($cert, $key)
   ~~~
 
 *Type*: statement.

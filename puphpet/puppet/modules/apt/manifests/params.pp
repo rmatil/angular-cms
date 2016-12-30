@@ -4,15 +4,12 @@ class apt::params {
     fail('This module only works on Debian or derivatives like Ubuntu')
   }
 
-  # prior to puppet 3.5.0, defined couldn't test if a variable was defined
-  # strict variables wasn't added until 3.5.0, so this should be fine.
-  if ! $::settings::strict_variables {
+  # prior to puppet 3.5.0, defined() couldn't test if a variable was defined.
+  # strict_variables wasn't added until 3.5.0, so this should be fine.
+  if $::puppetversion and versioncmp($::puppetversion, '3.5.0') < 0 {
     $xfacts = {
       'lsbdistcodename'     => $::lsbdistcodename,
       'lsbdistrelease'      => $::lsbdistrelease,
-      'lsbmajdistrelease'   => $::lsbmajdistrelease,
-      'lsbdistdescription'  => $::lsbdistdescription,
-      'lsbminordistrelease' => $::lsbminordistrelease,
       'lsbdistid'           => $::lsbdistid,
     }
   } else {
@@ -24,18 +21,6 @@ class apt::params {
       },
       'lsbdistrelease' => defined('$lsbdistrelease') ? {
         true    => $::lsbdistrelease,
-        default => undef,
-      },
-      'lsbmajdistrelease' => defined('$lsbmajdistrelease') ? {
-        true    => $::lsbmajdistrelease,
-        default => undef,
-      },
-      'lsbdistdescription' => defined('$lsbdistdescription') ? {
-        true    => $::lsbdistdescription,
-        default => undef,
-      },
-      'lsbminordistrelease' => defined('$lsbminordistrelease') ? {
-        true    => $::lsbminordistrelease,
         default => undef,
       },
       'lsbdistid' => defined('$lsbdistid') ? {
@@ -131,23 +116,18 @@ class apt::params {
         'repos'    => 'main universe multiverse restricted',
       }
 
-      case $xfacts['lsbdistcodename'] {
-        'lucid': {
+      if $xfacts['lsbdistcodename'] == 'lucid' {
           $ppa_options        = undef
           $ppa_package        = 'python-software-properties'
-        }
-        'precise': {
+      } elsif $xfacts['lsbdistcodename'] == 'precise' {
           $ppa_options        = '-y'
           $ppa_package        = 'python-software-properties'
-        }
-        'trusty', 'utopic', 'vivid': {
+      } elsif versioncmp($xfacts['lsbdistrelease'], '14.04') >= 0 {
           $ppa_options        = '-y'
           $ppa_package        = 'software-properties-common'
-        }
-        default: {
+      } else {
           $ppa_options        = '-y'
           $ppa_package        = 'python-software-properties'
-        }
       }
     }
     undef: {

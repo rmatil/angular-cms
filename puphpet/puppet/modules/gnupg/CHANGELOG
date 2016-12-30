@@ -1,3 +1,9 @@
+2016-01-22 - Dejan Golja <dejan@golja.org> - 1.2.3
+* Another retry to rebuild repack the module to fix the PaxHeaders bsd tar bug
+
+2016-01-18 - Dejan Golja <dejan@golja.org> - 1.2.2
+* module Remove PaxHeaders from distributed package, so it works with r10k
+
 2015-07-04 - Dejan Golja <dejan@golja.org> - 1.2.1
 * remove (present|absent) restriction on $package_ensure
 * add support for SLES

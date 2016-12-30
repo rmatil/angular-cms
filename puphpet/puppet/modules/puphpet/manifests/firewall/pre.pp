@@ -1,5 +1,5 @@
-# This depends on puppetlabs/firewall: https://github.com/puppetlabs/puppetlabs-firewall
-# Firewall rules to be setup before custom rules
+# First whitelist
+#
 class puphpet::firewall::pre {
 
   Firewall {
@@ -16,7 +16,13 @@ class puphpet::firewall::pre {
     iniface => 'lo',
     action  => 'accept',
   }->
-  firewall { '002 accept related established rules':
+  firewall { '002 reject local traffic not on loopback interface':
+    iniface     => '! lo',
+    proto       => 'all',
+    destination => '127.0.0.1/8',
+    action      => 'reject',
+  }->
+  firewall { '003 accept related established rules':
     proto  => 'all',
     state  => ['RELATED', 'ESTABLISHED'],
     action => 'accept',

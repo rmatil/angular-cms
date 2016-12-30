@@ -28,12 +28,15 @@ module Puppet::Util::Firewall
     elsif protocol == 'inet6'
       case value_icmp
         when "destination-unreachable" then "1"
+        when "too-big" then "2"
         when "time-exceeded" then "3"
         when "parameter-problem" then "4"
         when "echo-request" then "128"
         when "echo-reply" then "129"
         when "router-solicitation" then "133"
         when "router-advertisement" then "134"
+        when "neighbour-solicitation" then "135"
+        when "neighbour-advertisement" then "136"
         when "redirect" then "137"
         else nil
       end
@@ -77,14 +80,11 @@ module Puppet::Util::Firewall
       proto = 'tcp'
     end
 
-    if value.kind_of?(String)
-      if value.match(/^\d+(-\d+)?$/)
-        return value
-      else
-        return Socket.getservbyname(value, proto).to_s
-      end
+    m = value.to_s.match(/^(!\s+)?(\S+)/)
+    if m[2].match(/^\d+(-\d+)?$/)
+      return "#{m[1]}#{m[2]}"
     else
-      Socket.getservbyname(value.to_s, proto).to_s
+      return "#{m[1]}#{Socket.getservbyname(m[2], proto).to_s}"
     end
   end
 
@@ -160,6 +160,9 @@ module Puppet::Util::Firewall
 
     # Older iptables-persistent doesn't provide save action.
     if os_key == 'Debian'
+      # We need to call flush to clear Facter cache as it's possible the cached value will be nil due to the fact
+      # that the iptables-persistent package was potentially installed after the initial Fact gathering.
+      Facter.fact(:iptables_persistent_version).flush
       persist_ver = Facter.value(:iptables_persistent_version)
       if (persist_ver and Puppet::Util::Package.versioncmp(persist_ver, '0.5.0') < 0)
         os_key = 'Debian_manual'
@@ -172,7 +175,7 @@ module Puppet::Util::Firewall
     end
 
     # RHEL 7 and newer also use systemd to persist iptable rules
-    if os_key == 'RedHat' && Facter.value(:operatingsystem) == 'RedHat' && Facter.value(:operatingsystemrelease).to_i >= 7
+    if os_key == 'RedHat' && ['RedHat','CentOS','Scientific','SL','SLC','Ascendos','CloudLinux','PSBM','OracleLinux','OVS','OEL','XenServer'].include?(Facter.value(:operatingsystem)) && Facter.value(:operatingsystemrelease).to_i >= 7
       os_key = 'Fedora'
     end
 
@@ -194,7 +197,11 @@ module Puppet::Util::Firewall
     when :Debian
       case proto.to_sym
       when :IPv4, :IPv6
-        %w{/usr/sbin/service iptables-persistent save}
+        if (persist_ver and Puppet::Util::Package.versioncmp(persist_ver, '1.0') > 0)
+          %w{/usr/sbin/service netfilter-persistent save}
+        else
+          %w{/usr/sbin/service iptables-persistent save}
+        end
       end
     when :Debian_manual
       case proto.to_sym

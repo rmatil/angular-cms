@@ -1,3 +1,4 @@
+# See README.md.
 class mysql::server::account_security {
   mysql_user {
     [ 'root@127.0.0.1',
@@ -15,7 +16,7 @@ class mysql::server::account_security {
       require => Anchor['mysql::server::end'],
     }
   }
-  if ($::fqdn != 'localhost') {
+  if ($::fqdn and $::fqdn != 'localhost') {
     mysql_user {
       [ "root@${::fqdn}",
         "@${::fqdn}"]:

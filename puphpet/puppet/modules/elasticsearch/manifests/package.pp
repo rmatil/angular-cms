@@ -37,7 +37,9 @@ class elasticsearch::package {
   # set params: in operation
   if $elasticsearch::ensure == 'present' {
 
-    Package[$elasticsearch::package_name] ~> Elasticsearch::Service <| |>
+    if $elasticsearch::restart_package_change {
+      Package[$elasticsearch::package_name] ~> Elasticsearch::Service <| |>
+    }
     Package[$elasticsearch::package_name] ~> Exec['remove_plugin_dir']
 
     # Create directory to place the package file
@@ -113,6 +115,8 @@ class elasticsearch::package {
               "http_proxy=${elasticsearch::proxy_url}",
               "https_proxy=${elasticsearch::proxy_url}",
             ]
+          } else {
+            $exec_environment = []
           }
 
           exec { 'download_package_elasticsearch':
@@ -157,12 +161,14 @@ class elasticsearch::package {
   # Package removal
   } else {
 
-    if ($::operatingsystem == 'OpenSuSE') {
+    if ($::osfamily == 'Suse') {
       Package {
         provider  => 'rpm',
       }
+      $package_ensure = 'absent'
+    } else {
+      $package_ensure = 'purged'
     }
-    $package_ensure = 'purged'
 
   }
 

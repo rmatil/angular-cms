@@ -4,7 +4,7 @@ class puphpet::php::xhprof (
   $webserver_service
 ) inherits puphpet::params {
 
-  $package_devel = $puphpet::php::settings::package_devel
+  $package_devel = $puphpet::php::params::dev_package
 
   exec { 'delete-xhprof-path-if-empty-folder':
     command => "rm -rf ${webroot_location}/xhprof",

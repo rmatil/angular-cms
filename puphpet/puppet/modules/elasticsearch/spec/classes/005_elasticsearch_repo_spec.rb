@@ -22,6 +22,19 @@ describe 'elasticsearch', :type => 'class' do
         default_params
       end
 
+      context 'ordered with package pinning' do
+
+        let :params do
+          default_params
+        end
+
+        it { should contain_class(
+          'elasticsearch::package::pin'
+        ).that_comes_before(
+          'Class[elasticsearch::repo]'
+        ) }
+      end
+
       context "Use anchor type for ordering" do
 
         let :params do
@@ -58,32 +71,8 @@ describe 'elasticsearch', :type => 'class' do
         context 'has zypper repo parts' do
           it { should contain_exec('elasticsearch_suse_import_gpg').with(:command => 'rpmkeys --import http://packages.elastic.co/GPG-KEY-elasticsearch') }
           it { should contain_zypprepo('elasticsearch').with(:baseurl => 'http://packages.elastic.co/elasticsearch/1.3/centos') }
+          it { should contain_exec('elasticsearch_zypper_refresh_elasticsearch') }
         end
-      end
-
-      context "Package pinning" do
-
-        let :params do
-          default_params.merge({
-            :package_pin => true
-          })
-        end
-
-        case facts[:osfamily]
-        when 'Debian'
-          context 'is supported' do
-            it { should contain_apt__pin('elasticsearch').with(:packages => ['elasticsearch'], :version => '1.6.0') }
-          end
-        when 'RedHat'
-          context 'is supported' do
-            it { should contain_yum__versionlock('0:elasticsearch-1.6.0-1.noarch') }
-          end
-        else
-          context 'is not supported' do
-            pending("unable to test for warnings yet. https://github.com/rodjek/rspec-puppet/issues/108")
-          end
-        end
-
       end
 
       context "Override repo key ID" do
@@ -103,9 +92,11 @@ describe 'elasticsearch', :type => 'class' do
           end
         when 'Suse'
           context 'has override yum key' do
-            it { is_expected.to contain_exec('elasticsearch_suse_import_gpg').with({
-              :unless  => "test $(rpm -qa gpg-pubkey | grep -i '46095ACC8548582C1A2699A9D27D666CD88E42B4' | wc -l) -eq 1 ",
-            })}
+            it { is_expected.to contain_exec(
+              'elasticsearch_suse_import_gpg'
+            ).with_unless(
+              "test $(rpm -qa gpg-pubkey | grep -i 'D88E42B4' | wc -l) -eq 1"
+            )}
           end
         end
 
@@ -133,6 +124,23 @@ describe 'elasticsearch', :type => 'class' do
         when 'Suse'
           context 'has override yum key source' do
             it { should contain_exec('elasticsearch_suse_import_gpg').with(:command => 'rpmkeys --import https://packages.elasticsearch.org/GPG-KEY-elasticsearch') }
+          end
+        end
+
+      end
+
+      context "Override repo proxy" do
+
+        let :params do
+          default_params.merge({
+              :repo_proxy => 'http://proxy.com:8080'
+          })
+        end
+
+        case facts[:osfamily]
+        when 'RedHat'
+          context 'has override repo proxy' do
+            it { is_expected.to contain_yumrepo('elasticsearch').with_proxy('http://proxy.com:8080') }
           end
         end
 

@@ -6,6 +6,15 @@
 # This hash is for testing a line conversion to a hash of parameters
 # which will be used to create a resource.
 ARGS_TO_HASH = {
+  'mac_source_1' => {
+    :line => '-A neutron-openvswi-FORWARD -s 1.2.3.4/32 -m mac --mac-source FA:16:00:00:00:00 -j ACCEPT',
+    :table => 'filter',
+    :params => {
+      :chain => 'neutron-openvswi-FORWARD',
+      :source => '1.2.3.4/32',
+      :mac_source => 'FA:16:00:00:00:00',
+    },
+  },
   'dport_and_sport' => {
     :line => '-A nova-compute-FORWARD -s 0.0.0.0/32 -d 255.255.255.255/32 -p udp -m udp --sport 68 --dport 67 -j ACCEPT',
     :table => 'filter',
@@ -222,6 +231,13 @@ ARGS_TO_HASH = {
       :source => '192.168.0.1/32',
     },
   },
+  'string_escape_sequences' => {
+    :line => '-A INPUT -m comment --comment "000 parse escaped \\"s, \\\'s, and \\\\s"',
+    :table => 'filter',
+    :params => {
+      :name => '000 parse escaped "s, \'s, and \\s',
+    },
+  },
   'log_level_debug' => {
     :line => '-A INPUT -m comment --comment "956 INPUT log-level" -m state --state NEW -j LOG --log-level 7',
     :table => 'filter',
@@ -319,6 +335,24 @@ ARGS_TO_HASH = {
       :iniface => 'eth0',
     },
   },
+  'iniface_1_negated' => {
+    :line => '-A INPUT ! -i eth0 -m comment --comment "060 iniface" -j DROP',
+    :table => 'filter',
+    :params => {
+      :action => 'drop',
+      :chain => 'INPUT',
+      :iniface => '! eth0',
+    },
+  },
+  'iniface_1_aliased' => {
+    :line => '-A INPUT -i eth0:1 -m comment --comment "060 iniface" -j DROP',
+    :table => 'filter',
+    :params => {
+      :action => 'drop',
+      :chain => 'INPUT',
+      :iniface => 'eth0:1',
+    },
+  },
   'iniface_with_vlans_1' => {
     :line => '-A INPUT -i eth0.234 -m comment --comment "060 iniface" -j DROP',
     :table => 'filter',
@@ -344,6 +378,24 @@ ARGS_TO_HASH = {
       :action => 'drop',
       :chain => 'OUTPUT',
       :outiface => 'eth0',
+    },
+  },
+  'outiface_1_negated' => {
+    :line => '-A OUTPUT ! -o eth0 -m comment --comment "060 outiface" -j DROP',
+    :table => 'filter',
+    :params => {
+      :action => 'drop',
+      :chain => 'OUTPUT',
+      :outiface => '! eth0',
+    },
+  },
+  'outiface_1_aliased' => {
+    :line => '-A OUTPUT -o eth0:2 -m comment --comment "060 outiface" -j DROP',
+    :table => 'filter',
+    :params => {
+      :action => 'drop',
+      :chain => 'OUTPUT',
+      :outiface => 'eth0:2',
     },
   },
   'outiface_with_vlans_1' => {
@@ -462,6 +514,71 @@ ARGS_TO_HASH = {
       :proto => 'all',
       :connmark => '0x1',
       :action => 'reject',
+    },
+  },
+  'disallow_esp_protocol' => {
+    :line   => '-t filter ! -p esp -m comment --comment "063 disallow esp protocol" -j ACCEPT',
+    :table  => 'filter',
+    :params => {
+      :name   => '063 disallow esp protocol',
+      :action => 'accept',
+      :proto  => '! esp',
+    },
+  },
+  'drop_new_packets_without_syn' => {
+    :line   => '-t filter ! -s 10.0.0.0/8 ! -p tcp -m tcp ! --tcp-flags FIN,SYN,RST,ACK SYN -m comment --comment "064 drop NEW non-tcp external packets with FIN/RST/ACK set and SYN unset" -m state --state NEW -j DROP',
+    :table  => 'filter',
+    :params => {
+      :name      => '064 drop NEW non-tcp external packets with FIN/RST/ACK set and SYN unset',
+      :state     => ['NEW'],
+      :action    => 'drop',
+      :proto     => '! tcp',
+      :source    => '! 10.0.0.0/8',
+      :tcp_flags => '! FIN,SYN,RST,ACK SYN',
+    },
+  },
+  'negate_dport_and_sport' => {
+    :line => '-A nova-compute-FORWARD -s 0.0.0.0/32 -d 255.255.255.255/32 -p udp -m udp ! --sport 68,69 ! --dport 67,66 -j ACCEPT',
+    :table => 'filter',
+    :params => {
+      :action => 'accept',
+      :chain => 'nova-compute-FORWARD',
+      :source => '0.0.0.0/32',
+      :destination => '255.255.255.255/32',
+      :sport => ['! 68','! 69'],
+      :dport => ['! 67','! 66'],
+      :proto => 'udp',
+    },
+  },
+  'match_mark' => {
+    :line => '-A INPUT -p tcp -m comment --comment "066 REJECT connlimit_above 10 with mask 32 and mark matches" -m mark --mark 0x1 -m connlimit --connlimit-above 10 --connlimit-mask 32 -j REJECT --reject-with icmp-port-unreachable',
+    :table => 'filter',
+    :params => {
+      :proto           => 'tcp',
+      :connlimit_above => '10',
+      :connlimit_mask  => '32',
+      :match_mark      => '0x1',
+      :action          => 'reject',
+    },
+  },
+  'clamp_mss_to_pmtu' => {
+    :line => '-A INPUT -p tcp -m tcp --tcp-flags SYN,RST SYN -m comment --comment "067 change max segment size" -j TCPMSS --clamp-mss-to-pmtu',
+    :table => 'filter',
+    :params => {
+      :name              => '067 change max segment size',
+      :table             => 'filter',
+      :proto             => 'tcp',
+      :tcp_flags         => 'SYN,RST SYN',
+      :jump              => 'TCPMSS',
+      :clamp_mss_to_pmtu => true,
+    },
+  },
+  'mangled_chain_name_with_-f' => {
+    :line => '-A foo-filter -p tcp -m comment --comment "068 chain name containing -f" -j ACCEPT',
+    :params => {
+      :name              => '068 chain name containing -f',
+      :action            => 'accept',
+      :chain             => 'foo-filter',
     },
   },
 }
@@ -659,13 +776,12 @@ HASH_TO_ARGS = {
     },
     :args => ['-t', :filter, '-s', '192.168.0.1/32', '-p', :tcp, '-m', 'comment', '--comment', '000 allow from 192.168.0.1, please'],
   },
-  'port_property' => {
+  'comment_string_character_validation_2' => {
     :params => {
-      :name => '001 port property',
+      :name => "000 allow symbols ( $+<=>^`|~ ) in ruby >= 1.9",
       :table => 'filter',
-      :port => '80',
     },
-    :args => ['-t', :filter, '-p', :tcp, '-m', 'multiport', '--ports', '80', '-m', 'comment', '--comment', '001 port property'],
+    :args => ['-t', :filter, '-p', :tcp, '-m', 'comment', '--comment', '000 allow symbols ( $+<=>^`|~ ) in ruby >= 1.9'],
   },
   'log_level_debug' => {
     :params => {
@@ -930,5 +1046,75 @@ HASH_TO_ARGS = {
       :action => 'reject',
     },
     :args => ["-t", :filter, "-p", :all, "-m", "comment", "--comment", "062 REJECT connmark", "-j", "REJECT", "-m", "connmark", "--mark", "0x1"],
+  },
+  'disallow_esp_protocol' => {
+    :params => {
+      :name   => '063 disallow esp protocol',
+      :table  => 'filter',
+      :action => 'accept',
+      :proto  => '! esp',
+    },
+    :args => ["-t", :filter, "!", "-p", :esp, "-m", "comment", "--comment", "063 disallow esp protocol", "-j", "ACCEPT"],
+  },
+  'drop_new_packets_without_syn' => {
+    :params => {
+      :name      => '064 drop NEW non-tcp external packets with FIN/RST/ACK set and SYN unset',
+      :table     => 'filter',
+      :chain     => 'INPUT',
+      :state     => ['NEW'],
+      :action    => 'drop',
+      :proto     => '! tcp',
+      :source    => '! 10.0.0.0/8',
+      :tcp_flags => '! FIN,SYN,RST,ACK SYN',
+    },
+    :args => ["-t", :filter, "!", "-s", "10.0.0.0/8", "!", "-p", :tcp, "-m", "tcp", "!", "--tcp-flags", "FIN,SYN,RST,ACK", "SYN", "-m", "comment", "--comment", "064 drop NEW non-tcp external packets with FIN/RST/ACK set and SYN unset", "-m", "state", "--state", "NEW", "-j", "DROP"]
+  },
+  'negate_dport_and_sport' => {
+    :params => {
+      :name        => '065 negate dport and sport',
+      :table       => 'filter',
+      :action      => 'accept',
+      :chain       => 'nova-compute-FORWARD',
+      :source      => '0.0.0.0/32',
+      :destination => '255.255.255.255/32',
+      :sport       => ['! 68','! 69'],
+      :dport       => ['! 67','! 66'],
+      :proto       => 'udp',
+    },
+    :args => ["-t", :filter, "-s", "0.0.0.0/32", "-d", "255.255.255.255/32", "-p", :udp, "-m", "multiport", "!", "--sports", "68,69", "-m", "multiport", "!", "--dports", "67,66", "-m", "comment", "--comment", "065 negate dport and sport", "-j", "ACCEPT"],
+  },
+  'match_mark' => {
+    :params => {
+      :name            => '066 REJECT connlimit_above 10 with mask 32 and mark matches',
+      :table           => 'filter',
+      :proto           => 'tcp',
+      :connlimit_above => '10',
+      :connlimit_mask  => '32',
+      :match_mark      => '0x1',
+      :action          => 'reject',
+    },
+    :args => ["-t", :filter, "-p", :tcp, "-m", "comment", "--comment", "066 REJECT connlimit_above 10 with mask 32 and mark matches", "-j", "REJECT", "-m", "mark", "--mark", "0x1", "-m", "connlimit", "--connlimit-above", "10", "--connlimit-mask", "32"],
+  },
+  'clamp_mss_to_pmtu' => {
+    :params => {
+      :name              => '067 change max segment size',
+      :table             => 'filter',
+      :proto             => 'tcp',
+      :tcp_flags         => 'SYN,RST SYN',
+      :jump              => 'TCPMSS',
+      :clamp_mss_to_pmtu => true,
+    },
+    :args => ["-t", :filter, "-p", :tcp, "-m", "tcp", "--tcp-flags", "SYN,RST", "SYN", "-m", "comment", "--comment", "067 change max segment size", "-j", "TCPMSS", "--clamp-mss-to-pmtu"],
+  },
+  'set_dscp_class' => {
+    :params => {
+      :name              => '068 set dscp class to EF',
+      :table             => 'mangle',
+      :proto             => 'tcp',
+      :port              => '997',
+      :jump              => 'DSCP',
+      :set_dscp_class    => 'ef',
+    },
+    :args => ["-t", :mangle, "-p", :tcp, "-m", "multiport", '--ports', '997', "-m", "comment", "--comment", "068 set dscp class to EF", "-j", "DSCP", "--set-dscp-class", "ef"],
   },
 }
