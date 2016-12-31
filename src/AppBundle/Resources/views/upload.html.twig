@@ -1,0 +1,15 @@
+<html>
+<body>
+<form action="{{ path('get_events') }}" method="POST" enctype="multipart/form-data">
+    <input type="file" name="file" />
+    <input type="text" name="text-field" />
+    <input type="submit" name="submit-btn" />
+</form>
+</body>
+</html>
+
+
+{% if event is defined and event is not null %}
+    <h4>Event</h4>
+    <img src="{{ vich_uploader_asset(event, 'filePath') }}" alt="{{ event.name }}" />
+{% endif %}

@@ -78,3 +78,16 @@ fos_user:
     registration:
         confirmation:
             enabled: true
+
+# Vich Uploader Bundle
+vich_uploader:
+    db_driver: orm
+
+    mappings:
+        event_image:
+            uri_prefix:         /img/events
+            upload_destination: '%kernel.root_dir%/../web/img/events'
+
+            inject_on_load:     false
+            delete_on_update:   false
+            delete_on_remove:   false
