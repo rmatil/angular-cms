@@ -84,10 +84,10 @@ vich_uploader:
     db_driver: orm
 
     mappings:
-        event_image:
-            uri_prefix:         /img/events
-            upload_destination: '%kernel.root_dir%/../web/img/events'
-
+        upload:
+            uri_prefix:         /upload
+            upload_destination: '%kernel.root_dir%/../web/upload'
+            namer:              vich_uploader.namer_origname
             inject_on_load:     false
-            delete_on_update:   false
-            delete_on_remove:   false
+            delete_on_update:   true
+            delete_on_remove:   true
