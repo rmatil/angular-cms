@@ -26,8 +26,7 @@ framework:
     session:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
         handler_id:  session.handler.native_file
-        #save_path:   "%kernel.root_dir%/../var/sessions/%kernel.environment%"
-        save_path:   "/tmp/var/sessions/%kernel.environment%"
+        save_path:   "%kernel.root_dir%/../var/sessions/%kernel.environment%"
     fragments:       ~
     http_method_override: true
     assets: ~
@@ -61,6 +60,12 @@ doctrine:
         auto_generate_proxy_classes: "%kernel.debug%"
         naming_strategy: doctrine.orm.naming_strategy.underscore
         auto_mapping: true
+
+doctrine_migrations:
+    dir_name: "%kernel.root_dir%/../vendor/rmatil/angular-cms-bundle/Resources/doctrine-migrations"
+    namespace: Application\Migrations
+    table_name: migration_versions
+    name: Application Migrations
 
 # Swiftmailer Configuration
 swiftmailer:
