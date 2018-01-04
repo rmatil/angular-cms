@@ -1,5 +1,5 @@
 {
-    "name": "raphael/cmsv5",
+    "name": "rmatil/angular-cms",
     "license": "proprietary",
     "type": "project",
     "autoload": {
@@ -23,7 +23,7 @@
         }
     ],
     "require": {
-        "php": ">=5.5.9",
+        "php": ">=7.1",
         "rmatil/angular-cms-bundle": "dev-master"
     },
     "require-dev": {
