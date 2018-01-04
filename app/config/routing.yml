@@ -1,0 +1,12 @@
+# rmatil CmsBundle
+rmatil_cms:
+    resource: "@rmatilCmsBundle/Resources/config/routing.yml"
+    prefix:   "/api"
+
+# FOS UserBundle
+fos_user:
+    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+
+app:
+    resource: "@AppBundle/Controller/"
+    type:     annotation

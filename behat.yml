@@ -1,0 +1,16 @@
+default:
+    extensions:
+        Behat\Symfony2Extension:
+            kernel:
+                env: dev
+    # The path for the Context classes (only PSR-0 is supported)
+    autoload:
+        '': %paths.base%/tests/features/bootstrap
+    suites:
+        # The default test suite
+        default:
+            # The path for the *.feature definitions
+            paths: [ %paths.base%/src/rmatil/CmsBundle/Features ]
+            contexts:
+                - rmatil\CmsBundle\Features\Bootstrap\ArticleContext
+                - rmatil\CmsBundle\Features\Bootstrap\ArticleCategoryContext

@@ -1,5 +1,0 @@
-test:
-  adapter: mysql
-  database: angular_cms_test
-  username: root
-  encoding: utf8

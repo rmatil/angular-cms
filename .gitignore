@@ -1,37 +1,21 @@
-# composer
-composer.lock
-/vendor
-
-# bower
-/web/cms/bower_components
-
-# Sublime Text
-*.sublime-project
-*.sublime-workspace
-
-# Netbeans
-/nbproject/private/
-
-# PHPStorm
+/app/config/parameters.yml
+/build/
+/phpunit.xml
+/var/*
+!/var/cache
+/var/cache/*
+!var/cache/.gitkeep
+!/var/logs
+/var/logs/*
+!var/logs/.gitkeep
+!/var/sessions
+/var/sessions/*
+!var/sessions/.gitkeep
+!var/SymfonyRequirements.php
+/vendor/
+/web/bundles/
+web/upload
 .idea
-
-# OS X
-.DS_Store
-
-# Logs
-*.log
-
-# media dir
-/web/media/*
-
-# gulp.js
-node_modules
-
-# app config
-/app/config
-/app/cache
-/app/logs
-
-# Vagrant
 .vagrant
-/puphpet
+.DS_Store
+html

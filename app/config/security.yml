@@ -1,0 +1,58 @@
+# To get started with security, check out the documentation:
+# http://symfony.com/doc/current/book/security.html
+security:
+
+    encoders:
+        FOS\UserBundle\Model\UserInterface: bcrypt
+
+    role_hierarchy:
+        ROLE_MEMBER:      [ROLE_USER]
+        ROLE_ADMIN:       [ROLE_MEMBER]
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN]
+
+    # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
+    providers:
+        fos_userbundle:
+            id: fos_user.user_provider.username
+
+    firewalls:
+        # disables authentication for assets and the profiler, adapt it according to your needs
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        # Basic Authentication for API requests
+        api:
+            pattern: /api/*
+            stateless: true
+            anonymous: true
+            form_login: false
+            http_basic:
+                provider: fos_userbundle
+
+        # Form Login Authentication for all other requests
+        main:
+            # activate different ways to authenticate
+
+            # http_basic: ~
+            # http://symfony.com/doc/current/book/security.html#a-configuring-how-your-users-will-authenticate
+
+            # form_login: ~
+            # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
+
+            # FOS UserBundle
+            pattern: ^/
+            form_login:
+                provider: fos_userbundle
+                csrf_token_generator: security.csrf.token_manager
+                # if you are using Symfony < 2.8, use the following config instead:
+                # csrf_provider: form.csrf_provider
+
+            logout:       true
+            anonymous:    true
+
+    access_control:
+        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/, role: ROLE_ADMIN }
